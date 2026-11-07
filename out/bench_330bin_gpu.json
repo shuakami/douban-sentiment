@@ -1,0 +1,17 @@
+{
+  "model": "models/erlangshen330_binary_e4_b32_m128",
+  "task": "binary",
+  "device": "cuda",
+  "n": 508,
+  "bs": 64,
+  "max_len": 128,
+  "times": [
+    1.02569580078125,
+    1.0116403102874756,
+    1.0262970924377441
+  ],
+  "best_secs": 1.0116403102874756,
+  "avg_secs": 1.02121106783549,
+  "samples_per_sec": 502.1547627492649,
+  "ms_per_sample": 1.991417933636763
+}

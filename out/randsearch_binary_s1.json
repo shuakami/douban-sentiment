@@ -1,0 +1,12 @@
+{
+  "task": "binary",
+  "channels": [
+    "swp_erl110_binary_full_C0.3_cwbal.json",
+    "swp_mb256_binary_full_C1.0_cwnone.json",
+    "swp_erl110_binary_full_C1.0_cwnone.json",
+    "erlangshen330_bin_e4_b32_m128_eager.json",
+    "swp_mb256mean_binary_mean_C0.3_cwbal.json"
+  ],
+  "acc": 0.9566929133858267,
+  "macro_f1": 0.9537570340946706
+}

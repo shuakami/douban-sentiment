@@ -1,0 +1,51 @@
+\contentsline {section}{\numberline {1}引言}{3}{section.1}%
+\contentsline {paragraph}{贡献。}{3}{paragraph*.1}%
+\contentsline {section}{\numberline {2}相关工作}{3}{section.2}%
+\contentsline {paragraph}{中文文本情感分析。}{3}{paragraph*.2}%
+\contentsline {paragraph}{预训练语言模型。}{3}{paragraph*.3}%
+\contentsline {paragraph}{弱监督与自训练。}{3}{paragraph*.4}%
+\contentsline {paragraph}{知识蒸馏。}{4}{paragraph*.5}%
+\contentsline {paragraph}{模型校准。}{4}{paragraph*.6}%
+\contentsline {paragraph}{大模型作为标注器与基线。}{4}{paragraph*.7}%
+\contentsline {section}{\numberline {3}任务与数据集}{4}{section.3}%
+\contentsline {subsection}{\numberline {3.1}任务定义}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}金标集（600 条评论）}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}弱标注语料（911{,}998 条评论）}{4}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}星级评分不是情感标签}{5}{subsection.3.4}%
+\contentsline {section}{\numberline {4}方法}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}概述}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}教师集成与蒸馏}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}冻结判别器}{6}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}伪标签飞轮}{6}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}中性专家}{6}{subsection.4.5}%
+\contentsline {paragraph}{语料训练检测器。}{7}{paragraph*.12}%
+\contentsline {paragraph}{专家混合。}{7}{paragraph*.13}%
+\contentsline {subsection}{\numberline {4.6}语料规模学生模型}{7}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}模型校准}{7}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}部署}{7}{subsection.4.8}%
+\contentsline {section}{\numberline {5}实验设置}{7}{section.5}%
+\contentsline {paragraph}{评估协议。}{7}{paragraph*.14}%
+\contentsline {paragraph}{指标。}{7}{paragraph*.15}%
+\contentsline {paragraph}{基线。}{7}{paragraph*.16}%
+\contentsline {section}{\numberline {6}结果}{8}{section.6}%
+\contentsline {subsection}{\numberline {6.1}主要结果}{8}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}语料规模单模型}{9}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}伪标签规模效应}{9}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}跨域银标评估}{10}{subsection.6.4}%
+\contentsline {section}{\numberline {7}分析}{10}{section.7}%
+\contentsline {subsection}{\numberline {7.1}模型校准}{10}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}统计显著性}{10}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}错误分析}{11}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}被否决的架构}{11}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}与商业训练平台的对比}{11}{subsection.7.5}%
+\contentsline {section}{\numberline {8}分布外评估：lab500 研究}{11}{section.8}%
+\contentsline {paragraph}{协议。}{11}{paragraph*.23}%
+\contentsline {paragraph}{结果。}{11}{paragraph*.24}%
+\contentsline {paragraph}{发现。}{12}{paragraph*.27}%
+\contentsline {section}{\numberline {9}局限性与效度威胁}{12}{section.9}%
+\contentsline {section}{\numberline {10}结论与未来工作}{13}{section.10}%
+\contentsline {section}{可复现性}{13}{section.10}%
+\contentsline {section}{\numberline {A}训练细节与可复现性}{13}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}超参数}{13}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}产物清单}{13}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}环境}{14}{subsection.A.3}%

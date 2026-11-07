@@ -1,0 +1,154 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand*\HyPL@Entry[1]{}
+\HyPL@Entry{0<</S/D>>}
+\HyPL@Entry{1<</S/D>>}
+\citation{kim2014,socher2013,joulin2017,reimers2019}
+\citation{pang2008}
+\citation{tan2008}
+\citation{devlin2019}
+\citation{liu2019}
+\citation{cui2020}
+\citation{sun2019}
+\citation{wang2020}
+\citation{idea2023}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{3}{section.1}\protected@file@percent }
+\newlabel{sec:intro}{{1}{3}{Introduction}{section.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Contributions.}{3}{paragraph*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{3}{section.2}\protected@file@percent }
+\newlabel{sec:related}{{2}{3}{Related Work}{section.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Sentiment analysis of Chinese text.}{3}{paragraph*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Pre-trained language models.}{3}{paragraph*.3}\protected@file@percent }
+\citation{yarowsky1995,lee2013}
+\citation{ratner2017}
+\citation{hinton2015}
+\citation{gou2021}
+\citation{guo2017}
+\citation{qwen2025}
+\@writefile{toc}{\contentsline {paragraph}{Weak supervision and self-training.}{4}{paragraph*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Knowledge distillation.}{4}{paragraph*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Calibration.}{4}{paragraph*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{LLMs as annotators and baselines.}{4}{paragraph*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Task and Datasets}{4}{section.3}\protected@file@percent }
+\newlabel{sec:data}{{3}{4}{Task and Datasets}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Task definition}{4}{subsection.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Representative gold-set reviews (Chinese original with English gloss). ``Mixed$\to $Neg'' denotes a praise-then-criticism review whose final polarity is negative.}}{4}{table.caption.8}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{tab:examples}{{1}{4}{Representative gold-set reviews (Chinese original with English gloss). ``Mixed$\to $Neg'' denotes a praise-then-criticism review whose final polarity is negative}{table.caption.8}{}}
+\citation{douban2024}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Gold set (600 reviews)}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Weakly-labelled corpus (911{,}998 reviews)}{5}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Star ratings are not sentiment labels}{5}{subsection.3.4}\protected@file@percent }
+\newlabel{sec:ratings}{{3.4}{5}{Star ratings are not sentiment labels}{subsection.3.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Star rating vs.\ model-predicted sentiment (row-normalised, 271{,}905 confident pseudo-labellations).}}{5}{table.caption.9}\protected@file@percent }
+\newlabel{tab:crosstab}{{2}{5}{Star rating vs.\ model-predicted sentiment (row-normalised, 271{,}905 confident pseudo-labellations)}{table.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Star rating versus predicted sentiment on the 272K confident pseudo-label pool. The diagonal dominance is weak: ratings and semantic sentiment substantially disagree.}}{6}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:crosstab}{{1}{6}{Star rating versus predicted sentiment on the 272K confident pseudo-label pool. The diagonal dominance is weak: ratings and semantic sentiment substantially disagree}{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Methodology}{6}{section.4}\protected@file@percent }
+\newlabel{sec:method}{{4}{6}{Methodology}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Overview}{6}{subsection.4.1}\protected@file@percent }
+\citation{arazo2020,xie2020,sohn2020}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Deployed v3 architecture. $p_s,p_j,\mathrm  {dep},\mathrm  {spec}, \mathrm  {final}\in \Delta ^{3}$ are three-class probability vectors, whereas $p_n^{(1)},p_n^{(2)},p_n\in [0,1]$ are scalar neutral probabilities; $w_s,w_j$ are fusion weights, not model parameters. $r_\pm $ denote the positive/negative shares of $\mathrm  {dep}$ renormalised to sum to one. The two MegatronBERT-based heads share one frozen-backbone feature pass; the neutral specialist blends a judge-feature MLP with a corpus-trained MacBERT detector.}}{7}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:arch}{{2}{7}{Deployed v3 architecture. $p_s,p_j,\mathrm {dep},\mathrm {spec}, \mathrm {final}\in \Delta ^{3}$ are three-class probability vectors, whereas $p_n^{(1)},p_n^{(2)},p_n\in [0,1]$ are scalar neutral probabilities; $w_s,w_j$ are fusion weights, not model parameters. $r_\pm $ denote the positive/negative shares of $\mathrm {dep}$ renormalised to sum to one. The two MegatronBERT-based heads share one frozen-backbone feature pass; the neutral specialist blends a judge-feature MLP with a corpus-trained MacBERT detector}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Teacher ensemble and distillation}{7}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:distill}{{4.2}{7}{Teacher ensemble and distillation}{subsection.4.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Frozen judge}{7}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:judge}{{4.3}{7}{Frozen judge}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Pseudo-label flywheel}{7}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:flywheel}{{4.4}{7}{Pseudo-label flywheel}{subsection.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Neutral specialist}{8}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:neu}{{4.5}{8}{Neutral specialist}{subsection.4.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Corpus-trained detector.}{8}{paragraph*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Specialist blend.}{8}{paragraph*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Corpus-scale students}{8}{subsection.4.6}\protected@file@percent }
+\newlabel{sec:corpus}{{4.6}{8}{Corpus-scale students}{subsection.4.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Calibration}{8}{subsection.4.7}\protected@file@percent }
+\newlabel{sec:calib}{{4.7}{8}{Calibration}{subsection.4.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Deployment}{8}{subsection.4.8}\protected@file@percent }
+\newlabel{sec:deploy}{{4.8}{8}{Deployment}{subsection.4.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Experimental Setup}{8}{section.5}\protected@file@percent }
+\newlabel{sec:setup}{{5}{8}{Experimental Setup}{section.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Evaluation protocol.}{8}{paragraph*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Metrics.}{9}{paragraph*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Baselines.}{9}{paragraph*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Results}{9}{section.6}\protected@file@percent }
+\newlabel{sec:results}{{6}{9}{Results}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Main results}{9}{subsection.6.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Gold-600 out-of-fold results. ``Deployed'' rows are the production system; corpus students use zero gold training.}}{9}{table.caption.17}\protected@file@percent }
+\newlabel{tab:main}{{3}{9}{Gold-600 out-of-fold results. ``Deployed'' rows are the production system; corpus students use zero gold training}{table.caption.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Deployed v3 confusion matrix on the 600-row gold set (out-of-fold). Row sums match the class distribution (316/92/192).}}{10}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:confusion}{{3}{10}{Deployed v3 confusion matrix on the 600-row gold set (out-of-fold). Row sums match the class distribution (316/92/192)}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Corpus-scale single models}{10}{subsection.6.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Corpus-trained models evaluated on gold-600 (zero gold training unless noted).}}{10}{table.caption.19}\protected@file@percent }
+\newlabel{tab:corpus}{{4}{10}{Corpus-trained models evaluated on gold-600 (zero gold training unless noted)}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Pseudo-label scaling}{11}{subsection.6.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Accuracy and macro-F1 of corpus-trained pseudo-label students on gold-600 versus training-set size (log scale). Performance grows monotonically and is still rising at 160K rows.}}{11}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:scaling}{{4}{11}{Accuracy and macro-F1 of corpus-trained pseudo-label students on gold-600 versus training-set size (log scale). Performance grows monotonically and is still rising at 160K rows}{figure.caption.20}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Pseudo-label scaling (gold-600, zero gold training).}}{11}{table.caption.21}\protected@file@percent }
+\newlabel{tab:scaling}{{5}{11}{Pseudo-label scaling (gold-600, zero gold training)}{table.caption.21}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Cross-domain silver evaluation}{11}{subsection.6.4}\protected@file@percent }
+\citation{mcnemar1947}
+\citation{efron1993}
+\citation{dietterich1998,demsar2006}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Analysis}{12}{section.7}\protected@file@percent }
+\newlabel{sec:analysis}{{7}{12}{Analysis}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Calibration}{12}{subsection.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Reliability diagram before and after temperature scaling ($T=0.37$, fitted by NLL on the gold-600 OOF predictions; all quantities are computed on the same 600 out-of-fold rows). The lower panel shows the sample count per equal-width confidence bin; the high-confidence region is sparse, so local fluctuations are expected even though the global ECE improves substantially.}}{12}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:calib}{{5}{12}{Reliability diagram before and after temperature scaling ($T=0.37$, fitted by NLL on the gold-600 OOF predictions; all quantities are computed on the same 600 out-of-fold rows). The lower panel shows the sample count per equal-width confidence bin; the high-confidence region is sparse, so local fluctuations are expected even though the global ECE improves substantially}{figure.caption.22}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Statistical significance}{12}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Error analysis}{12}{subsection.7.3}\protected@file@percent }
+\citation{qwen2025}
+\citation{gilardi2023,tornberg2023}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Rejected architectures}{13}{subsection.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Comparison with a commercial training platform}{13}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Out-of-Distribution Evaluation: The lab500 Study}{13}{section.8}\protected@file@percent }
+\newlabel{sec:lab500}{{8}{13}{Out-of-Distribution Evaluation: The lab500 Study}{section.8}{}}
+\@writefile{toc}{\contentsline {paragraph}{Protocol.}{13}{paragraph*.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Results.}{14}{paragraph*.24}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces lab500 out-of-distribution results.}}{14}{table.caption.25}\protected@file@percent }
+\newlabel{tab:lab500}{{6}{14}{lab500 out-of-distribution results}{table.caption.25}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces lab500 accuracy by evaluator/reference pair. The binary task generalises far better than three-class.}}{14}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:lab500}{{6}{14}{lab500 accuracy by evaluator/reference pair. The binary task generalises far better than three-class}{figure.caption.26}{}}
+\@writefile{toc}{\contentsline {paragraph}{Findings.}{14}{paragraph*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{15}{section.9}\protected@file@percent }
+\newlabel{sec:limits}{{9}{15}{Limitations and Threats to Validity}{section.9}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Conclusion and Future Work}{15}{section.10}\protected@file@percent }
+\newlabel{sec:conclusion}{{10}{15}{Conclusion and Future Work}{section.10}{}}
+\@writefile{toc}{\contentsline {section}{Reproducibility}{15}{section.10}\protected@file@percent }
+\bibcite{devlin2019}{{1}{2019}{{Devlin et al.}}{{}}}
+\bibcite{liu2019}{{2}{2019}{{Liu et al.}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Training Details and Reproducibility}{16}{appendix.A}\protected@file@percent }
+\newlabel{app:repro}{{A}{16}{Training Details and Reproducibility}{appendix.A}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Hyperparameters}{16}{subsection.A.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Key hyperparameters of the deployed pipeline.}}{16}{table.caption.28}\protected@file@percent }
+\newlabel{tab:hparams}{{7}{16}{Key hyperparameters of the deployed pipeline}{table.caption.28}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Artifacts}{16}{subsection.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Environment}{16}{subsection.A.3}\protected@file@percent }
+\bibcite{cui2020}{{3}{2020}{{Cui et al.}}{{}}}
+\bibcite{wang2020}{{4}{2020}{{Wang et al.}}{{}}}
+\bibcite{sun2019}{{5}{2019}{{Sun et al.}}{{}}}
+\bibcite{idea2023}{{6}{2023}{{IDEA-CCNL}}{{}}}
+\bibcite{kim2014}{{7}{2014}{{Kim}}{{}}}
+\bibcite{socher2013}{{8}{2013}{{Socher et al.}}{{}}}
+\bibcite{pang2008}{{9}{2008}{{Pang and Lee}}{{}}}
+\bibcite{tan2008}{{10}{2008}{{Tan and Zhang}}{{}}}
+\bibcite{yarowsky1995}{{11}{1995}{{Yarowsky}}{{}}}
+\bibcite{lee2013}{{12}{2013}{{Lee}}{{}}}
+\bibcite{arazo2020}{{13}{2020}{{Arazo et al.}}{{}}}
+\bibcite{ratner2017}{{14}{2017}{{Ratner et al.}}{{}}}
+\bibcite{xie2020}{{15}{2020}{{Xie et al.}}{{}}}
+\bibcite{sohn2020}{{16}{2020}{{Sohn et al.}}{{}}}
+\bibcite{hinton2015}{{17}{2015}{{Hinton et al.}}{{}}}
+\bibcite{gou2021}{{18}{2021}{{Gou et al.}}{{}}}
+\bibcite{joulin2017}{{19}{2017}{{Joulin et al.}}{{}}}
+\bibcite{reimers2019}{{20}{2019}{{Reimers and Gurevych}}{{}}}
+\bibcite{guo2017}{{21}{2017}{{Guo et al.}}{{}}}
+\bibcite{qwen2025}{{22}{2025}{{Qwen Team}}{{}}}
+\bibcite{gilardi2023}{{23}{2023}{{Gilardi et al.}}{{}}}
+\bibcite{tornberg2023}{{24}{2023}{{T\"ornberg}}{{}}}
+\bibcite{dietterich1998}{{25}{1998}{{Dietterich}}{{}}}
+\bibcite{demsar2006}{{26}{2006}{{Dem\v {s}ar}}{{}}}
+\bibcite{efron1993}{{27}{1993}{{Efron and Tibshirani}}{{}}}
+\bibcite{mcnemar1947}{{28}{1947}{{McNemar}}{{}}}
+\bibcite{douban2024}{{29}{2019}{{csuldw}}{{}}}
+\gdef \@abspage@last{19}

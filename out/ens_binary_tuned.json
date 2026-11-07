@@ -1,0 +1,1 @@
+{"file": "out/ens_binary_all.json", "threshold": 0.40, "best": {"acc": 0.9350, "macro_f1": 0.9293}, "note": "OOF threshold tuned; t=0.50 baseline acc=0.9311 macro_f1=0.9259"}

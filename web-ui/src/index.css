@@ -1,0 +1,136 @@
+@import "@fontsource/inter/latin-400.css";
+@import "@fontsource/inter/latin-500.css";
+@import "tailwindcss";
+
+/* ── Base UI gray scale (ported from base-ui.com) ──────────────
+   Only these six grays are used. Lines and text share --gray-t2,
+   exactly like the base-ui homepage. Dark mode follows the OS. */
+:root {
+  color-scheme: light dark;
+
+  --gray-s1: hsl(0 0% 99%);
+  --gray-s2: hsl(0 0% 97.5%);
+  --gray-c1: hsl(0 0% 95.25%);
+  --gray-c2: hsl(0 0% 94%);
+  --gray-t1: hsl(0 0% 46.4%);
+  --gray-t2: hsl(0 0% 18%);
+
+  --green-t1: hsl(156deg 81% 29%);
+  --red-t1: hsl(10deg 86% 48%);
+  --orange-t1: hsl(14deg 96% 52.5%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gray-s1: hsl(0 0% 7.5%);
+    --gray-s2: hsl(0 0% 10%);
+    --gray-c1: hsl(0 0% 13%);
+    --gray-c2: hsl(0 0% 16%);
+    --gray-t1: hsl(0 0% 70%);
+    --gray-t2: hsl(0 0% 90%);
+
+    --green-t1: hsl(156deg 68% 54%);
+    --red-t1: hsl(10deg 96% 63%);
+    --orange-t1: hsl(26deg 98% 63%);
+  }
+}
+
+@theme {
+  --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", system-ui, -apple-system, sans-serif;
+
+  --color-canvas: var(--gray-s1);
+  --color-panel: var(--gray-s2);
+  --color-tint: var(--gray-c1);
+  --color-tint-strong: var(--gray-c2);
+  --color-ink: var(--gray-t2);
+  --color-ink-2: var(--gray-t1);
+
+  /* sentiment colors: the only non-gray colors on the page */
+  --color-pos: var(--green-t1);
+  --color-neg: var(--red-t1);
+  --color-neu: var(--orange-t1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  background: var(--gray-s1);
+  color: var(--gray-t2);
+}
+
+::selection {
+  background: var(--gray-c2);
+}
+
+textarea {
+  resize: vertical;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-c2) transparent;
+}
+
+/* ── motion ────────────────────────────────────────────────────
+   grow-spring reads --p so the bar springs to its exact value and
+   the overshoot is clipped by the track's overflow: hidden.        */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes grow-spring {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(var(--p, 1)); }
+}
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.2; }
+  40%           { opacity: 1; }
+}
+
+.anim-rise { animation: rise 450ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-pop  { animation: pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.anim-grow { animation: grow-spring 700ms cubic-bezier(0.34, 1.35, 0.64, 1) both; }
+.anim-dot  { animation: blink 1.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* shader 背景入场：淡入 + 轻微缩放，与全站 anim-rise 同一条缓出曲线 */
+@keyframes shader-bg-in {
+  from { opacity: 0; transform: scale(1.045); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.anim-shader-in {
+  animation: shader-bg-in 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}

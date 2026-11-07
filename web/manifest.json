@@ -1,0 +1,65 @@
+{
+  "use_gpu": true,
+  "binary_threshold": 0.5,
+  "tasks": {
+    "binary": {
+      "tfidf": false,
+      "models": [
+        {
+          "type": "transformer",
+          "name": "MacBERT 蒸馏学生",
+          "path": "models/macbert_bin_distill",
+          "max_len": 256,
+          "weight": 1.0
+        },
+        {
+          "type": "mlp_head",
+          "name": "MegatronBERT-1.3B MLP 头",
+          "model": "IDEA-CCNL/Erlangshen-MegatronBert-1.3B-Sentiment",
+          "head": "models/mlp_bin_mb13b_m256.pt",
+          "max_len": 256,
+          "weight": 2.0
+        }
+      ]
+    },
+    "3class": {
+      "tfidf": false,
+      "temperature": 0.37,
+      "neu_expert": {
+        "weight": 0.5,
+        "student_w": 0.4,
+        "head_w": 0.6,
+        "student": {
+          "type": "transformer",
+          "name": "中性语料检测器",
+          "path": "models/macbert_neu_corpus",
+          "max_len": 256
+        },
+        "head": {
+          "type": "mlp_head",
+          "name": "中性专家 MLP 头",
+          "model": "IDEA-CCNL/Erlangshen-MegatronBert-1.3B-Sentiment",
+          "head": "models/mlp_neu_mb13b_m256_h256.pt",
+          "max_len": 256
+        }
+      },
+      "models": [
+        {
+          "type": "transformer",
+          "name": "MacBERT 三分类蒸馏学生",
+          "path": "models/macbert_3c_distill",
+          "max_len": 256,
+          "weight": 1.0
+        },
+        {
+          "type": "mlp_head",
+          "name": "MegatronBERT-1.3B MLP 头",
+          "model": "IDEA-CCNL/Erlangshen-MegatronBert-1.3B-Sentiment",
+          "head": "models/mlp_3c_mb13b_m256.pt",
+          "max_len": 256,
+          "weight": 2.0
+        }
+      ]
+    }
+  }
+}

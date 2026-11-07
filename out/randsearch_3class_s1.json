@@ -1,0 +1,10 @@
+{
+  "task": "3class",
+  "channels": [
+    "swp_mb256mean_3class_mean_C0.03_cwnone.json",
+    "swp_mb256mean_3class_mean_C0.01_cwnone.json",
+    "frozen_mb13b_m128_3class_C1.0.json"
+  ],
+  "acc": 0.845,
+  "macro_f1": 0.7834490535395195
+}

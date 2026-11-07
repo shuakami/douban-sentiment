@@ -1,0 +1,13 @@
+torch>=2.0
+transformers>=4.30
+datasets>=2.14
+accelerate>=0.24
+scikit-learn>=1.3
+pandas
+numpy
+openpyxl
+sentencepiece
+fastapi
+uvicorn
+matplotlib
+# peft  # only needed for scripts/lora_finetune.py (rejected LoRA experiment)

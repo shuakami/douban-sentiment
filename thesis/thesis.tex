@@ -1,0 +1,1102 @@
+% !TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.5cm,headheight=14pt]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Consolas}
+\setCJKmainfont{SimSun}
+\setCJKsansfont{Microsoft YaHei}
+\setCJKmonofont{SimSun}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{natbib}
+\usepackage{siunitx}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black}
+
+\captionsetup{font=small,labelfont=bf}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\setstretch{1.08}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Weakly-Supervised Chinese Review Sentiment Classification}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.8em}{}
+\setlist[itemize]{leftmargin=1.5em,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=2pt,topsep=3pt}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+
+%=====================================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{center}
+\vspace*{2.0cm}
+{\LARGE\bfseries Weakly-Supervised Chinese Review Sentiment\\[6pt]
+Classification at Scale:\\[6pt]
+Pseudo-Labeling, Specialist Decomposition,\\[6pt]
+and Honest Out-of-Distribution Evaluation}\par
+\vspace{0.9cm}
+{\large\itshape Undergraduate Thesis --- Natural Language Processing}
+\par
+\vspace{2.6cm}
+\begin{tabular}{ll}
+\textbf{Student}    & Shuakami \\
+\textbf{Date}       & \today \\
+\end{tabular}
+\vfill
+{\footnotesize\itshape
+Code, out-of-fold predictions, and full experiment records:
+\url{https://github.com/shuakami/douban-sentiment}}
+\end{center}
+\end{titlepage}
+
+%=====================================================================
+\begin{abstract}
+\begingroup
+\small
+\noindent
+We study three-class sentiment classification (positive / neutral /
+negative) of Chinese Douban movie short reviews under a realistic
+low-resource setting: 600 human-verified semantic labels plus a large
+weakly-labelled corpus of 911{,}998 reviews with star ratings. Our study
+makes four contributions. First, we \emph{measure} that star ratings are
+a poor proxy for semantic sentiment: on a 271{,}905-row confident
+pseudo-label pool, only $\sim$59\% of 5-star reviews are predicted
+positive, and 3-star reviews skew negative rather than neutral.
+Second, we show that pseudo-labelling the corpus with a distilled
+ensemble and training a single compact student on 160K balanced rows
+reaches 87.5\% accuracy with 84.8\% neutral recall on the gold set ---
+evidence that label quality at scale, not model capacity, is the binding
+constraint. Third, our deployed system couples a distilled MacBERT
+student, a frozen MegatronBERT-1.3B feature judge, and a
+corpus-trained neutral specialist, reaching \textbf{89.5\% accuracy /
+85.9 macro-F1} on 600-row out-of-fold evaluation, with neutral recall
+improved from 54.3\% to 70.7\%. Fourth, we conduct an honest
+out-of-distribution study on 500 fresh corpus reviews and report a
+substantial generalization gap (60--74\% three-class), attributing it to
+intrinsic annotation ambiguity of terse comments rather than model
+defects. All negative results --- more than twenty rejected
+architectures --- are documented.
+\par\endgroup
+\end{abstract}
+
+\vspace{0.6em}
+\noindent{\small\itshape\textbf{Keywords:} sentiment analysis;
+Chinese NLP; weak supervision; pseudo-labelling; knowledge
+distillation; pre-trained language models; calibration;
+out-of-distribution evaluation.}
+
+\newpage
+\tableofcontents
+\newpage
+
+%=====================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Short reviews on Douban --- China's most influential movie community ---
+are terse, ironic, and frequently mix praise with criticism. A typical
+review reads \emph{``特效无敌，但是剧情简直像一坨''} (``the special
+effects are unbeatable, but the plot is literally a pile of trash'').
+Such mixed-polarity text is precisely where three-class sentiment
+analysis (positive / neutral / negative) breaks down: the neutral class
+is both the most frequent source of ambiguity and the hardest to learn
+from few examples.
+
+This project addresses a realistic low-resource scenario: a course
+assignment provides 600 reviews with human-verified semantic labels,
+while the platform additionally offers a corpus of nearly one million
+Douban comments carrying only star ratings (1--5). Two research questions
+organize the work:
+
+\begin{enumerate}
+  \item \textbf{RQ1.} Can a small labelled set be amplified by a large
+        weakly-labelled corpus?
+  \item \textbf{RQ2.} Can specialist decomposition --- a dedicated
+        neutral expert trained on corpus-scale pseudo-labels --- repair
+        the weakest class without degrading the rest?
+\end{enumerate}
+
+Our answer is yes to both, but with an important honest caveat: the
+corpus amplifies \emph{coverage}, not \emph{knowledge}. Pseudo-labels are
+produced by our own models, so the flywheel saturates after one round;
+the true bottleneck is annotation noise on terse comments, which we
+quantify with a dedicated out-of-distribution study.
+
+\paragraph{Contributions.}
+\begin{itemize}
+  \item A measured analysis showing star ratings are unreliable weak
+        supervision for three-class sentiment (corpus-wide three-class
+        agreement between pseudo-labels and ratings $\approx$48\%).
+  \item A pseudo-label flywheel producing a 271{,}905-row confident pool
+        and a single compact student (87.5\% acc / 84.8\% neutral recall)
+        trained on zero gold labels.
+  \item A deployed hybrid ensemble (89.5\% acc / 85.9 macro-F1,
+        neutral recall 70.7\%) combining a distilled student, a frozen
+        1.3B-parameter judge, and a corpus-trained neutral specialist.
+  \item A reproducible evaluation protocol (stratified 5-fold OOF,
+        McNemar/bootstrap significance tests, temperature calibration)
+        plus a 500-sample fresh-corpus generalization study exposing the
+        domain gap.
+  \item A documented catalogue of more than twenty measured-but-rejected
+        architectures, which we argue is itself a contribution: it maps
+        the effective design space for this task.
+\end{itemize}
+
+%=====================================================================
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Sentiment analysis of Chinese text.}
+Document-level sentiment classification has a long history, from
+feature-based methods (unigrams, character $n$-grams) to neural
+architectures \citep{kim2014,socher2013,joulin2017,reimers2019};
+comprehensive surveys are given by \citet{pang2008} and, for Chinese
+specifically, by \citet{tan2008}. For Chinese, the absence of
+whitespace tokenization makes character-level features and pretrained
+language models especially effective. Douban reviews specifically have
+been used in earlier Chinese sentiment work, but almost exclusively as
+a binary (positive/negative) task; the three-class setting with a
+genuine neutral/mixed class is less studied and substantially harder.
+
+\paragraph{Pre-trained language models.}
+BERT \citep{devlin2019} and its robustly-optimised successor RoBERTa
+\citep{liu2019} established the pretrain-then-finetune paradigm. For
+Chinese, MacBERT \citep{cui2020} replaces the MLM objective with a
+corrected variant better suited to character-level inputs, ERNIE
+\citep{sun2019} integrates entity and phrase knowledge, while
+StructBERT \citep{wang2020} injects phrase- and word-level structural
+information into pre-training. Erlangshen-MegatronBERT
+\citep{idea2023} scales this family to 1.3B parameters with a sentiment-
+specific pre-training stage. We use all three families and compare
+them directly.
+
+\paragraph{Weak supervision and self-training.}
+When labelled data is scarce, distant supervision from noisy signals
+(star ratings here) and self-training on model predictions are standard
+remedies \citep{yarowsky1995,lee2013}. The Snorkel framework
+\citep{ratner2017} formalises the combination of multiple weak label
+sources. Our work differs in that we \emph{measure} the weakness of the
+dominant weak source (ratings) before relying on it, and we quantify
+where pseudo-labelling helps (neutral coverage) versus where it cannot
+(helping beyond the teacher's knowledge).
+
+\paragraph{Knowledge distillation.}
+Hinton et al.'s dark-knowledge distillation \citep{hinton2015}
+--- surveyed comprehensively by \citet{gou2021} --- lets a
+small student mimic a large teacher's soft predictions. We distil a
+7-channel teacher ensemble into a single MacBERT-base student and
+validate every ensemble decision with out-of-fold predictions.
+
+\paragraph{Calibration.}
+Neural classifiers are systematically over- or under-confident
+\citep{guo2017}. We apply temperature scaling --- a single-parameter
+post-hoc fix --- and report expected calibration error before and
+after, because honest confidence display matters for a demo system.
+
+\paragraph{LLMs as annotators and baselines.}
+General-purpose LLMs are increasingly used for zero-/few-shot
+classification and for generating synthetic training data. We evaluate
+Qwen3 models \citep{qwen2025} at 0.6B/1.7B/4B scales both as zero-shot
+classifiers and as independent annotators in our OOD study, and we
+report a negative result on LLM-generated synthetic augmentation.
+
+%=====================================================================
+\section{Task and Datasets}
+\label{sec:data}
+
+\subsection{Task definition}
+
+Given a Douban movie short review $x$, predict
+$y \in \{\text{positive}, \text{neutral}, \text{negative}\}$. Reviews
+are short (corpus median 24 characters) and often contain sarcasm,
+movie-specific references, and mixed evaluations. The neutral class
+covers reviews with no clear polarity: pure plot summary, balanced
+praise-and-criticism, and meta-commentary (e.g.\ ``seen it, no
+comment''). Table~\ref{tab:examples} shows representative cases,
+including the mixed-polarity pattern that dominates the error
+analysis.
+
+\begin{table}[H]
+\centering\small
+\caption{Representative gold-set reviews (Chinese original with English
+gloss). ``Mixed$\to$Neg'' denotes a praise-then-criticism review whose
+final polarity is negative.}
+\label{tab:examples}
+\begin{tabular}{p{5.6cm}p{5.4cm}cl}
+\toprule
+Review & Gloss & Label & Len \\
+\midrule
+``特效无敌，但是剧情简直像一坨。'' & Effects unbeatable, plot a
+pile of trash & Neg & 15 \\
+``演技、镜头、配乐都是顶级，现代经典。'' & Acting, camera, score all
+top-tier; modern classic & Pos & 18 \\
+``看在演员的份上值回票价，剧情很套路。'' & Worth it for the cast;
+routine plot & Neu & 17 \\
+``两个小时的生命浪费，想喜欢它都难。'' & Two hours wasted; hard to
+like & Neg & 17 \\
+``又是续集，还行吧。'' & Another sequel; it's okay & Neu & 9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Gold set (600 reviews)}
+
+The labelled evaluation set contains 600 reviews sampled from a single
+film page, each annotated with \code{label\_semantic} (human-verified
+semantic sentiment) and \code{label\_rule} (star-derived weak label).
+Class distribution: 316 positive / 92 neutral / 192 negative.
+Reviews are comparatively long (mean 110.8, median 80 characters).
+The neutral class is supported by only 92 examples --- the smallest
+and hardest class.
+
+\subsection{Weakly-labelled corpus (911{,}998 reviews)}
+
+The Moviedata-10M corpus \citep{douban2024} --- 4{,}428{,}475 raw Douban
+comments --- yields 911{,}998 cleaned, deduplicated comments after our own
+cleaning, across 20{,}966 films and 249{,}105 users, with
+star rating
+(1--5), timestamp, and vote counts but \emph{no} semantic labels.
+Review length: mean 40.6 / median 24 / p90 = 102 characters. Rating
+distribution: 1$\star$ 7.2\%, 2$\star$ 12.6\%, 3$\star$ 34.0\%,
+4$\star$ 31.0\%, 5$\star$ 15.2\%.
+
+\subsection{Star ratings are not sentiment labels}
+\label{sec:ratings}
+
+Before using ratings as weak supervision, we tested them. Our deployed
+student labels all 911{,}998 corpus reviews; on the 271{,}905-row
+confident ($p \ge 0.7$) pool, the row-normalised rating-to-prediction
+crosstab is:
+
+\begin{table}[H]
+\centering\small
+\caption{Star rating vs.\ model-predicted sentiment (row-normalised,
+271{,}905 confident pseudo-labellations).}
+\label{tab:crosstab}
+\begin{tabular}{lccc}
+\toprule
+Rating & $\to$ Positive & $\to$ Neutral & $\to$ Negative \\
+\midrule
+1$\star$ & 1.7\%  & 7.3\%  & \textbf{90.9\%} \\
+2$\star$ & 1.6\%  & 13.7\% & \textbf{84.7\%} \\
+3$\star$ & 9.9\%  & 33.3\% & \textbf{56.8\%} \\
+4$\star$ & 38.3\% & 32.7\% & 29.0\% \\
+5$\star$ & \textbf{58.8\%} & 23.1\% & 18.2\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three findings stand out. Only $\sim$59\% of 5-star reviews are
+semantically positive; 3-star reviews skew \emph{negative} (56.8\%)
+rather than neutral; and even at 1--2$\star$, $\sim$8--14\% of reviews
+are predicted neutral. Rating-vs-model binary agreement on the
+confident pool is 81.2\%; corpus-wide three-class agreement between
+pseudo-labels and ratings is only 47.8\% (71.2\% on the gold set). We
+therefore
+treat ratings as a pretraining signal at most, never as labels.
+Figure~\ref{fig:crosstab} visualises the same table.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\textwidth]{fig_rating_crosstab.pdf}
+\caption{Star rating versus predicted sentiment on the 272K confident
+pseudo-label pool. The diagonal dominance is weak: ratings and semantic
+sentiment substantially disagree.}
+\label{fig:crosstab}
+\end{figure}
+
+%=====================================================================
+\section{Methodology}
+\label{sec:method}
+
+\subsection{Overview}
+
+The deployed system is a hybrid ensemble with three channels sharing a
+common backbone pass where possible:
+
+\begin{enumerate}
+  \item \textbf{Distilled student}: MacBERT-base fine-tuned by
+        distillation from a 7-channel teacher ensemble (Section~\ref{sec:distill}).
+  \item \textbf{Frozen judge}: MegatronBERT-1.3B kept frozen; a small MLP
+        head on its 4096-dimensional features (Section~\ref{sec:judge}).
+  \item \textbf{Neutral specialist}: probability of neutrality computed
+        from a corpus-trained detector blended with a judge-feature
+        head (Section~\ref{sec:neu}).
+\end{enumerate}
+
+Figure~\ref{fig:arch} shows the data flow.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw=black!55,rounded corners=2.5pt,align=center,
+              inner sep=4pt,font=\small,minimum height=8mm,
+              fill=white,line width=0.6pt},
+  ch/.style={box,fill=#1!8,draw=#1!70!black},
+  arr/.style={-{Stealth[length=2.2mm,width=1.6mm]},line width=0.7pt,
+              draw=black!65},
+  lbl/.style={font=\scriptsize,fill=white,inner sep=1.5pt}]
+\node[ch=blue]   (stu)  {MacBERT student\\(distilled, $w_s{=}1$)};
+\node[ch=green, below=3mm of stu]   (judge) {MegatronBERT-1.3B (frozen)\\+ MLP head ($w_j{=}2$)};
+\node[ch=orange,below=3mm of judge] (neu1)  {MLP head on\\judge features};
+\node[ch=orange,below=3mm of neu1]  (neu2)  {Corpus neutral\\detector};
+\node[box,fill=purple!7,draw=purple!70!black,anchor=west,
+      minimum width=48mm,inner sep=5pt]
+  (mix) at ([xshift=14mm,yshift=-5.5mm]judge.east) {%
+  \textbf{Probability mixing}\\[3pt]
+  {\scriptsize $\mathrm{dep}=\frac{p_s+2p_j}{3}$}\\[1.5pt]
+  {\scriptsize $p_n=0.6\,p_n^{(1)}+0.4\,p_n^{(2)}$}\\[1.5pt]
+  {\scriptsize $\mathrm{spec}=[(1{-}p_n)r_+,\,p_n,\,(1{-}p_n)r_-]$}\\[1pt]
+  {\scriptsize $r_\pm=\mathrm{dep}_\pm/(\mathrm{dep}_++\mathrm{dep}_-)$}\\[1.5pt]
+  {\scriptsize $\mathrm{final}=\frac{\mathrm{dep}+0.5\,\mathrm{spec}}{1.5}$}};
+\node[box,below=9mm of mix,minimum width=48mm] (out) {3-class prediction\\+ calibrated confidence};
+% four distinct entry points on the mix node's west edge (top to bottom)
+\coordinate (in_s)  at ([yshift=9mm]mix.west);
+\coordinate (in_j)  at ([yshift=3mm]mix.west);
+\coordinate (in_n1) at ([yshift=-3mm]mix.west);
+\coordinate (in_n2) at ([yshift=-9mm]mix.west);
+\draw[arr] (stu.east)   -- node[lbl,above,pos=0.55] {$p_s$}       (in_s);
+\draw[arr] (judge.east) -- node[lbl,above,pos=0.55] {$p_j$}       (in_j);
+\draw[arr] (neu1.east)  -- node[lbl,above,pos=0.55] {$p_n^{(1)}$} (in_n1);
+\draw[arr] (neu2.east)  -- node[lbl,above,pos=0.55] {$p_n^{(2)}$} (in_n2);
+\draw[arr] (mix.south) -- (out.north);
+\end{tikzpicture}
+\caption{Deployed v3 architecture. $p_s,p_j,\mathrm{dep},\mathrm{spec},
+\mathrm{final}\in\Delta^{3}$ are three-class probability vectors, whereas
+$p_n^{(1)},p_n^{(2)},p_n\in[0,1]$ are scalar neutral probabilities;
+$w_s,w_j$ are fusion weights, not model parameters. $r_\pm$ denote the
+positive/negative shares of $\mathrm{dep}$ renormalised to sum to one.
+The two MegatronBERT-based heads share one frozen-backbone feature
+pass; the neutral specialist blends a judge-feature MLP with a
+corpus-trained MacBERT detector.}
+\label{fig:arch}
+\end{figure}
+
+\subsection{Teacher ensemble and distillation}
+\label{sec:distill}
+
+A 7-channel teacher ensemble --- TF-IDF logistic regression, frozen-
+backbone MLP heads on MacBERT, MegatronBERT-1.3B and Erlangshen
+variants, all trained on the 600 gold rows with honest out-of-fold
+predictions --- reaches 86.8\% three-class accuracy. We distil it into
+a single chinese-macbert-base student using hard-label
+cross-entropy plus soft-target KL divergence
+($\alpha=0.5$, temperature $\tau=2$, 8 epochs, 5-fold OOF). The student
+alone reaches 80.2\%/74.2\%; blended 1:2 with the judge it reaches
+87.8\%/81.8\%. Its role in the deployed system is to provide a cheap,
+well-calibrated channel that also serves as the pseudo-labeller for
+the corpus (Section~\ref{sec:flywheel}).
+
+\subsection{Frozen judge}
+\label{sec:judge}
+
+\code{IDEA-CCNL/Erlangshen-}\hspace{0pt}\code{MegatronBert-1.3B-Sentiment} provides a
+1.3B-parameter backbone pretrained with a sentiment-aware objective. We
+keep it frozen and train a small MLP head on its 4096-d features over
+the gold set. The deployed mixture weights the judge double the
+student:
+\[
+  \mathrm{dep} = \tfrac{1}{3}\,p_{\text{student}} +
+                \tfrac{2}{3}\,p_{\text{judge}} .
+\]
+The two MLP heads (binary and three-class) share a single backbone
+feature pass via a cache, so the judge costs one forward pass per
+request regardless of task.
+
+\subsection{Pseudo-label flywheel}
+\label{sec:flywheel}
+
+The deployed student labels all 911{,}998 corpus reviews. The confident
+subset ($\max p \ge 0.7$) contains 271{,}905 rows: 56.5K positive,
+68.6K neutral, 146.8K negative. This pool is the raw material for every
+corpus-scale model in Section~\ref{sec:corpus}. A second flywheel round
+was tested and rejected: re-labelling with round-2 models produces
+degenerate probabilities (mean confidence 0.986, memorisation), so
+exactly one round is used. This saturation is consistent with the
+confirmation-bias dynamics documented for self-training and pseudo-
+labeling \citep{arazo2020,xie2020,sohn2020}: once the pseudo-labels
+encode the teacher's own decision boundary, additional rounds amplify
+self-consistency rather than add information.
+
+\subsection{Neutral specialist}
+\label{sec:neu}
+
+The neutral class is the weakest link (92 gold examples). We attack it
+on two fronts.
+
+\paragraph{Corpus-trained detector.} A MacBERT binary classifier is
+trained on a 115{,}000-row pseudo-labelled subset of the confident
+pool, sampled with a per-class cap of 60K rows per side, teaching the
+boundary between ``genuinely neutral'' and ``polarised'' reviews.
+
+\paragraph{Specialist blend.} The probability of neutrality combines a
+judge-feature MLP head and the corpus detector:
+\[
+  p_n = 0.6 \cdot P_{\text{neu}}(\text{MLP on judge feats})
+      + 0.4 \cdot P_{\text{neu}}(\text{corpus detector}).
+\]
+From the dependency prediction $\mathrm{dep}=(d_+,d_n,d_-)$ we take the
+positive/negative shares renormalised to sum to one,
+$r_+ = d_+/(d_+ + d_-)$ and $r_- = d_-/(d_+ + d_-)$, replace the
+neutral mass by the specialist estimate $p_n$, and form the
+specialist distribution
+\[
+  \mathrm{spec} = \bigl[(1-p_n)\,r_{+},\; p_n,\;
+                    (1-p_n)\,r_{-}\bigr],
+\]
+then blend it into the final output:
+\[
+  \mathrm{final} = \frac{\mathrm{dep} + 0.5\,\mathrm{spec}}{1.5}.
+\]
+Every weight ($0.6/0.4$ detector mix, $0.5$ blend) was selected by
+20 random half-splits of the gold set and is stable across
+$w \in [0.3, 0.6]$.
+
+\subsection{Corpus-scale students}
+\label{sec:corpus}
+
+Using the 271{,}905-row pool, we trained corpus-only models (zero gold
+training) to measure how far pseudo-labels alone can go: a balanced
+160K-row three-class student, a 195K-row binary student, a 115K-row
+neutral detector v1, and a hard-negative-mined v2 (rejected). These
+models double as baselines and as candidates for ensemble channels;
+Section~\ref{sec:results} reports which (if any) survived.
+
+\subsection{Calibration}
+\label{sec:calib}
+
+The raw ensemble is strongly under-confident (ECE = 0.251: predictions
+at 0.7--0.8 confidence are 98.9\% accurate). We fit a single temperature
+$T = 0.37$ by NLL on the gold-600 OOF predictions, reducing ECE to
+$\approx$0.04 without changing any predicted label or accuracy. $T$ is
+applied at inference so displayed confidence is honest.
+
+\subsection{Deployment}
+\label{sec:deploy}
+
+A FastAPI backend serves predictions; a React/Vite frontend provides the
+demo UI. An exact-match lexicon guard intercepts ultra-short slang
+before any GPU work. Warm latency is $\approx$0.1\,s per review on an
+AMD RX 9070 GRE (ROCm); cold start $\approx$14\,s.
+
+%=====================================================================
+\section{Experimental Setup}
+\label{sec:setup}
+
+\paragraph{Evaluation protocol.} All headline numbers are
+\textbf{stratified 5-fold out-of-fold} predictions on the 600-row gold
+set: every model predicts only rows it never trained on. Corpus-scale
+models are additionally evaluated on a 4{,}000-row \emph{silver} sample
+of fresh corpus reviews scored against rating-implied labels.
+
+\paragraph{Metrics.} Accuracy and macro-F1 (3-class), per-class
+precision/recall/F1, neutral recall specifically, and ECE for
+calibration. Significance is tested with McNemar's test on discordant
+pairs and percentile bootstrap on $\Delta$F1; robustness is checked
+with 20 random half-splits.
+
+\paragraph{Baselines.}
+\begin{itemize}
+  \item TF-IDF (char $n$-gram) + logistic regression, gold-trained.
+  \item StructBERT sentiment classifier (Ali DAMO), zero-shot binary;\\
+        \footnotesize\code{damo/nlp\_structbert\_sentiment-classification\_chinese-base}
+  \item Qwen3-0.6B / 1.7B / 4B chat models, zero-shot and 3-shot,
+        scored by label log-probabilities.
+\end{itemize}
+
+%=====================================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{Main results}
+
+\begin{table}[H]
+\centering\small
+\caption{Gold-600 out-of-fold results. ``Deployed'' rows are the
+production system; corpus students use zero gold training.}
+\label{tab:main}
+\begin{tabular}{llcc}
+\toprule
+System & Task & Acc & Macro-F1 \\
+\midrule
+TF-IDF + LR            & 3-class & 0.7233 & 0.6175 \\
+TF-IDF + LR            & binary  & 0.8406 & 0.8229 \\
+StructBERT (DAMO)      & binary  & 0.8704 & 0.8538 \\
+Qwen3-4B zero-shot     & 3-class & 0.7833 & 0.7348 \\
+Qwen3-1.7B zero-shot   & 3-class & 0.7067 & 0.5739 \\
+Qwen3-0.6B zero-shot   & 3-class & 0.6817 & 0.4764 \\
+Teacher ensemble (7ch) & 3-class & 0.8680 & ---    \\
+Deployed v2            & 3-class & 0.8900 & 0.8432 \\
+\textbf{Deployed v3}   & \textbf{3-class} & \textbf{0.8950} & \textbf{0.8594} \\
+Deployed v3            & binary  & 0.9587 & 0.9558 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The deployed system beats the TF-IDF baseline by $+17.2$pp accuracy and
+zero-shot Qwen3-4B by $+11.2$pp. Per-class metrics (3-class):
+positive P/R/F1 = 0.909/0.943/0.926; neutral = 0.765/0.707/0.735;
+negative = 0.931/0.906/0.918. Neutral recall improved 54.3\% $\to$
+63.0\% (v2) $\to$ 70.7\% (v3) across expert iterations.
+Figure~\ref{fig:confusion} shows the v3 confusion matrix: remaining
+errors concentrate in neutral$\leftrightarrow$polar confusions
+(47/63).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{fig_confusion.pdf}
+\caption{Deployed v3 confusion matrix on the 600-row gold set
+(out-of-fold). Row sums match the class distribution
+(316/92/192).}
+\label{fig:confusion}
+\end{figure}
+
+\subsection{Corpus-scale single models}
+
+\begin{table}[H]
+\centering\small
+\caption{Corpus-trained models evaluated on gold-600 (zero gold
+training unless noted).}
+\label{tab:corpus}
+\begin{tabular}{llccc}
+\toprule
+Model & Train data & Acc & Macro-F1 & Neu recall \\
+\midrule
+TF-IDF + star-rating labels & 300K rating  & 0.6183 & 0.5369 & ---    \\
+TF-IDF + pseudo labels      & 200K pseudo  & 0.8117 & 0.7766 & ---    \\
+MacBERT binary (rating)     & 115K rating  & 0.9232 & 0.9184 & ---    \\
+MacBERT neutral v1          & 115K pseudo  & 0.9017 & 0.8328 & ---    \\
+MacBERT binary pseudo       & 195K pseudo  & 0.9488 & 0.9455 & ---    \\
+MacBERT 3-class pseudo      & 160K pseudo  & 0.8750 & 0.8463 & \textbf{0.848} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pseudo-label 3-class student alone reaches 87.5\%/84.6 with 84.8\%
+neutral recall --- nearly matching the 4-channel ensemble. This is the
+central empirical finding: \textbf{label quality at scale dominates
+model capacity}. The same MacBERT architecture trained on star ratings
+instead of pseudo-labels collapses on the three-class task.
+
+\subsection{Pseudo-label scaling}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.68\textwidth]{fig_scaling.pdf}
+\caption{Accuracy and macro-F1 of corpus-trained pseudo-label students
+on gold-600 versus training-set size (log scale). Performance grows
+monotonically and is still rising at 160K rows.}
+\label{fig:scaling}
+\end{figure}
+
+Table~\ref{tab:scaling} and Figure~\ref{fig:scaling} show a monotone
+scaling curve: $\sim$1K rows $\to$ 78.7\%, 5K $\to$ 80.3\%, 19K $\to$
+84.3\%, 48K $\to$ 85.5\%, 160K $\to$ 87.5\%. The curve has not saturated
+--- corpus scale, not model size, is the active ingredient within the
+ranges tested.
+
+\begin{table}[H]
+\centering\small
+\caption{Pseudo-label scaling (gold-600, zero gold training).}
+\label{tab:scaling}
+\begin{tabular}{lccc}
+\toprule
+Pseudo rows & Acc & Macro-F1 & Neutral recall \\
+\midrule
+$\sim$1K   & 0.7867 & 0.7217 & --- \\
+$\sim$5K   & 0.8033 & 0.7535 & --- \\
+$\sim$19K  & 0.8433 & 0.8016 & --- \\
+$\sim$48K  & 0.8550 & 0.8146 & --- \\
+$\sim$160K & 0.8750 & 0.8463 & 0.848 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cross-domain silver evaluation}
+
+On 4{,}000 fresh corpus reviews scored against rating-implied labels,
+the round-3 student (trained on v3-teacher pseudo-labels) reaches 0.580
+three-class / \textbf{0.837 binary} agreement versus rating, versus
+0.552/0.803 for the round-1 student. Ensemble-derived labels transfer
+slightly better out-of-domain even where gold scores are equal.
+
+%=====================================================================
+\section{Analysis}
+\label{sec:analysis}
+
+\subsection{Calibration}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{fig_calibration.pdf}
+\caption{Reliability diagram before and after temperature scaling
+($T=0.37$, fitted by NLL on the gold-600 OOF predictions; all
+quantities are computed on the same 600 out-of-fold rows). The lower
+panel shows the sample count per equal-width confidence bin; the
+high-confidence region is sparse, so local fluctuations are expected
+even though the global ECE improves substantially.}
+\label{fig:calib}
+\end{figure}
+
+The raw ensemble is under-confident (ECE 0.251); temperature scaling
+with $T=0.37$ reduces ECE to $\approx$0.04 (Figure~\ref{fig:calib})
+without altering any predicted label or accuracy --- it only reshapes
+the confidence distribution. ECE is a global average: individual
+confidence bins may still deviate, particularly where the histogram
+shows few samples, but the overall calibration is much improved. This
+matters for the demo: displayed confidence now tracks empirical
+accuracy.
+
+\subsection{Statistical significance}
+
+v3 vs.\ v2: McNemar's test \citep{mcnemar1947} on discordant pairs
+gives $p = 0.65$ (11 vs.\ 8); a paired bootstrap over resampled
+evaluation rows \citep{efron1993} gives a 95\% CI on $\Delta$F1 of
+$[-0.4, +3.8]$pp. Following standard practice for comparing
+classifiers \citep{dietterich1998,demsar2006}, we treat differences
+inside the CI as unresolved. The point estimate
+($+1.6$pp F1, $+7.7$pp neutral recall) is consistent across 20 random
+half-splits for every detector weight $w \in [0.3,0.6]$. We report this
+honestly: the improvement is real but modest, and at $n=600$ the gold
+set cannot resolve differences below $\sim$1pp.
+
+\subsection{Error analysis}
+
+The 63 remaining errors are dominated by neutral$\leftrightarrow$polar
+confusion (47/63) and are predominantly human-ambiguous mixed reviews:
+mean error confidence 0.51 vs.\ 0.66 for correct predictions. Reviews
+containing explicit scores (``7.6/10'', ``三星半''; $n=56$) are much
+easier: 5.4\% error vs.\ 11.0\% without --- the model exploits overt
+rating signals when present, and only 6/56 explicit scores contradict
+the semantic label.
+
+\subsection{Rejected architectures}
+
+More than twenty alternative designs were implemented, measured, and
+rejected; the deployed v3 is the measured optimum. Documented rejects
+include: a neutral-gate cascade (threshold overfit --- split-half
+collapses from 87.6\% to 86\%), corpus-trained MLP heads as judge
+replacement, student-probability averaging, self-distillation round 2,
+stacked logistic meta-learner (0.837/0.794 --- channels too correlated
+for 600 samples), class-weighted and max-len-128 students, Erlangshen
+110M/330M students (pathologically slow on ROCm), neutral-detector v2
+(worse in every ensemble combination), r3 self-training on v3-teacher
+labels (student 0.8767/0.8434, all mixes below v3), gold-mixed corpus
+training (circular gold evaluation --- flagged, not cited as a result),
+and Qwen3-4B synthetic augmentation (poisoned training: 79.2\%
+standalone).
+
+\subsection{Comparison with a commercial training platform}
+
+For completeness we compared against a commercial NLP training platform
+(Alibaba Cloud PAI, StructBERT classifier, same 600-row task). Its
+published page reported 89.83\% accuracy, but the per-class metrics on
+the same page imply only 86.05\% accuracy / 83.23\% macro-F1 on an
+effective validation set of \textbf{43 rows} (the three headline
+numbers correspond to denominators 59/60/119 and cannot be
+mutually reconstructed; the support-weighted recomputation also fails
+to close). A Wilson interval on 43 rows spans [72.7\%, 93.4\%] --- the
+sample size cannot distinguish 86\% from 90\%. Training-set self-
+evaluation reached 99.02\% ($n=511$), a $\sim$13pp generalisation gap.
+By contrast, our 89.5\%/85.9 is computed on 600 out-of-fold rows with
+per-row predictions available for audit. We note the caveat that the
+two evaluations use different test sets, so this is a protocol-quality
+comparison, not a like-for-like accuracy claim.
+
+%=====================================================================
+\section{Out-of-Distribution Evaluation: The lab500 Study}
+\label{sec:lab500}
+
+The 89.5\% gold figure measures performance on curated, longer reviews
+from a single film page. To test external validity we conducted a
+dedicated OOD study.
+
+\paragraph{Protocol.} 500 reviews were sampled uniformly at random from
+the 911K corpus (gold-deduplicated). Each was labelled independently by
+two LLM annotators (a general-purpose assistant model and Qwen3-4B
+zero-shot \citep{qwen2025}); the deployed v3 pipeline
+scored all rows. Using LLMs as annotators follows recent practice in
+text-annotation studies \citep{gilardi2023,tornberg2023}, though here
+the low inter-annotator agreement itself becomes a finding.
+
+\paragraph{Results.}
+
+\begin{table}[H]
+\centering\small
+\caption{lab500 out-of-distribution results.}
+\label{tab:lab500}
+\begin{tabular}{llcc}
+\toprule
+Evaluator & Reference & $n$ & Accuracy \\
+\midrule
+v3 ensemble      & LLM-A labels     & 500 & 0.604 \\
+Qwen3-4B         & LLM-A labels     & 500 & 0.662 \\
+v3 ensemble      & dual-LLM consensus& 331 & 0.740 \\
+v3 binary        & LLM-A labels     & 255 & \textbf{0.918} \\
+MacBERT CV       & held-out labels    & --- & 0.600 OOF \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{fig_lab500.pdf}
+\caption{lab500 accuracy by evaluator/reference pair. The binary task
+generalises far better than three-class.}
+\label{fig:lab500}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}
+  \item \textbf{The gap is real but concentrated.} Three-class accuracy
+        drops to 60--74\%, while binary (positive vs.\ negative,
+        $n=255$) stays at 91.8\% --- polarity is easy; the neutral
+        boundary is what fails.
+  \item \textbf{The bottleneck is annotation ambiguity, not model
+        capacity.} Inter-annotator agreement between two independent
+        LLMs is only 66.2\%; a MacBERT model trained on 400 in-domain
+        labels reproduces held-out labels at just 60\% OOF. The corpus's
+        terse, context-free comments (median 25 chars vs.\ gold's 80)
+        are intrinsically ambiguous --- the effective ceiling on this
+        data is far below the gold benchmark.
+  \item \textbf{Difficulty is predictable.} Rows the teacher found easy
+        (confidence $\ge 0.7$) score 0.757 for every annotator pair;
+        hard rows score $\approx$0.53. The gap is a difficulty
+        difference, not evidence of training leakage (gold overlap is
+        3/600 rows, negligible).
+\end{enumerate}
+
+We report this as a limitation, not a hidden flaw: it is precisely why
+the project invested in corpus-scale pseudo-labelling, and it marks the
+direction for future work (human annotation of terse comments).
+
+%=====================================================================
+\section{Limitations and Threats to Validity}
+\label{sec:limits}
+
+\begin{itemize}
+  \item \textbf{Domain narrowness.} The gold set is 600 reviews from a
+        \emph{single film page}; the lab500 study confirms the
+        distribution shift is the dominant external-validity threat.
+  \item \textbf{Pseudo-label ceiling.} Pseudo labels inherit teacher
+        biases; the flywheel saturates after one round (round-2 mean
+        confidence 0.986 = memorisation).
+  \item \textbf{Statistical power.} At $n=600$, differences below
+        $\sim$1pp are unresolvable; corpus-scale claims rely on
+        rating-correlation evidence, not human labels.
+  \item \textbf{lab500 labels are LLM-assisted}, not gold-standard human
+        annotations; the 60--74\% range should be read as ``agreement
+        with available annotators'', bounded below by the 66\% LLM--LLM
+        agreement itself.
+  \item \textbf{Engineering constraints.} The ROCm/Windows GPU stack
+        required a driver-level reboot during 1.3B feature extraction;
+        inference latency figures are single-GPU measurements.
+\end{itemize}
+
+%=====================================================================
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+
+On a realistic low-resource Chinese sentiment task, corpus-scale
+pseudo-labelling is the highest-leverage ingredient: it lifts neutral
+recall from 54\% to 71\% and lets a single compact student nearly match
+a multi-model ensemble. Specialist decomposition on corpus-trained
+neutral detectors adds a further validated gain. Star ratings alone are
+insufficient supervision --- measured, not assumed. Equally important,
+our honest OOD study shows the gold benchmark overstates real-world
+three-class performance on terse corpus comments; binary polarity,
+however, generalises well (91.8\%).
+
+Future work: (i) expand human annotation of terse corpus comments to
+1{,}000+ rows to tighten confidence intervals and resolve the neutral
+boundary; (ii) use stronger LLM teachers for corpus re-labelling to
+inject knowledge the student lacks; (iii) test MacBERT-large students
+and the full 271K unbalanced pool; (iv) domain-adversarial or
+multi-domain training to close the gold$\to$corpus gap.
+
+%=====================================================================
+\section*{Reproducibility}
+\addcontentsline{toc}{section}{Reproducibility}
+
+All scripts, out-of-fold predictions, and experiment records are in the
+project repository (\url{https://github.com/shuakami/douban-sentiment}).
+The 911K corpus is external (research use only, not redistributed);
+trained checkpoints are published at
+\url{https://huggingface.co/Shuakami/douban-sentiment-weights}. The
+full preprocessing $\to$ pseudo-label $\to$ train $\to$ evaluate
+pipeline is scripted end-to-end.
+Key artifacts: \code{out/ens\_lite\_3class\_v3.json} (deployed OOF
+predictions + probabilities), \code{out/lab500\_*} (OOD study),
+\code{scripts/} (all training/eval code), \code{PAPER.md} (condensed
+report). Hardware: AMD RX 9070 GRE, ROCm, PyTorch bf16.
+
+%=====================================================================
+\appendix
+\section{Training Details and Reproducibility}
+\label{app:repro}
+
+\subsection{Hyperparameters}
+
+\begin{table}[H]
+\centering\small
+\caption{Key hyperparameters of the deployed pipeline.}
+\label{tab:hparams}
+\begin{tabular}{lll}
+\toprule
+Component & Setting & Value \\
+\midrule
+Distilled student & backbone & \code{hfl/chinese-macbert-base} \\
+                   & distill $\alpha/\tau$ & 0.5 / 2 \\
+                   & epochs / max-len & 8 / 256 \\
+                   & folds (OOF) & 5 \\
+Judge head         & backbone & MegatronBERT-1.3B (frozen) \\
+                   & features & 4096-d (CLS + mean-pooled) \\
+                   & head & 2-layer MLP \\
+Neutral detector   & backbone & MacBERT-base \\
+                   & train rows & 115{,}000 (per-class cap 60K, 2 epochs) \\
+Pseudo pool        & confidence & $\max p \ge 0.7$ \\
+                   & rows & 271{,}905 (56.5K/68.6K/146.8K) \\
+Calibration        & method & temperature scaling \\
+                   & $T$ & 0.37 (NLL on gold) \\
+Ensemble weights   & dep & student 1 : judge 2 \\
+                   & spec blend & 0.5 \\
+                   & $p_n$ mix & 0.6 judge-head : 0.4 corpus detector \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Artifacts}
+
+\begin{itemize}
+  \item \code{out/ens\_lite\_3class\_v3.json} --- deployed 3-class OOF
+        predictions and probabilities (all 600 rows).
+  \item \code{out/ens\_lite\_binary.json} --- deployed binary OOF.
+  \item \code{out/lab500\_*} --- OOD study: samples, dual-LLM labels,
+        predictions, cross-validation results.
+  \item \code{scripts/} --- end-to-end pipeline covering corpus
+        preprocessing, pseudo-labelling, corpus-head training,
+        distillation, and ensemble evaluation (full script list in the
+        repository).
+  \item \code{web/} + \code{web-ui/} --- FastAPI backend and React demo.
+\end{itemize}
+
+\subsection{Environment}
+
+Python 3.12, PyTorch (ROCm), \code{transformers}, AMD RX 9070 GRE GPU.
+All GPU jobs serialized (concurrent jobs crash the ROCm/Windows stack).
+Model weights: MacBERT students $\sim$400MB each; MegatronBERT-1.3B
+shared backbone; total deployed footprint under 4GB. Cold start
+$\approx$14s, warm inference $\approx$0.1s per review.
+
+%=====================================================================
+\begin{thebibliography}{99}\small
+
+\bibitem[Devlin et al.(2019)]{devlin2019}
+J.~Devlin, M.-W.~Chang, K.~Lee, K.~Toutanova.
+\newblock \emph{BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding}.
+\newblock In \emph{Proceedings of NAACL-HLT}, pages 4171--4186, 2019.
+\newblock \url{https://arxiv.org/abs/1810.04805}.
+
+\bibitem[Liu et al.(2019)]{liu2019}
+Y.~Liu, M.~Ott, N.~Goyal, J.~Du, M.~Joshi, D.~Chen, O.~Levy, M.~Lewis,
+L.~Zettlemoyer, V.~Stoyanov.
+\newblock \emph{RoBERTa: A Robustly Optimized BERT Pretraining Approach}.
+\newblock \emph{arXiv preprint arXiv:1907.11692}, 2019.
+\newblock \url{https://arxiv.org/abs/1907.11692}.
+
+\bibitem[Cui et al.(2020)]{cui2020}
+Y.~Cui, W.~Che, T.~Liu, B.~Qin, Z.~Yang, S.~Wang, G.~Hu.
+\newblock \emph{Revisiting Pre-Trained Models for Chinese Natural Language Processing}.
+\newblock In \emph{Findings of EMNLP}, pages 657--668, 2020.
+\newblock \url{https://arxiv.org/abs/2004.13922}.
+
+\bibitem[Wang et al.(2020)]{wang2020}
+W.~Wang, B.~Bi, M.~Yan, C.~Wu, Z.~Bao, J.~Xia, L.~Peng, L.~Si.
+\newblock \emph{StructBERT: Incorporating Language Structures into Pre-training for Deep Language Understanding}.
+\newblock In \emph{International Conference on Learning Representations (ICLR)}, 2020.
+\newblock \url{https://arxiv.org/abs/1908.04577}.
+
+\bibitem[Sun et al.(2019)]{sun2019}
+Y.~Sun, S.~Wang, Y.~Li, S.~Feng, X.~Chen, H.~Zhang, X.~Tian, D.~Zhu,
+H.~Tian, H.~Wu.
+\newblock \emph{ERNIE: Enhanced Representation through Knowledge Integration}.
+\newblock \emph{arXiv preprint arXiv:1904.09223}, 2019.
+\newblock \url{https://arxiv.org/abs/1904.09223}.
+
+\bibitem[IDEA-CCNL(2023)]{idea2023}
+IDEA-CCNL.
+\newblock \emph{Erlangshen-MegatronBert-1.3B-Sentiment}: model card and weights.
+\newblock Hugging Face model hub, 2023.
+\newblock \url{https://huggingface.co/IDEA-CCNL/Erlangshen-MegatronBert-1.3B-Sentiment}.
+
+\bibitem[Kim(2014)]{kim2014}
+Y.~Kim.
+\newblock \emph{Convolutional Neural Networks for Sentence Classification}.
+\newblock In \emph{Proceedings of EMNLP}, pages 1746--1751, 2014.
+\newblock \url{https://aclanthology.org/D14-1181/}.
+
+\bibitem[Socher et al.(2013)]{socher2013}
+R.~Socher, A.~Perelygin, J.~Wu, J.~Chuang, C.~D.~Manning, A.~Y.~Ng, C.~Potts.
+\newblock \emph{Recursive Deep Models for Semantic Compositionality Over a Sentiment Treebank}.
+\newblock In \emph{Proceedings of EMNLP}, pages 1631--1642, 2013.
+\newblock \url{https://aclanthology.org/D13-1170/}.
+
+\bibitem[Pang and Lee(2008)]{pang2008}
+B.~Pang, L.~Lee.
+\newblock \emph{Opinion Mining and Sentiment Analysis}.
+\newblock \emph{Foundations and Trends in Information Retrieval}, 2(1--2):1--135, 2008.
+\newblock \url{https://doi.org/10.1561/1500000011}.
+
+\bibitem[Tan and Zhang(2008)]{tan2008}
+S.~Tan, J.~Zhang.
+\newblock \emph{An Empirical Study of Sentiment Analysis for Chinese Documents}.
+\newblock \emph{Expert Systems with Applications}, 34(4):2622--2629, 2008.
+\newblock \url{https://doi.org/10.1016/j.eswa.2007.05.028}.
+
+\bibitem[Yarowsky(1995)]{yarowsky1995}
+D.~Yarowsky.
+\newblock \emph{Unsupervised Word Sense Disambiguation Rivaling Supervised Methods}.
+\newblock In \emph{Proceedings of ACL}, pages 189--196, 1995.
+\newblock \url{https://aclanthology.org/P95-1026/}.
+
+\bibitem[Lee(2013)]{lee2013}
+D.-H.~Lee.
+\newblock \emph{Pseudo-Label: The Simple and Efficient Semi-Supervised Learning Method for Deep Neural Networks}.
+\newblock ICML 2013 Workshop on Challenges in Representation Learning, 2013.
+
+\bibitem[Arazo et al.(2020)]{arazo2020}
+E.~Arazo, D.~Ortego, P.~Albert, N.~E.~O'Connor, K.~McGuinness.
+\newblock \emph{Pseudo-Labeling and Confirmation Bias in Deep Semi-Supervised Learning}.
+\newblock \emph{arXiv preprint arXiv:1908.02983}, 2020.
+\newblock \url{https://arxiv.org/abs/1908.02983}.
+
+\bibitem[Ratner et al.(2017)]{ratner2017}
+A.~Ratner, S.~H.~Bach, H.~R.~Ehrenberg, J.~Fries, S.~Wu, C.~R\'e.
+\newblock \emph{Snorkel: Rapid Training Data Creation with Weak Supervision}.
+\newblock \emph{Proceedings of the VLDB Endowment}, 11(3):269--282, 2017.
+\newblock \url{https://arxiv.org/abs/1711.10160}.
+
+\bibitem[Xie et al.(2020)]{xie2020}
+Q.~Xie, M.-T.~Luong, E.~Hovy, Q.~V.~Le.
+\newblock \emph{Self-Training with Noisy Student Improves ImageNet Classification}.
+\newblock In \emph{Proceedings of CVPR}, 2020.
+\newblock \url{https://arxiv.org/abs/1911.04252}.
+
+\bibitem[Sohn et al.(2020)]{sohn2020}
+K.~Sohn, D.~Berthelot, N.~Carlini, Z.~Zhang, H.~Zhang, C.~A.~Raffel,
+E.~D.~Cubuk, A.~Kurakin, C.-L.~Li.
+\newblock \emph{FixMatch: Simplifying Semi-Supervised Learning with Consistency and Confidence}.
+\newblock In \emph{Advances in NeurIPS}, 2020.
+\newblock \url{https://arxiv.org/abs/2001.07685}.
+
+\bibitem[Hinton et al.(2015)]{hinton2015}
+G.~Hinton, O.~Vinyals, J.~Dean.
+\newblock \emph{Distilling the Knowledge in a Neural Network}.
+\newblock \emph{arXiv preprint arXiv:1503.02531}, 2015.
+\newblock \url{https://arxiv.org/abs/1503.02531}.
+
+\bibitem[Gou et al.(2021)]{gou2021}
+J.~Gou, B.~Yu, S.~J.~Maybank, D.~Tao.
+\newblock \emph{Knowledge Distillation: A Survey}.
+\newblock \emph{International Journal of Computer Vision}, 129(6):1789--1819, 2021.
+\newblock \url{https://arxiv.org/abs/2006.05525}.
+
+\bibitem[Joulin et al.(2017)]{joulin2017}
+A.~Joulin, E.~Grave, P.~Bojanowski, T.~Mikolov.
+\newblock \emph{Bag of Tricks for Efficient Text Classification}.
+\newblock In \emph{Proceedings of EACL}, pages 427--431, 2017.
+\newblock \url{https://aclanthology.org/E17-2068/}.
+
+\bibitem[Reimers and Gurevych(2019)]{reimers2019}
+N.~Reimers, I.~Gurevych.
+\newblock \emph{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks}.
+\newblock In \emph{Proceedings of EMNLP-IJCNLP}, pages 3982--3992, 2019.
+\newblock \url{https://arxiv.org/abs/1908.10084}.
+
+\bibitem[Guo et al.(2017)]{guo2017}
+C.~Guo, G.~Pleiss, Y.~Sun, K.~Q.~Weinberger.
+\newblock \emph{On Calibration of Modern Neural Networks}.
+\newblock In \emph{Proceedings of ICML}, pages 1321--1330, 2017.
+\newblock \url{https://proceedings.mlr.press/v70/guo17a.html}.
+
+\bibitem[Qwen Team(2025)]{qwen2025}
+Qwen Team.
+\newblock \emph{Qwen3: Technical Report and Model Release}.
+\newblock GitHub repository and model documentation, 2025.
+\newblock \url{https://github.com/QwenLM/Qwen3}.
+
+\bibitem[Gilardi et al.(2023)]{gilardi2023}
+F.~Gilardi, M.~Alizadeh, M.~Kubli.
+\newblock \emph{ChatGPT Outperforms Crowd-Workers for Text-Annotation Tasks}.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 120(30):e2305016120, 2023.
+\newblock \url{https://doi.org/10.1073/pnas.2305016120}.
+
+\bibitem[T\"ornberg(2023)]{tornberg2023}
+P.~T\"ornberg.
+\newblock \emph{ChatGPT-4 Outperforms Experts and Crowd Workers in Annotating
+Political Twitter Messages with Zero-Shot Learning}.
+\newblock \emph{arXiv preprint arXiv:2304.06588}, 2023.
+\newblock \url{https://arxiv.org/abs/2304.06588}.
+
+\bibitem[Dietterich(1998)]{dietterich1998}
+T.~G.~Dietterich.
+\newblock \emph{Approximate Statistical Tests for Comparing Supervised Classification Learning Algorithms}.
+\newblock \emph{Neural Computation}, 10(7):1895--1923, 1998.
+\newblock \url{https://doi.org/10.1162/089976698300017197}.
+
+\bibitem[Dem\v{s}ar(2006)]{demsar2006}
+J.~Dem\v{s}ar.
+\newblock \emph{Statistical Comparisons of Classifiers over Multiple Data Sets}.
+\newblock \emph{Journal of Machine Learning Research}, 7:1--30, 2006.
+\newblock \url{https://jmlr.org/papers/v7/demsar06a.html}.
+
+\bibitem[Efron and Tibshirani(1993)]{efron1993}
+B.~Efron, R.~J.~Tibshirani.
+\newblock \emph{An Introduction to the Bootstrap}.
+\newblock Chapman \& Hall, London, 1993.
+
+\bibitem[McNemar(1947)]{mcnemar1947}
+Q.~McNemar.
+\newblock \emph{Note on the Sampling Error of the Difference Between Correlated Proportions or Percentages}.
+\newblock \emph{Psychometrika}, 12(2):153--157, 1947.
+\newblock \url{https://doi.org/10.1007/BF02295996}.
+
+\bibitem[csuldw(2019)]{douban2024}
+csuldw. Moviedata-10M: a large-scale Douban movie dataset (140{,}502
+films, 4{,}428{,}475 comments, collected 2019).
+\newblock AntSpider project, Central South University, 2019.
+\newblock \url{https://github.com/csuldw/AntSpider}. Research use only;
+the raw corpus is not redistributed here.
+
+\end{thebibliography}
+
+\end{document}

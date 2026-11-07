@@ -1,0 +1,20 @@
+# model weights & feature caches — too large for git, reproducible via scripts
+models/
+eval/
+out/*.npy
+
+# frontend deps / build cache (web/static IS committed — it's the served bundle)
+web-ui/node_modules/
+web-ui/dist/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# misc
+*.log
+.env
+.DS_Store
+Thumbs.db
