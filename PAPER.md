@@ -23,8 +23,8 @@ gold-trained system drops to 65.0% three-class on wild short reviews,
 but that adding only 1,000 actively-selected boundary examples recovers
 +8.8pp to 71.4% (McNemar p = 4.2e-8), and scaling the same protocol
 with frontier-LLM pseudo-labels (up to ~11K AL rows) pushes the
-ensemble mix to **75.7% three-class** (74.9--75.7% across seeds,
-split-half validated), significantly above the 1K-human mix
+ensemble mix to **75.7% three-class** (74.9--75.7% across three
+seeds, split-half validated), significantly above the 1K-human mix
 (McNemar p = 0.018), and lifts
 binary OOD to **91.5%** — at or above
 measured human--human agreement (71.5%). Three findings emerge that n=600 could
@@ -372,8 +372,9 @@ shifts to 4.
 Three observations: (i) **scale beats provenance** — 5,906 pure-LLM
 labels (72.5%) exceed 1,000 human labels (71.4%); (ii) **hybrid is
 best** — human adjudication on the hardest 1K + LLM-verified AL rows
-+ v3 mix reaches \textbf{75.7\%} three-class (s123; 74.9\% at s42,
-split-half 74.6--75.5\%) and \textbf{91.5\%} binary. The 11K mix is
++ v3 mix reaches \textbf{75.7\%} three-class (74.9--75.7\% across
+three seeds s42/s123/s456; split-half 74.6--75.5\%) and
+\textbf{91.5\%} binary. The 11K mix is
 significantly better than the 1K-human mix (McNemar $p = 0.018$,
 109 vs 76 discordant) and far above v3 alone ($p = 5.9\times10^{-12}$),
 still ~6pp below the frontier LLM but at ~0.1s local latency;

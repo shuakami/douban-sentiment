@@ -107,7 +107,7 @@ that adding only 1{,}000 actively-selected boundary examples raises
 OOD accuracy by $+8.8$pp to 71.4\% (McNemar $p = 4.2\times10^{-8}$).
 Scaling the same protocol with frontier-LLM pseudo-labels --- up to
 $\sim$11K actively-selected examples --- pushes the ensemble mix to
-\textbf{75.7\% three-class} (74.9--75.7\% across seeds,
+\textbf{75.7\% three-class} (74.9--75.7\% across three seeds,
 split-half validated; significantly above the 1K-human mix,
 McNemar $p = 0.018$), and lifts
 binary OOD to \textbf{91.5\%}, above measured
@@ -1037,7 +1037,7 @@ ood1000 zero-shot vs.\ DeepSeek's 82.0\%). The all-API-teacher run
 edges the hybrid forward (73.4\% standalone, 91.5\% binary, and the
 best gold-600 cross-fit of any large-AL model at 81.0\%), but the
 three-class mix is statistically flat vs.\ 6K (74.9--75.7\% across
-two seeds, mean 75.3\% vs.\ 75.0\%, McNemar $p = 0.57$) --- the
+three seeds, mean 75.3\% vs.\ 75.0\%, McNemar $p = 0.57$) --- the
 1K$\to$6K gain of +3.6pp does not repeat at 6K$\to$11K, marking the
 onset of diminishing returns in the ambiguity region. The gain over
 the 1K-human mix is nonetheless significant (McNemar $p = 0.018$,
