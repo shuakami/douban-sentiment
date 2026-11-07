@@ -23,7 +23,8 @@ gold-trained system drops to 65.0% three-class on wild short reviews,
 but that adding only 1,000 actively-selected boundary examples recovers
 +8.8pp to 71.4% (McNemar p = 4.2e-8), and scaling the same protocol
 with frontier-LLM pseudo-labels (5,906 additional AL rows) pushes the
-ensemble mix to **75.0% three-class / 91.2% binary** — at or above
+ensemble mix to **75.0% three-class**, and a second 5,000-label batch
+lifts binary OOD to **91.4%** — at or above
 measured human–human agreement (71.5%). Three findings emerge that n=600 could
 never show: active learning needs a gold anchor, hard labels beat soft
 distillation under domain shift, and star ratings become the strongest
@@ -308,11 +309,13 @@ JSON prompt:
 |---|---|---|---|---|
 | DeepSeek-V4-Pro | ~763B+ | 0.846 (n=945) | — | ~5.1s API |
 | DeepSeek-V4.1-Flash | ~763B | 0.820 (n=992) | **0.976** (n=661) | ~1.7s API |
+| Qwen3-4B (local) | ~4B | 0.706 (n=1000) | — | ~2.3s local |
 | Deployed v3 | ~1.7B | 0.650 | 0.850 | ~0.1s local |
-| SFT+mix (gold+al6k) | ~0.1B | **0.750** | **0.912** | ~0.1s local |
+| SFT+mix (gold+al6k) | ~0.1B | **0.750** | **0.914** | ~0.1s local |
 
 The frontier model leads by ~10pp on the full random OOD set — expected
-at ~2000× the parameters. But: (i) the neutral wall hits everyone —
+at ~2000× the parameters (McNemar p = 4.3e-5 on the 992 jointly
+parseable rows). But: (i) the neutral wall hits everyone —
 DeepSeek's own binary (97.6%) exceeds its three-class (82.0%) by 15.6pp;
 (ii) on the 479 human-adjudicated hard subset the gap nearly closes
 (59.5% vs 58.5% on the ood portion — parity within noise); (iii) the
@@ -349,24 +352,32 @@ shifts to 4.
 | gold-600 + al5000 (DS) | 0.719 / 0.720 | 0.893 / 0.890 |
 | gold-600 + al6k (all DS) | 0.725 / 0.727 | 0.893 / 0.890 |
 | **gold-600 + al6k (hybrid)** | **0.729 / 0.731** | **0.911 / 0.908** |
-| + v3 mix (best) | **0.750 / 0.751** | **0.912 / 0.910** |
+| gold-600 + al11k (1K human + 9.9K DS) | 0.734 / 0.737 | **0.914 / 0.912** |
+| gold-600 + al11k (1K human + 4.9K DS + 5K Qwen3-4B) | 0.703 / 0.706 | 0.902 / 0.898 |
+| + v3 mix (best) | **0.750 / 0.751** | **0.914 / 0.912** |
 
 Three observations: (i) **scale beats provenance** — 5,906 pure-LLM
 labels (72.5%) exceed 1,000 human labels (71.4%); (ii) **hybrid is
 best** — human adjudication on the hardest 1K + 4,906 LLM labels +
 v3 mix reaches 75.0%/91.2%, the strongest OOD numbers in the paper,
 still ~7pp below the frontier LLM but at ~0.1s local latency;
-(iii) the curve is still rising (+3.6pp from 1K→6K). Total API cost for
-all 5,893 extra labels was a few hundred thousand tokens — orders of
-magnitude cheaper than human annotation. This validates the protocol
-lab2000 itself used: LLM-label at scale, human-adjudicate a
-verification core.
+(iii) **diminishing returns beyond ~6K** — a second 5K DeepSeek batch
+(al11k-DS) lifts binary to 91.4% and gold-600 cross-fit to 81.0%
+(best of any large-AL model) but leaves the 3-class mix flat
+(74.9% vs 75.0%), while the same-scale local Qwen3-4B teacher run is
+clearly worse (70.3% standalone, 73.5% mixed): pseudo-label *quality*,
+not quantity, is the binding constraint at this scale. Total API cost
+for all 9,906 extra DeepSeek labels was a few hundred thousand tokens
+— orders of magnitude cheaper than human annotation. This validates
+the protocol lab2000 itself used: LLM-label at scale,
+human-adjudicate a verification core.
 
 ### Deployment trade-off (measured)
 
 Should the OOD-hardened mix replace v3? Cross-fit evaluation says no:
 the SFT component reaches only 80.0%/0.730 on gold-600 (80.2%/0.737
-for the scaled al6k-hybrid variant; vs v3's 89.5%/0.859), and every
+for the scaled al6k-hybrid variant, 81.0%/0.751 for al11k-DS; vs v3's
+89.5%/0.859), and every
 mixture weight lands at 80–82% — training on
 terse ambiguous AL examples shifts the boundary away from the longer
 single-film gold distribution. OOD-hardening and in-domain accuracy

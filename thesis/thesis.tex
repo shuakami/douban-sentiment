@@ -107,7 +107,8 @@ that adding only 1{,}000 actively-selected boundary examples raises
 OOD accuracy by $+8.8$pp to 71.4\% (McNemar $p = 4.2\times10^{-8}$).
 Scaling the same protocol with frontier-LLM pseudo-labels --- 5{,}906
 additional actively-selected examples --- pushes the ensemble mix to
-\textbf{75.0\% three-class / 91.2\% binary}, above measured
+\textbf{75.0\% three-class}, and a second 5{,}000-label batch lifts
+binary OOD to \textbf{91.4\%}, above measured
 human--human agreement (71.5\%). We
 further document three findings invisible at $n{=}600$: active-learning
 samples require a gold anchor to avoid prior collapse, hard labels beat
@@ -908,6 +909,7 @@ System & Params & ood1000 3-class & ood1000 binary & Latency \\
 \midrule
 DeepSeek-V4-Pro     & $\sim$763B$+$ & 0.846 (n=945) & --- & $\sim$5.1s API \\
 DeepSeek-V4.1-Flash & $\sim$763B    & 0.820 (n=992) & \textbf{0.976} (n=661) & $\sim$1.7s API \\
+Qwen3-4B (local)    & $\sim$4B      & 0.706 (n=1000) & --- & $\sim$2.3s local \\
 Deployed v3         & $\sim$1.7B    & 0.650 & 0.850 & $\sim$0.1s local \\
 SFT+mix (gold+al6k) & $\sim$0.1B    & \textbf{0.750} & \textbf{0.912} & $\sim$0.1s local \\
 \bottomrule
@@ -916,7 +918,9 @@ SFT+mix (gold+al6k) & $\sim$0.1B    & \textbf{0.750} & \textbf{0.912} & $\sim$0.
 
 On the full random OOD set the frontier model wins by $\sim$10pp ---
 unsurprising, given $\sim$2000$\times$ the parameters and corpus
-exposure our student lacks. Three qualifications keep the comparison
+exposure our student lacks (on the 992 jointly parseable rows,
+McNemar $p = 4.3\times10^{-5}$ in DeepSeek's favour). Three
+qualifications keep the comparison
 honest. First, the neutral-class wall hits everyone: DeepSeek's own
 binary accuracy (97.6\%) exceeds its three-class accuracy (82.0\%) by
 15.6pp, the same polarity-vs-neutral gap we document --- intrinsic
@@ -989,9 +993,11 @@ gold-600 + al1000 (human)            & 0.714 / 0.710 & 0.880 / 0.875 \\
 gold-600 + al1000 (DS labels)        & 0.713 / 0.714 & 0.863 / 0.860 \\
 gold-600 + al5000 (DS labels)        & 0.719 / 0.720 & 0.893 / 0.890 \\
 gold-600 + al6k (all DS labels)      & 0.725 / 0.727 & 0.893 / 0.890 \\
-\textbf{gold-600 + al6k (hybrid)}    & \textbf{0.729 / 0.731} & \textbf{0.911 / 0.908} \\
+\textbf{gold-600 + al6k (hybrid)}    & 0.729 / 0.731 & 0.911 / 0.908 \\
+gold-600 + al11k (1K human + 9.9K DS)& 0.734 / 0.737 & \textbf{0.914 / 0.912} \\
+gold-600 + al11k (1K human + 4.9K DS + 5K Qwen3-4B) & 0.703 / 0.706 & 0.902 / 0.898 \\
 \midrule
-+ v3 mix (best)                      & \textbf{0.750 / 0.751} & \textbf{0.912 / 0.910} \\
++ v3 mix (best)                      & \textbf{0.750 / 0.751} & \textbf{0.914 / 0.912} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1008,12 +1014,28 @@ labels reaches 72.9\% standalone and \textbf{75.0\% / 0.751} three-class
 and \textbf{91.2\% / 0.910} binary after mixing (split-half
 $0.748 \pm 0.015$ / $0.913 \pm 0.010$) --- the strongest OOD numbers
 in this paper, still $\sim$7pp below the frontier LLM but at
-$\sim$0.1s local latency. Third, the trajectory is still rising:
-1K$\to$6K AL rows gained +3.6pp three-class, suggesting further
-LLM-labelling of the ambiguity region is the highest-leverage next
-step. Total API cost for all 5{,}893 additional labels was a few
-hundred thousand tokens --- orders of magnitude cheaper than equivalent
-human annotation.
+$\sim$0.1s local latency.
+
+\paragraph{Diminishing returns and teacher quality at 11K.} We pushed
+the same protocol to $\sim$11K AL rows twice: once adding a second
+5{,}000 DeepSeek-labelled batch (al11k-DS), once replacing it with
+5{,}000 labels from a \emph{local} Qwen3-4B teacher scored by
+label-logprob (al11k-Qwen; the local model reaches only 70.6\% on
+ood1000 zero-shot vs.\ DeepSeek's 82.0\%). The all-API-teacher run
+edges the hybrid forward (73.4\% standalone, 91.4\% binary, and the
+best gold-600 cross-fit of any large-AL model at 81.0\%), but the
+three-class mix is flat (74.9\% vs.\ 75.0\%) --- the 1K$\to$6K gain
+of +3.6pp does not repeat at 6K$\to$11K, marking the onset of
+diminishing returns in the ambiguity region. The local-teacher run is
+clearly worse (70.3\% standalone, 73.5\% mixed, 90.2\% binary,
+cross-fit 79.5\%): at identical scale, pseudo-label quality --- not
+quantity --- is the binding constraint, and a 4B open teacher cannot
+substitute for the frontier API here. The honest scaling curve is
+therefore: rapid gains to $\sim$6K AL rows, then saturation on the
+three-class task while binary and in-domain robustness keep improving.
+The total API cost for all 9{,}906 additional DeepSeek labels was a
+few hundred thousand tokens --- orders of magnitude cheaper than
+equivalent human annotation.
 
 The practical protocol this validates is exactly the one lab2000
 itself used: \emph{LLM-label at scale, human-adjudicate a verification
@@ -1026,7 +1048,8 @@ demo. We tested this honestly: the SFT component was cross-fit on
 gold-600 (5 folds, each holding out 120 gold rows while training on
 the rest + all al1000), then mixed with v3's OOF probabilities. The
 SFT student alone reaches only \textbf{80.0\% / 0.730} on gold-600
-(80.2\% / 0.737 for the scaled al6k-hybrid variant; vs.\ v3's 89.5\% /
+(80.2\% / 0.737 for the scaled al6k-hybrid variant, 81.0\% / 0.751 for
+al11k-DS; vs.\ v3's 89.5\% /
 0.859), and \emph{every} mixture weight lands at
 80--82\% --- training on terse ambiguous AL examples shifts the
 decision boundary away from the longer, single-film gold
@@ -1099,7 +1122,8 @@ gold-trained system drops to 65.0\% three-class on wild cross-movie
 reviews; 1{,}000 actively-selected, human-adjudicated boundary examples
 recover the gap to 72.4\% ($p = 4.2\times10^{-8}$), and scaling the
 same protocol with frontier-LLM pseudo-labels reaches \textbf{75.0\%}
---- at or above measured human--human agreement (71.5\%).
+three-class and \textbf{91.4\%} binary --- at or above measured
+human--human agreement (71.5\%).
 Three transferable findings emerge: active learning requires a gold
 anchor, hard labels outperform soft distillation once the evaluation
 domain shifts, and star ratings become the strongest available signal

@@ -252,17 +252,22 @@ HANDOFF 写于 Stage-1 时代。此后项目进入第二阶段，核心产物是
 | 部署 v3（gold-600） | 0.650 | 0.850 |
 | SFT gold+al1000 人工 | 0.714 | 0.880 |
 | SFT gold+al5k 纯DS e4 | 0.725 | — |
-| SFT gold+al6k 纯DS e4 | 0.729 | — |
-| SFT gold+al6k 混合（1K人工+4.9K DS）e4 | 0.745 | — |
-| SFT 同上 e8 | — | 0.911 |
+| SFT gold+al6k 纯DS e4 | 0.725 | — |
+| SFT gold+al6k 混合（1K人工+4.9K DS）e4 | 0.729 | — |
+| SFT gold+al11k 全DS（1K人工+9.9K DS）e4 | 0.734 | 0.914(e4) |
+| SFT gold+al11k Qwen教师（1K人工+4.9K DS+5K Qwen3-4B）e4 | 0.703 | 0.902(e8) |
+| SFT gold+al6kh binary e8 | — | 0.911 |
 | **v3×0.5 + al6kh e4 SFT×0.5 mix** | **0.750** | **0.912** |
+| v3×0.5 + al11kds e4 SFT×0.5 mix | 0.749 | 0.914 |
 | DeepSeek-V4.1-Flash 零样本 | 0.820 (n=992) | 0.976 (n=661) |
+| Qwen3-4B 零样本（label-logprob） | 0.706 (n=1000) | — |
 
-- McNemar p=4.2e-8（gold+al vs gold-only）；split-half 已验证
-- **规模化曲线**：1K 人工 71.4% → 5.9K 纯 DS 72.5% → 6.9K 混合（1K 人工+5.9K DS）74.5%，mix 后 75.0%
+- McNemar p=4.2e-8（gold+al vs gold-only）；DS vs mix p=4.3e-5；split-half 已验证
+- **规模化曲线**：1K 人工 71.4% → 5.9K 纯 DS 72.5% → 6.9K 混合 74.5% → mix 75.0%；**11K 后收益递减**（al11kds mix 74.9% 持平，binary 升至 91.4%，gold600 CF 升至 81.0%）
+- **教师质量 > 数量**：同规模下 Qwen3-4B 教师（OOD 零样本 70.6%）训出的学生全面落后 DS 教师（82.0%）——al11kq mix 仅 73.5%
 - **LLM 伪标签 ≈ 人工终审**（71.3% vs 71.4%）；规模胜过来源，但人工标签纠正 DS 的正面极性偏差（人工正面仅 65% 与 DS 一致）
 - 三个论文级发现：AL 需要金标锚点（al-only 崩到 56%）；领域偏移下硬标签>软蒸馏；评分在文本歧义天花板处反超文本模型
-- **部署权衡已实测**：gold+al SFT 在 gold-600 交叉拟合只有 ~80%（v3 是 89.5%），任何混合权重都回退到 80-82%——**v3 仍是部署模型，mix 只是 OOD 专家候选**。长度路由实测是帕累托前沿非免费午餐（T=20 字：87.5% gold / 69.0% OOD）
+- **部署权衡已实测**：gold+al SFT 在 gold-600 交叉拟合 79.5-81.0%（v3 是 89.5%），任何混合权重都回退到 80-82%——**v3 仍是部署模型，mix 只是 OOD 专家候选**。长度路由实测是帕累托前沿非免费午餐（T=20 字：87.5% gold / 69.0% OOD）
 
 ### 复现入口
 
@@ -278,3 +283,6 @@ HANDOFF 写于 Stage-1 时代。此后项目进入第二阶段，核心产物是
 - GPU 任务必须串行（ROCm/Windows 栈，并发会崩）
 - DeepSeek flash 标注要 low reasoning effort + 紧凑 JSON prompt，否则 reasoning 吃光 completion 预算返回空
 - al1000/al5000 是**训练集**，报 OOD 数字只能用 ood1000
+- **al5000b DS 标注**：首轮失败（reasoning 吃光 1024 completion tokens，仅 580/5000 可解析）+ 余额耗尽 402；充值后用 `--max_tokens 4096 --reasoning_effort low` 重跑（`ds_deepseek_flash_al5000b_r2_labels.jsonl`），**5000/5000 全部可解析**。与首轮 580 条重叠部分自一致率 89.5%
+- al5000b 另有一套**本地 Qwen3-4B** 标注（`qwen_label_al5000b.py`，label-logprob 打分，同 rubric prompt），用于"API 教师 vs 本地教师"对照：`qwen_al5000b_labels.jsonl` + `qwen3_4b_al5000b_probs.npy`；ood1000 的 Qwen 基线见 `qwen_label_ood1000.py`
+- AL-11K 实验文件：`extra_al11k_ds.jsonl`（al1000人工+al5000 DS+al5000b DS = 10,906，SFT 用）；`extra_al11k_hybrid.jsonl`（同结构但末批换 Qwen = 10,906）；`extra_al11k_tail{,_ds}.jsonl`（去 al1000 的 9,906/9,906，crossfit 用——crossfit 脚本自带 al1000，al6kh 那次 crossfit 曾重复计 al1000）
