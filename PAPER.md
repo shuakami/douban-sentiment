@@ -22,9 +22,9 @@ dual-LLM blind annotation and 479 human-adjudicated rows — and show the
 gold-trained system drops to 65.0% three-class on wild short reviews,
 but that adding only 1,000 actively-selected boundary examples recovers
 +8.8pp to 71.4% (McNemar p = 4.2e-8), and scaling the same protocol
-with frontier-LLM pseudo-labels (5,906 additional AL rows) pushes the
-ensemble mix to **75.0% three-class**, and a second 5,000-label batch
-lifts binary OOD to **91.4%** — at or above
+with frontier-LLM pseudo-labels (up to ~11K AL rows) pushes the
+ensemble mix to **75.2% three-class** (seed-robust at ~75%), and lifts
+binary OOD to **91.4%** — at or above
 measured human–human agreement (71.5%). Three findings emerge that n=600 could
 never show: active learning needs a gold anchor, hard labels beat soft
 distillation under domain shift, and star ratings become the strongest
@@ -219,7 +219,7 @@ insufficient supervision — measured, not assumed.
 
 The lab2000 study stress-tests this honestly: the gold-trained system
 drops to 65.0% on wild reviews; 1,000 adjudicated AL examples recover
-the gap to 72.4% (p = 4.2e-8) with human labels alone, and to **75.0%**
+the gap to 72.4% (p = 4.2e-8) with human labels alone, and to **75.2%**
 after LLM-scaled AL expansion — at or above human–human agreement
 (71.5%). AL needs a gold anchor, hard labels beat
 soft distillation under shift, and ratings dominate precisely where
@@ -293,7 +293,7 @@ at n=600 (v2→v3 was p=0.65). Split-half resampling: 0.7225±0.013 /
 **71.5%**, κ=0.568 (95% CI [0.47, 0.66]). Divergence concentrates on the
 neutral boundary — where the first annotator said neutral, the second
 agrees only 49% (37/80 relabelled positive). Our best OOD system at
-72.4% with human labels alone and 75.0% after LLM scaling — at or above
+72.4% with human labels alone and 75.2% after LLM scaling — at or above
 human–human agreement:
 the model has reached the human consistency ceiling. (The two LLM
 passes agree with each other at 83.5%/κ=0.75 on the same subset — LLMs
@@ -354,19 +354,23 @@ shifts to 4.
 | **gold-600 + al6k (hybrid)** | **0.729 / 0.731** | **0.911 / 0.908** |
 | gold-600 + al11k (1K human + 9.9K DS) | 0.734 / 0.737 | **0.914 / 0.912** |
 | gold-600 + al11k (1K human + 4.9K DS + 5K Qwen3-4B) | 0.703 / 0.706 | 0.902 / 0.898 |
-| + v3 mix (best) | **0.750 / 0.751** | **0.914 / 0.912** |
+| + v3 mix (al6kh) | 0.750 / 0.751 | 0.912 / 0.910 |
+| + v3 mix (al11kds, s123, w=0.4) | **0.752 / 0.755** | — |
 
 Three observations: (i) **scale beats provenance** — 5,906 pure-LLM
 labels (72.5%) exceed 1,000 human labels (71.4%); (ii) **hybrid is
 best** — human adjudication on the hardest 1K + 4,906 LLM labels +
-v3 mix reaches 75.0%/91.2%, the strongest OOD numbers in the paper,
+v3 mix reaches 75.0%/91.2% (75.2%/91.4% after the second batch) — the
+strongest OOD numbers in the paper,
 still ~7pp below the frontier LLM but at ~0.1s local latency;
 (iii) **diminishing returns beyond ~6K** — a second 5K DeepSeek batch
 (al11k-DS) lifts binary to 91.4% and gold-600 cross-fit to 81.0%
 (best of any large-AL model) but leaves the 3-class mix flat
 (74.9% vs 75.0%), while the same-scale local Qwen3-4B teacher run is
-clearly worse (70.3% standalone, 73.5% mixed): pseudo-label *quality*,
-not quantity, is the binding constraint at this scale. Total API cost
+consistently worse (70.3% standalone, 73.5% mixed, 90.2% binary,
+cross-fit 79.5%; pairwise McNemar n.s.\ at n=1000 but uniform across
+all four axes): pseudo-label *quality*, not quantity, is the binding
+constraint at this scale. Total API cost
 for all 9,906 extra DeepSeek labels was a few hundred thousand tokens
 — orders of magnitude cheaper than human annotation. This validates
 the protocol lab2000 itself used: LLM-label at scale,

@@ -258,6 +258,7 @@ HANDOFF 写于 Stage-1 时代。此后项目进入第二阶段，核心产物是
 | SFT gold+al11k Qwen教师（1K人工+4.9K DS+5K Qwen3-4B）e4 | 0.703 | 0.902(e8) |
 | SFT gold+al6kh binary e8 | — | 0.911 |
 | **v3×0.5 + al6kh e4 SFT×0.5 mix** | **0.750** | **0.912** |
+| v3×0.4 + al11kds e4 SFT(s123)×0.6 mix | **0.752** | — |
 | v3×0.5 + al11kds e4 SFT×0.5 mix | 0.749 | 0.914 |
 | DeepSeek-V4.1-Flash 零样本 | 0.820 (n=992) | 0.976 (n=661) |
 | Qwen3-4B 零样本（label-logprob） | 0.706 (n=1000) | — |

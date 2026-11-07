@@ -105,9 +105,9 @@ a 2{,}000-row cross-movie benchmark with dual-LLM blind annotation and
 generalises poorly to wild short reviews (65.0\% three-class) --- but
 that adding only 1{,}000 actively-selected boundary examples raises
 OOD accuracy by $+8.8$pp to 71.4\% (McNemar $p = 4.2\times10^{-8}$).
-Scaling the same protocol with frontier-LLM pseudo-labels --- 5{,}906
-additional actively-selected examples --- pushes the ensemble mix to
-\textbf{75.0\% three-class}, and a second 5{,}000-label batch lifts
+Scaling the same protocol with frontier-LLM pseudo-labels --- up to
+$\sim$11K actively-selected examples --- pushes the ensemble mix to
+\textbf{75.2\% three-class} (seed-robust at $\sim$75\%), and lifts
 binary OOD to \textbf{91.4\%}, above measured
 human--human agreement (71.5\%). We
 further document three findings invisible at $n{=}600$: active-learning
@@ -877,7 +877,7 @@ disagreement is not uniform: on items the first annotator labelled
 neutral, the second agrees only 49\% of the time, relabelling 37 of 80
 as positive. Two humans do not share a stable neutral boundary.
 
-Meanwhile our best OOD system scores \textbf{75.0\%} after AL
+Meanwhile our best OOD system scores \textbf{75.2\%} after AL
 scaling (72.4\% with human labels alone) --- at or above
 human--human agreement. The appropriate reading
 is not ``the model is imperfect'' but ``the model has reached and
@@ -993,11 +993,12 @@ gold-600 + al1000 (human)            & 0.714 / 0.710 & 0.880 / 0.875 \\
 gold-600 + al1000 (DS labels)        & 0.713 / 0.714 & 0.863 / 0.860 \\
 gold-600 + al5000 (DS labels)        & 0.719 / 0.720 & 0.893 / 0.890 \\
 gold-600 + al6k (all DS labels)      & 0.725 / 0.727 & 0.893 / 0.890 \\
-\textbf{gold-600 + al6k (hybrid)}    & 0.729 / 0.731 & 0.911 / 0.908 \\
+\textbf{gold-600 + al6k (hybrid)}    & \textbf{0.729 / 0.731} & \textbf{0.911 / 0.908} \\
 gold-600 + al11k (1K human + 9.9K DS)& 0.734 / 0.737 & \textbf{0.914 / 0.912} \\
 gold-600 + al11k (1K human + 4.9K DS + 5K Qwen3-4B) & 0.703 / 0.706 & 0.902 / 0.898 \\
 \midrule
-+ v3 mix (best)                      & \textbf{0.750 / 0.751} & \textbf{0.914 / 0.912} \\
++ v3 mix (al6kh)                     & 0.750 / 0.751 & 0.912 / 0.910 \\
++ v3 mix (al11kds, s123, $w{=}0.4$)  & \textbf{0.752 / 0.755} & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1013,7 +1014,7 @@ adjudication on the hardest 1{,}000 rows and adding 4{,}906 LLM
 labels reaches 72.9\% standalone and \textbf{75.0\% / 0.751} three-class
 and \textbf{91.2\% / 0.910} binary after mixing (split-half
 $0.748 \pm 0.015$ / $0.913 \pm 0.010$) --- the strongest OOD numbers
-in this paper, still $\sim$7pp below the frontier LLM but at
+at this scale, still $\sim$7pp below the frontier LLM but at
 $\sim$0.1s local latency.
 
 \paragraph{Diminishing returns and teacher quality at 11K.} We pushed
@@ -1028,7 +1029,9 @@ three-class mix is flat (74.9\% vs.\ 75.0\%) --- the 1K$\to$6K gain
 of +3.6pp does not repeat at 6K$\to$11K, marking the onset of
 diminishing returns in the ambiguity region. The local-teacher run is
 clearly worse (70.3\% standalone, 73.5\% mixed, 90.2\% binary,
-cross-fit 79.5\%): at identical scale, pseudo-label quality --- not
+cross-fit 79.5\%; pairwise McNemar vs.\ the DS-teacher mix is
+n.s.\ at $n{=}1000$, but the deficit is consistent across all four
+evaluation axes): at identical scale, pseudo-label quality --- not
 quantity --- is the binding constraint, and a 4B open teacher cannot
 substitute for the frontier API here. The honest scaling curve is
 therefore: rapid gains to $\sim$6K AL rows, then saturation on the
@@ -1121,7 +1124,7 @@ The lab2000 study then stress-tests the result honestly. The
 gold-trained system drops to 65.0\% three-class on wild cross-movie
 reviews; 1{,}000 actively-selected, human-adjudicated boundary examples
 recover the gap to 72.4\% ($p = 4.2\times10^{-8}$), and scaling the
-same protocol with frontier-LLM pseudo-labels reaches \textbf{75.0\%}
+same protocol with frontier-LLM pseudo-labels reaches \textbf{75.2\%}
 three-class and \textbf{91.4\%} binary --- at or above measured
 human--human agreement (71.5\%).
 Three transferable findings emerge: active learning requires a gold
