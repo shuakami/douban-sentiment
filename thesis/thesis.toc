@@ -1,51 +1,63 @@
-\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
-\contentsline {paragraph}{Contributions.}{3}{paragraph*.1}%
-\contentsline {section}{\numberline {2}Related Work}{3}{section.2}%
-\contentsline {paragraph}{Sentiment analysis of Chinese text.}{3}{paragraph*.2}%
-\contentsline {paragraph}{Pre-trained language models.}{3}{paragraph*.3}%
-\contentsline {paragraph}{Weak supervision and self-training.}{4}{paragraph*.4}%
-\contentsline {paragraph}{Knowledge distillation.}{4}{paragraph*.5}%
-\contentsline {paragraph}{Calibration.}{4}{paragraph*.6}%
-\contentsline {paragraph}{LLMs as annotators and baselines.}{4}{paragraph*.7}%
-\contentsline {section}{\numberline {3}Task and Datasets}{4}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Task definition}{4}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Gold set (600 reviews)}{5}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Weakly-labelled corpus (911{,}998 reviews)}{5}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Star ratings are not sentiment labels}{5}{subsection.3.4}%
-\contentsline {section}{\numberline {4}Methodology}{6}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Overview}{6}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Teacher ensemble and distillation}{7}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Frozen judge}{7}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Pseudo-label flywheel}{7}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Neutral specialist}{8}{subsection.4.5}%
-\contentsline {paragraph}{Corpus-trained detector.}{8}{paragraph*.12}%
-\contentsline {paragraph}{Specialist blend.}{8}{paragraph*.13}%
-\contentsline {subsection}{\numberline {4.6}Corpus-scale students}{8}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Calibration}{8}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}Deployment}{8}{subsection.4.8}%
-\contentsline {section}{\numberline {5}Experimental Setup}{8}{section.5}%
-\contentsline {paragraph}{Evaluation protocol.}{8}{paragraph*.14}%
-\contentsline {paragraph}{Metrics.}{9}{paragraph*.15}%
-\contentsline {paragraph}{Baselines.}{9}{paragraph*.16}%
-\contentsline {section}{\numberline {6}Results}{9}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Main results}{9}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Corpus-scale single models}{10}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Pseudo-label scaling}{11}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Cross-domain silver evaluation}{11}{subsection.6.4}%
-\contentsline {section}{\numberline {7}Analysis}{12}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Calibration}{12}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Statistical significance}{12}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Error analysis}{12}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Rejected architectures}{13}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Comparison with a commercial training platform}{13}{subsection.7.5}%
-\contentsline {section}{\numberline {8}Out-of-Distribution Evaluation: The lab500 Study}{13}{section.8}%
-\contentsline {paragraph}{Protocol.}{13}{paragraph*.23}%
-\contentsline {paragraph}{Results.}{14}{paragraph*.24}%
-\contentsline {paragraph}{Findings.}{14}{paragraph*.27}%
-\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{15}{section.9}%
-\contentsline {section}{\numberline {10}Conclusion and Future Work}{15}{section.10}%
-\contentsline {section}{Reproducibility}{15}{section.10}%
-\contentsline {section}{\numberline {A}Training Details and Reproducibility}{16}{appendix.A}%
-\contentsline {subsection}{\numberline {A.1}Hyperparameters}{16}{subsection.A.1}%
-\contentsline {subsection}{\numberline {A.2}Artifacts}{16}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}Environment}{16}{subsection.A.3}%
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {paragraph}{Contributions.}{4}{paragraph*.1}%
+\contentsline {section}{\numberline {2}Related Work}{4}{section.2}%
+\contentsline {paragraph}{Sentiment analysis of Chinese text.}{4}{paragraph*.2}%
+\contentsline {paragraph}{Pre-trained language models.}{4}{paragraph*.3}%
+\contentsline {paragraph}{Weak supervision and self-training.}{5}{paragraph*.4}%
+\contentsline {paragraph}{Knowledge distillation.}{5}{paragraph*.5}%
+\contentsline {paragraph}{Calibration.}{5}{paragraph*.6}%
+\contentsline {paragraph}{LLMs as annotators and baselines.}{5}{paragraph*.7}%
+\contentsline {section}{\numberline {3}Task and Datasets}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Task definition}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Gold set (600 reviews)}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Weakly-labelled corpus (911{,}998 reviews)}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Star ratings are not sentiment labels}{6}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Stage-2 benchmark: lab2000}{7}{subsection.3.5}%
+\contentsline {paragraph}{Annotation protocol.}{7}{paragraph*.11}%
+\contentsline {section}{\numberline {4}Methodology}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Overview}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Teacher ensemble and distillation}{8}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Frozen judge}{8}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Pseudo-label flywheel}{8}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Neutral specialist}{9}{subsection.4.5}%
+\contentsline {paragraph}{Corpus-trained detector.}{9}{paragraph*.13}%
+\contentsline {paragraph}{Specialist blend.}{9}{paragraph*.14}%
+\contentsline {subsection}{\numberline {4.6}Corpus-scale students}{9}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Calibration}{9}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Deployment}{9}{subsection.4.8}%
+\contentsline {section}{\numberline {5}Experimental Setup}{10}{section.5}%
+\contentsline {paragraph}{Evaluation protocol.}{10}{paragraph*.15}%
+\contentsline {paragraph}{Metrics.}{10}{paragraph*.16}%
+\contentsline {paragraph}{Baselines.}{10}{paragraph*.17}%
+\contentsline {section}{\numberline {6}Results}{10}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Main results}{10}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Corpus-scale single models}{11}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Pseudo-label scaling}{12}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Cross-domain silver evaluation}{12}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Analysis}{13}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Calibration}{13}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Statistical significance}{13}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Error analysis}{13}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Rejected architectures}{14}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Comparison with a commercial training platform}{14}{subsection.7.5}%
+\contentsline {section}{\numberline {8}Stage-2: The lab2000 OOD and Active-Learning Study}{14}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Exposing the OOD gap}{14}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Three findings invisible at $n{=}600$}{15}{subsection.8.2}%
+\contentsline {paragraph}{F1: Active learning needs an anchor.}{15}{paragraph*.26}%
+\contentsline {paragraph}{F2: Under domain shift, hard labels beat soft distillation.}{15}{paragraph*.27}%
+\contentsline {paragraph}{F3: Ratings beat text exactly where text fails.}{15}{paragraph*.28}%
+\contentsline {subsection}{\numberline {8.3}Human agreement: the real ceiling}{16}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{16}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{17}{subsection.8.5}%
+\contentsline {paragraph}{Scaling: 1K human $\to $ 5.9K hybrid.}{17}{paragraph*.31}%
+\contentsline {paragraph}{Diminishing returns and teacher quality at 11K.}{18}{paragraph*.33}%
+\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{18}{paragraph*.34}%
+\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{18}{subsection.8.6}%
+\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{18}{section.9}%
+\contentsline {section}{\numberline {10}Conclusion and Future Work}{19}{section.10}%
+\contentsline {section}{Reproducibility}{19}{section.10}%
+\contentsline {section}{\numberline {A}Training Details and Reproducibility}{20}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Hyperparameters}{20}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Artifacts}{20}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Environment}{20}{subsection.A.3}%
+\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{21}{appendix.B}%
