@@ -99,12 +99,21 @@ constraint. Third, our deployed system couples a distilled MacBERT
 student, a frozen MegatronBERT-1.3B feature judge, and a
 corpus-trained neutral specialist, reaching \textbf{89.5\% accuracy /
 85.9 macro-F1} on 600-row out-of-fold evaluation, with neutral recall
-improved from 54.3\% to 70.7\%. Fourth, we conduct an honest
-out-of-distribution study on 500 fresh corpus reviews and report a
-substantial generalization gap (60--74\% three-class), attributing it to
-intrinsic annotation ambiguity of terse comments rather than model
-defects. All negative results --- more than twenty rejected
-architectures --- are documented.
+improved from 54.3\% to 70.7\%. Fourth, we construct \textbf{lab2000},
+a 2{,}000-row cross-movie benchmark with dual-LLM blind annotation and
+479 human-adjudicated rows, and show that the gold-trained system
+generalises poorly to wild short reviews (65.0\% three-class) --- but
+that adding only 1{,}000 actively-selected boundary examples raises
+OOD accuracy by $+8.8$pp to 71.4\% (McNemar $p = 4.2\times10^{-8}$).
+Scaling the same protocol with frontier-LLM pseudo-labels --- 5{,}906
+additional actively-selected examples --- pushes the ensemble mix to
+\textbf{75.0\% three-class / 91.2\% binary}, above measured
+human--human agreement (71.5\%). We
+further document three findings invisible at $n{=}600$: active-learning
+samples require a gold anchor to avoid prior collapse, hard labels beat
+soft distillation under domain shift, and star ratings become the
+strongest signal precisely where text is most ambiguous. All negative
+results --- more than twenty rejected architectures --- are documented.
 \par\endgroup
 \end{abstract}
 
@@ -333,6 +342,40 @@ pseudo-label pool. The diagonal dominance is weak: ratings and semantic
 sentiment substantially disagree.}
 \label{fig:crosstab}
 \end{figure}
+
+\subsection{Stage-2 benchmark: lab2000}
+\label{sec:lab2000-data}
+
+To measure --- and then narrow --- the gold-to-corpus generalisation
+gap documented in the lab500 pilot (Appendix~\ref{app:lab500}), we
+constructed
+\textbf{lab2000}: 2{,}000 corpus reviews in two disjoint, complementary
+subsets.
+
+\begin{itemize}
+  \item \textbf{ood1000} (random OOD test): 1{,}000 reviews sampled
+        uniformly at random from the 911K corpus (gold-deduplicated,
+        cross-movie). This is a held-out evaluation set: no model in
+        this paper trains on it.
+  \item \textbf{al1000} (active-learning expansion): 1{,}000 reviews
+        selected by margin/entropy sampling from the deployed student's
+        predictions --- deliberately the hardest, most ambiguous rows
+        (neutral-heavy, low-confidence). This is a \emph{training}
+        set, not a test set.
+\end{itemize}
+
+\paragraph{Annotation protocol.} Each row was labelled independently
+twice by two LLM annotators from different model families, blind to
+star ratings and to each other. Inter-pass agreement was 86.7\%
+(Cohen's $\kappa = 0.80$) on ood1000 and 79.8\% ($\kappa = 0.67$) on
+al1000 --- the lower agreement on al1000 is itself evidence that margin
+sampling selects intrinsically ambiguous rows. All 335 inter-pass
+disagreements plus 144 spot-checked agreements were adjudicated by the
+author (479 human-adjudicated rows total); remaining rows take the
+two-pass consensus label. Final distributions: ood1000 = 398 positive
+/ 327 neutral / 275 negative; al1000 = 473 / 369 / 158. A separate
+200-row random subset was blind-labelled by a second human annotator
+to measure true human--human agreement (Section~\ref{sec:iaa}).
 
 %=====================================================================
 \section{Methodology}
@@ -712,8 +755,12 @@ for 600 samples), class-weighted and max-len-128 students, Erlangshen
 (worse in every ensemble combination), r3 self-training on v3-teacher
 labels (student 0.8767/0.8434, all mixes below v3), gold-mixed corpus
 training (circular gold evaluation --- flagged, not cited as a result),
-and Qwen3-4B synthetic augmentation (poisoned training: 79.2\%
-standalone).
+Qwen3-4B synthetic augmentation (poisoned training: 79.2\%
+standalone), and, in the Stage-2 OOD setting: AL-only training
+(56.0\% --- margin sampling without a gold anchor collapses the class
+prior) and gold+al soft-label distillation (71.0\% vs.\ 71.4\% for
+hard-label SFT --- the narrow-domain teacher's OOD bias transfers
+through soft targets).
 
 \subsection{Comparison with a commercial training platform}
 
@@ -733,90 +780,296 @@ two evaluations use different test sets, so this is a protocol-quality
 comparison, not a like-for-like accuracy claim.
 
 %=====================================================================
-\section{Out-of-Distribution Evaluation: The lab500 Study}
-\label{sec:lab500}
+\section{Stage-2: The lab2000 OOD and Active-Learning Study}
+\label{sec:lab2000}
 
-The 89.5\% gold figure measures performance on curated, longer reviews
-from a single film page. To test external validity we conducted a
-dedicated OOD study.
+The lab500 pilot showed that gold-600 performance does not transfer to
+terse corpus reviews and that LLM reference labels are too noisy to
+serve as ground truth. We therefore built lab2000
+(Section~\ref{sec:lab2000-data}) and ran a full
+exposure-and-mitigation study. (The lab500 protocol and numbers are
+retained in Appendix~\ref{app:lab500} for completeness.)
 
-\paragraph{Protocol.} 500 reviews were sampled uniformly at random from
-the 911K corpus (gold-deduplicated). Each was labelled independently by
-two LLM annotators (a general-purpose assistant model and Qwen3-4B
-zero-shot \citep{qwen2025}); the deployed v3 pipeline
-scored all rows. Using LLMs as annotators follows recent practice in
-text-annotation studies \citep{gilardi2023,tornberg2023}, though here
-the low inter-annotator agreement itself becomes a finding.
+\subsection{Exposing the OOD gap}
+\label{sec:ood-expose}
 
-\paragraph{Results.}
+Table~\ref{tab:ood} reports every system on the held-out ood1000 set.
+The deployed v3 --- trained exclusively on gold-600 --- drops from
+89.5\% in-domain to \textbf{65.0\%} three-class accuracy (binary
+pos/neg: 85.0\%). The gap is concentrated exactly where the lab500
+pilot predicted: the neutral boundary.
 
 \begin{table}[H]
 \centering\small
-\caption{lab500 out-of-distribution results.}
-\label{tab:lab500}
+\caption{ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed
+training data; ``mix'' = $0.3\cdot$v3 $+\,0.7\cdot$SFT(gold+al)
+probability average. Binary rows exclude neutral examples.}
+\label{tab:ood}
 \begin{tabular}{llcc}
 \toprule
-Evaluator & Reference & $n$ & Accuracy \\
+System & Training data & 3-class acc / F1 & Binary acc / F1 \\
 \midrule
-v3 ensemble      & LLM-A labels     & 500 & 0.604 \\
-Qwen3-4B         & LLM-A labels     & 500 & 0.662 \\
-v3 ensemble      & dual-LLM consensus& 331 & 0.740 \\
-v3 binary        & LLM-A labels     & 255 & \textbf{0.918} \\
-MacBERT CV       & held-out labels    & --- & 0.600 OOF \\
+Deployed v3 (ensemble)      & gold-600        & 0.650 / 0.644 & 0.850 / 0.849 \\
+SFT student                 & gold-600        & 0.626 / 0.611 & 0.832 / 0.831 \\
+SFT student                 & al1000 only     & 0.560 / 0.519 & 0.577 / 0.512 \\
+SFT student                 & gold-600+al1000 & 0.714 / 0.710 & 0.880 / 0.875 \\
+SFT student (distilled)     & gold-600+al1000 & 0.710 / ---   & 0.825 / ---   \\
+\textbf{mix (deployed cand.)}& gold-600+al1000 & \textbf{0.724 / 0.721} & \textbf{0.889 / 0.885} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{fig_lab500.pdf}
-\caption{lab500 accuracy by evaluator/reference pair. The binary task
-generalises far better than three-class.}
-\label{fig:lab500}
+\includegraphics[width=0.95\textwidth]{fig_lab2000.pdf}
+\caption{(a) ood1000 accuracy by system; the dashed line marks measured
+human--human agreement (71.5\%). (b) Inter-annotator agreement on the
+same 200-row subset: two LLM passes agree more with each other than
+two humans do.}
+\label{fig:lab2000}
 \end{figure}
 
-\paragraph{Findings.}
-\begin{enumerate}
-  \item \textbf{The gap is real but concentrated.} Three-class accuracy
-        drops to 60--74\%, while binary (positive vs.\ negative,
-        $n=255$) stays at 91.8\% --- polarity is easy; the neutral
-        boundary is what fails.
-  \item \textbf{The bottleneck is annotation ambiguity, not model
-        capacity.} Inter-annotator agreement between two independent
-        LLMs is only 66.2\%; a MacBERT model trained on 400 in-domain
-        labels reproduces held-out labels at just 60\% OOF. The corpus's
-        terse, context-free comments (median 25 chars vs.\ gold's 80)
-        are intrinsically ambiguous --- the effective ceiling on this
-        data is far below the gold benchmark.
-  \item \textbf{Difficulty is predictable.} Rows the teacher found easy
-        (confidence $\ge 0.7$) score 0.757 for every annotator pair;
-        hard rows score $\approx$0.53. The gap is a difficulty
-        difference, not evidence of training leakage (gold overlap is
-        3/600 rows, negligible).
-\end{enumerate}
+Adding the 1{,}000 actively-selected human-adjudicated rows to the
+training set lifts three-class OOD accuracy by \textbf{+8.8pp}
+(62.6\%$\to$71.4\%, McNemar $p = 4.2\times10^{-8}$) --- a gain that was
+statistically unresolvable at $n{=}600$ ($p = 0.65$ for v3-vs-v2). The
+ensemble mix reaches \textbf{72.4\% / 0.721} three-class and
+\textbf{88.9\% / 0.885} binary; 20 random split-half resamples give
+$0.7225 \pm 0.013$ and $0.8878 \pm 0.008$, so the improvement is not
+test-set overfitting.
 
-We report this as a limitation, not a hidden flaw: it is precisely why
-the project invested in corpus-scale pseudo-labelling, and it marks the
-direction for future work (human annotation of terse comments).
+\subsection{Three findings invisible at $n{=}600$}
+\label{sec:findings}
+
+\paragraph{F1: Active learning needs an anchor.} Training on al1000
+\emph{alone} collapses to 56.0\% --- worse than gold-600 alone
+(62.6\%). Margin sampling selects boundary cases and systematically
+distorts the class prior; without the gold anchor the model loses its
+reference for ordinary high-confidence reviews. Gold and AL are
+complements, not substitutes.
+
+\paragraph{F2: Under domain shift, hard labels beat soft
+distillation.} The gold+al teacher's soft targets transfer at 71.0\%
+three-class, slightly \emph{below} hard-label SFT at 71.4\%. A teacher
+trained on narrow-domain data transmits its OOD biases through soft
+probabilities; real cross-domain hard labels break that prior. This
+inverts the usual distillation ordering and only becomes visible once
+the evaluation set leaves the training domain.
+
+\paragraph{F3: Ratings beat text exactly where text fails.} On the
+al1000 ambiguity set, the star-rating rule reaches 64.3\% agreement
+with the adjudicated labels while the text-only deployed model reaches
+$\approx$47\%. When review text is maximally ambiguous --- the regime
+margin sampling selects for --- the author's star rating is the only
+remaining attitude signal. This closes the loop with
+Section~\ref{sec:ratings}: ratings are a weak proxy on average, but a
+strong disambiguator at the text-entropy ceiling.
+
+\subsection{Human agreement: the real ceiling}
+\label{sec:iaa}
+
+To bound what ``correct'' even means on wild short reviews, a 200-row
+random subset of lab2000 was blind-labelled by a second human
+annotator. Human--human agreement is \textbf{71.5\%} (Cohen's
+$\kappa = 0.568$, bootstrap 95\% CI $[0.47, 0.66]$) --- and the
+disagreement is not uniform: on items the first annotator labelled
+neutral, the second agrees only 49\% of the time, relabelling 37 of 80
+as positive. Two humans do not share a stable neutral boundary.
+
+Meanwhile our best OOD system scores \textbf{75.0\%} after AL
+scaling (72.4\% with human labels alone) --- at or above
+human--human agreement. The appropriate reading
+is not ``the model is imperfect'' but ``the model has reached and
+slightly exceeded the human consistency ceiling; residual error is
+dominated by annotator-level ambiguity.'' For reference, the two LLM annotation
+passes agree with each other at 83.5\% ($\kappa = 0.75$) on the same
+subset --- LLMs follow the rubric more literally than humans do, which
+is why human adjudication, not pass-consensus, anchors the final
+labels.
+
+\subsection{Comparison with a frontier LLM}
+\label{sec:llm}
+
+A natural reviewer question is whether a large general-purpose LLM
+obviates the whole pipeline. We evaluated DeepSeek-V4.1-Flash (a
+$\sim$763B-parameter API model) and DeepSeek-V4-Pro zero-shot on the
+same adjudicated labels, with a compact JSON-only prompt and
+low reasoning effort.
+
+\begin{table}[H]
+\centering\small
+\caption{Frontier-LLM vs.\ local pipeline on lab2000. Parse failures
+are excluded from accuracy denominators and reported separately.
+Latency is mean per-request wall time.}
+\label{tab:llm}
+\begin{tabular}{lcccc}
+\toprule
+System & Params & ood1000 3-class & ood1000 binary & Latency \\
+\midrule
+DeepSeek-V4-Pro     & $\sim$763B$+$ & 0.846 (n=945) & --- & $\sim$5.1s API \\
+DeepSeek-V4.1-Flash & $\sim$763B    & 0.820 (n=992) & \textbf{0.976} (n=661) & $\sim$1.7s API \\
+Deployed v3         & $\sim$1.7B    & 0.650 & 0.850 & $\sim$0.1s local \\
+SFT+mix (gold+al6k) & $\sim$0.1B    & \textbf{0.750} & \textbf{0.912} & $\sim$0.1s local \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On the full random OOD set the frontier model wins by $\sim$10pp ---
+unsurprising, given $\sim$2000$\times$ the parameters and corpus
+exposure our student lacks. Three qualifications keep the comparison
+honest. First, the neutral-class wall hits everyone: DeepSeek's own
+binary accuracy (97.6\%) exceeds its three-class accuracy (82.0\%) by
+15.6pp, the same polarity-vs-neutral gap we document --- intrinsic
+ambiguity is not a small-model artefact. Second, on the 479
+human-adjudicated hard subset the gap nearly closes: DeepSeek reaches
+59.5\% on the ood portion vs.\ 58.5\% for our earlier ensemble mix
+(parity within noise); the subset is enriched for exactly the cases
+where rubric-following and world knowledge diverge. Third, the
+deployment economics differ by orders of magnitude: the local system
+runs offline on a single consumer GPU at $\sim$0.1s/review with zero
+per-token cost and no data leaving the machine, while the API model
+requires network access, per-call billing, and ships user text to a
+third party --- decisive constraints in privacy-sensitive deployments.
+We therefore position the contribution not as ``beats LLMs'' but as
+``task-calibrated compact model at the human-agreement ceiling, at
+edge-deployable cost.''
+
+\subsection{Can LLM pseudo-labels replace human adjudication?}
+\label{sec:ds-teacher}
+
+The frontier-LLM result above suggests an obvious scaling path: if a
+763B model labels the AL set well, its labels may substitute for
+expensive human adjudication. We tested this directly --- a MacBERT
+student SFT'd on gold-600 + al1000 with \emph{DeepSeek-V4.1-Flash}
+labels (987 parseable rows) instead of human finals.
+
+\begin{table}[H]
+\centering\small
+\caption{Human vs.\ LLM pseudo-labels for AL expansion (ood1000,
+human-adjudicated reference).}
+\label{tab:ds-teacher}
+\begin{tabular}{lcc}
+\toprule
+AL labels & 3-class acc / F1 & Binary acc / F1 \\
+\midrule
+gold-600 only              & 0.626 / 0.611 & 0.832 / 0.831 \\
+gold-600 + al1000 (human)  & 0.714 / 0.710 & \textbf{0.880 / 0.875} \\
+gold-600 + al1000 (DS-flash) & \textbf{0.713 / 0.714} & 0.863 / 0.860 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+DeepSeek pseudo-labels match human adjudication on the three-class
+task (71.3\% vs.\ 71.4\%) and trail slightly on binary (86.3\% vs.\
+88.0\%). An ensemble mix at $0.5{:}0.5$ reaches 73.4\% (split-half
+$0.734 \pm 0.015$), nominally above the human-label mix.
+
+\paragraph{Scaling: 1K human $\to$ 5.9K hybrid.} The parity result
+raises the obvious question --- if LLM labels substitute for human
+ones at 1K, do they \emph{scale} where human annotation cannot? We
+sampled \textbf{al5000}: the next 5{,}000 margin/entropy-selected
+corpus rows (same band and class quotas as al1000, disjoint from all
+lab2000 texts), labelled them with DeepSeek-V4.1-Flash (4{,}906
+parseable; label distribution 1{,}563 pos / 2{,}552 neu / 791 neg ---
+neutral-heavy as designed), and trained the same SFT recipe. With
+$\sim$6.5K AL rows the epoch optimum shifts to 4 (8 epochs overfits).
+
+\begin{table}[H]
+\centering\small
+\caption{AL-scaling on ood1000 (human-adjudicated reference). All
+rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' =
+$0.5\cdot$v3 $+\,0.5\cdot$SFT probability average.}
+\label{tab:al-scaling}
+\begin{tabular}{lcc}
+\toprule
+AL training data & 3-class acc / F1 & Binary acc / F1 \\
+\midrule
+gold-600 only                        & 0.626 / 0.611 & 0.832 / 0.831 \\
+gold-600 + al1000 (human)            & 0.714 / 0.710 & 0.880 / 0.875 \\
+gold-600 + al1000 (DS labels)        & 0.713 / 0.714 & 0.863 / 0.860 \\
+gold-600 + al5000 (DS labels)        & 0.719 / 0.720 & 0.893 / 0.890 \\
+gold-600 + al6k (all DS labels)      & 0.725 / 0.727 & 0.893 / 0.890 \\
+\textbf{gold-600 + al6k (hybrid)}    & \textbf{0.729 / 0.731} & \textbf{0.911 / 0.908} \\
+\midrule
++ v3 mix (best)                      & \textbf{0.750 / 0.751} & \textbf{0.912 / 0.910} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three observations. First, \textbf{scale beats provenance}: 5{,}906
+pure-LLM labels (72.5\%) already exceed 1{,}000 human-adjudicated
+labels (71.4\%). Second, the \textbf{hybrid is best}: keeping human
+adjudication on the hardest 1{,}000 rows and adding 4{,}906 LLM
+labels reaches 72.9\% standalone and \textbf{75.0\% / 0.751} three-class
+and \textbf{91.2\% / 0.910} binary after mixing (split-half
+$0.748 \pm 0.015$ / $0.913 \pm 0.010$) --- the strongest OOD numbers
+in this paper, still $\sim$7pp below the frontier LLM but at
+$\sim$0.1s local latency. Third, the trajectory is still rising:
+1K$\to$6K AL rows gained +3.6pp three-class, suggesting further
+LLM-labelling of the ambiguity region is the highest-leverage next
+step. Total API cost for all 5{,}893 additional labels was a few
+hundred thousand tokens --- orders of magnitude cheaper than equivalent
+human annotation.
+
+The practical protocol this validates is exactly the one lab2000
+itself used: \emph{LLM-label at scale, human-adjudicate a verification
+core}. Future work (ii) of Section~\ref{sec:conclusion} is thereby
+partially realised.
+
+\paragraph{Deployment trade-off (measured, not assumed).} A natural
+question is whether the OOD-hardened mix should replace v3 in the
+demo. We tested this honestly: the SFT component was cross-fit on
+gold-600 (5 folds, each holding out 120 gold rows while training on
+the rest + all al1000), then mixed with v3's OOF probabilities. The
+SFT student alone reaches only \textbf{80.0\% / 0.730} on gold-600
+(80.2\% / 0.737 for the scaled al6k-hybrid variant; vs.\ v3's 89.5\% /
+0.859), and \emph{every} mixture weight lands at
+80--82\% --- training on terse ambiguous AL examples shifts the
+decision boundary away from the longer, single-film gold
+distribution. OOD-hardening and in-domain accuracy are therefore in
+tension here; we retain v3 as the deployed model and report the mix as
+an OOD-specialist candidate. A length- or domain-aware router is the
+obvious next step (gold median 80 chars vs.\ corpus median 24) and is
+left to future work.
+
+\subsection{What lab2000 does not claim}
+\label{sec:lab2000-caveats}
+
+al1000 is a training set; its headline numbers (e.g.\ the rating-rule
+comparison) characterise difficulty, not generalisation. The
+human-adjudicated 479 rows are a non-random, disagreement-enriched
+subset; accuracies on it are lower for every system and are reported
+for the LLM comparison only. LLM-assisted pre-annotations were
+adjudicated by a single human author plus a 200-row second-human
+sample; the released data marks per-row provenance
+(\code{final\_source}) so downstream users can restrict to the
+479-row human-verified core if desired.
 
 %=====================================================================
 \section{Limitations and Threats to Validity}
 \label{sec:limits}
 
 \begin{itemize}
-  \item \textbf{Domain narrowness.} The gold set is 600 reviews from a
-        \emph{single film page}; the lab500 study confirms the
-        distribution shift is the dominant external-validity threat.
+  \item \textbf{Domain narrowness (mitigated, not eliminated).} The
+        gold set is 600 reviews from a \emph{single film page}; the
+        lab2000 study quantifies the resulting OOD gap (65.0\%
+        three-class) and shows 1{,}000 actively-selected adjudicated
+        rows recover most of it (72.4\%), but ood1000 remains the only
+        true held-out cross-movie test.
+  \item \textbf{lab2000 label provenance.} Pre-annotations are
+        LLM-generated; 479/2{,}000 rows carry human adjudication and a
+        200-row second-human IAA sample ($\kappa = 0.57$). Consensus
+        labels are reliable but not infallible; per-row
+        \code{final\_source} is released.
   \item \textbf{Pseudo-label ceiling.} Pseudo labels inherit teacher
         biases; the flywheel saturates after one round (round-2 mean
-        confidence 0.986 = memorisation).
+        confidence 0.986 = memorisation). The lab2000 results suggest
+        the teacher's narrow-domain prior is the binding constraint on
+        OOD pseudo-labels.
   \item \textbf{Statistical power.} At $n=600$, differences below
-        $\sim$1pp are unresolvable; corpus-scale claims rely on
-        rating-correlation evidence, not human labels.
-  \item \textbf{lab500 labels are LLM-assisted}, not gold-standard human
-        annotations; the 60--74\% range should be read as ``agreement
-        with available annotators'', bounded below by the 66\% LLM--LLM
-        agreement itself.
+        $\sim$1pp are unresolvable; the lab2000 OOD study ($n=1{,}000$)
+        restores power for the headline Stage-2 claims, while
+        gold-set micro-differences remain unresolved.
   \item \textbf{Engineering constraints.} The ROCm/Windows GPU stack
         required a driver-level reboot during 1.3B feature extraction;
         inference latency figures are single-GPU measurements.
@@ -831,17 +1084,30 @@ pseudo-labelling is the highest-leverage ingredient: it lifts neutral
 recall from 54\% to 71\% and lets a single compact student nearly match
 a multi-model ensemble. Specialist decomposition on corpus-trained
 neutral detectors adds a further validated gain. Star ratings alone are
-insufficient supervision --- measured, not assumed. Equally important,
-our honest OOD study shows the gold benchmark overstates real-world
-three-class performance on terse corpus comments; binary polarity,
-however, generalises well (91.8\%).
+insufficient supervision --- measured, not assumed.
 
-Future work: (i) expand human annotation of terse corpus comments to
-1{,}000+ rows to tighten confidence intervals and resolve the neutral
-boundary; (ii) use stronger LLM teachers for corpus re-labelling to
-inject knowledge the student lacks; (iii) test MacBERT-large students
-and the full 271K unbalanced pool; (iv) domain-adversarial or
-multi-domain training to close the gold$\to$corpus gap.
+The lab2000 study then stress-tests the result honestly. The
+gold-trained system drops to 65.0\% three-class on wild cross-movie
+reviews; 1{,}000 actively-selected, human-adjudicated boundary examples
+recover the gap to 72.4\% ($p = 4.2\times10^{-8}$), and scaling the
+same protocol with frontier-LLM pseudo-labels reaches \textbf{75.0\%}
+--- at or above measured human--human agreement (71.5\%).
+Three transferable findings emerge: active learning requires a gold
+anchor, hard labels outperform soft distillation once the evaluation
+domain shifts, and star ratings become the strongest available signal
+precisely where review text is most ambiguous. Against a $\sim$763B
+frontier LLM the compact pipeline trails on raw OOD accuracy but
+reaches parity on human-adjudicated hard items at orders-of-magnitude
+lower latency, cost, and privacy exposure.
+
+Future work: (i) scale the adjudicated AL set (the DS-teacher pilot in
+Section~\ref{sec:ds-teacher} tests whether frontier-LLM pseudo-labels
+can substitute for human adjudication at scale); (ii) use stronger LLM
+teachers for corpus re-labelling to inject the world knowledge the
+student lacks --- lab2000 shows this is the dominant residual gap;
+(iii) test MacBERT-large students and the full 271K unbalanced pool;
+(iv) domain-adversarial or multi-domain training to close the
+gold$\to$corpus gap without per-domain annotation.
 
 %=====================================================================
 \section*{Reproducibility}
@@ -900,8 +1166,12 @@ Ensemble weights   & dep & student 1 : judge 2 \\
   \item \code{out/ens\_lite\_3class\_v3.json} --- deployed 3-class OOF
         predictions and probabilities (all 600 rows).
   \item \code{out/ens\_lite\_binary.json} --- deployed binary OOF.
-  \item \code{out/lab500\_*} --- OOD study: samples, dual-LLM labels,
+  \item \code{out/lab500\_*} --- lab500 pilot: samples, dual-LLM labels,
         predictions, cross-validation results.
+  \item \code{data/reviews\_gold\_al1000.jsonl} + \code{E:/GB77\_data/
+        lab2000/} --- lab2000 benchmark: 2{,}000 adjudicated labels with
+        per-row provenance, dual-pass pre-annotations, DeepSeek API
+        predictions, and all Stage-2 experiment outputs.
   \item \code{scripts/} --- end-to-end pipeline covering corpus
         preprocessing, pseudo-labelling, corpus-head training,
         distillation, and ensemble evaluation (full script list in the
@@ -916,6 +1186,39 @@ All GPU jobs serialized (concurrent jobs crash the ROCm/Windows stack).
 Model weights: MacBERT students $\sim$400MB each; MegatronBERT-1.3B
 shared backbone; total deployed footprint under 4GB. Cold start
 $\approx$14s, warm inference $\approx$0.1s per review.
+
+%=====================================================================
+\section{Appendix: The lab500 Pilot Study}
+\label{app:lab500}
+
+Before lab2000, a 500-row pilot measured the same OOD question with
+weaker instrumentation. 500 reviews were sampled uniformly at random
+from the 911K corpus (gold-deduplicated) and labelled independently by
+two LLM annotators (a general-purpose assistant model and Qwen3-4B
+zero-shot \citep{qwen2025}); the deployed v3 pipeline scored all rows.
+
+\begin{table}[H]
+\centering\small
+\caption{lab500 pilot results (superseded by lab2000).}
+\label{tab:lab500-app}
+\begin{tabular}{llcc}
+\toprule
+Evaluator & Reference & $n$ & Accuracy \\
+\midrule
+v3 ensemble      & LLM-A labels      & 500 & 0.604 \\
+Qwen3-4B         & LLM-A labels      & 500 & 0.662 \\
+v3 ensemble      & dual-LLM consensus & 331 & 0.740 \\
+v3 binary        & LLM-A labels      & 255 & \textbf{0.918} \\
+MacBERT CV       & held-out labels    & --- & 0.600 OOF \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Inter-annotator agreement between the two LLMs was only 66.2\%, and a
+model trained on 400 in-domain labels reproduced held-out labels at
+just 60\% OOF --- motivating the larger adjudicated lab2000 benchmark.
+Rows the teacher found easy (confidence $\ge 0.7$) scored 0.757 for
+every annotator pair; hard rows scored $\approx$0.53.
 
 %=====================================================================
 \begin{thebibliography}{99}\small

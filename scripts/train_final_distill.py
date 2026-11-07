@@ -27,7 +27,7 @@ sys.path.insert(0, HERE)
 import distill as ds  # noqa: E402
 
 
-def train_full(model_name, tok, texts, y, soft, args, n_classes, seed, out_dir):
+def train_full(model_name, tok, texts, y, soft, alpha_vec, args, n_classes, seed, out_dir):
     ds.set_seed(seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     attn = None if args.attn_implementation == "none" else args.attn_implementation
@@ -37,7 +37,6 @@ def train_full(model_name, tok, texts, y, soft, args, n_classes, seed, out_dir):
     model.train()
 
     idx = list(range(len(texts)))
-    alpha_vec = np.full(len(texts), args.alpha, dtype=np.float32)
     data = ds.TokenizedDS(texts, y, soft, alpha_vec, idx, tok, args.max_len)
     dl = DataLoader(data, batch_size=args.batch, shuffle=True, num_workers=0,
                     collate_fn=ds.collate, generator=torch.Generator().manual_seed(seed))
@@ -60,15 +59,15 @@ def train_full(model_name, tok, texts, y, soft, args, n_classes, seed, out_dir):
             batch = {k: v.to(device, non_blocking=True) for k, v in batch.items()}
             labels = batch.pop("labels")
             soft_t = batch.pop("soft")
-            batch.pop("alpha", None)
+            a = batch.pop("alpha")
             opt.zero_grad(set_to_none=True)
             with ds.autocast_ctx(device, args.amp):
                 logits = model(**batch).logits.float()
-            ce = F.cross_entropy(logits, labels, weight=cw)
+            ce = F.cross_entropy(logits, labels, weight=cw, reduction="none")
             logp = F.log_softmax(logits / args.tau, dim=-1)
             target = F.softmax(soft_t / args.tau, dim=-1)
-            kl = F.kl_div(logp, target, reduction="batchmean") * args.tau * args.tau
-            loss = args.alpha * ce + (1.0 - args.alpha) * kl
+            kl = F.kl_div(logp, target, reduction="none").sum(-1) * args.tau * args.tau
+            loss = (a * ce + (1.0 - a) * kl).mean()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.clip)
             opt.step()
@@ -93,6 +92,8 @@ def main():
     ap.add_argument("--out", required=True, help="output dir under models/")
     ap.add_argument("--teacher", default=None)
     ap.add_argument("--alpha", type=float, default=0.5)
+    ap.add_argument("--aug_alpha", type=float, default=None,
+                    help="per-sample alpha override for src=aug rows")
     ap.add_argument("--tau", type=float, default=2.0)
     ap.add_argument("--epochs", type=int, default=8)
     ap.add_argument("--batch", type=int, default=32)
@@ -119,12 +120,17 @@ def main():
     else:
         teacher_probs, teacher_tag = ds.load_teacher(args.task)
     assert len(teacher_probs) == len(y), f"teacher n={len(teacher_probs)} != y n={len(y)}"
+    alpha_vec = np.full(len(y), args.alpha, dtype=np.float32)
+    if args.aug_alpha is not None:
+        aug = ds.aug_flags(rows, args.task)
+        assert len(aug) == len(y), f"aug n={len(aug)} != y n={len(y)}"
+        alpha_vec = np.where(aug, args.aug_alpha, args.alpha).astype(np.float32)
 
     print(f"# final-distill model={args.model} task={args.task} n={len(y)} "
           f"classes={n_classes} teacher={teacher_tag} -> {args.out}", flush=True)
     tok = AutoTokenizer.from_pretrained(args.model)
     out_dir = args.out if os.path.isabs(args.out) else os.path.join(ROOT, "models", args.out)
-    train_full(args.model, tok, texts, y, teacher_probs, args, n_classes, args.seed, out_dir)
+    train_full(args.model, tok, texts, y, teacher_probs, alpha_vec, args, n_classes, args.seed, out_dir)
 
 
 if __name__ == "__main__":
