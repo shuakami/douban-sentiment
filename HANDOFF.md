@@ -227,3 +227,50 @@ models/                 模型权重没打包，用 download_models.sh 拉
 ## 九、一句话总结
 
 数据是 600 条豆瓣短评，标签要用 `label_semantic` 那套（另一套是星级刷出来的，别用）。零样本情感模型能到 84%，通用 BERT 从头微调是弯路。84% 上不去主要卡在标注噪音和混合情感，先把 46 条疑似错标清洗掉，再用 5 折 CV 微调 MacBERT 或 RoBERTa-large，二分类冲 95% 有希望，三分类现实目标是 88-90%。评测一律用 Macro-F1，必须 K 折。
+
+---
+
+## 十、Stage-2：lab2000 分布外研究（2025 年新增，接手前必读）
+
+HANDOFF 写于 Stage-1 时代。此后项目进入第二阶段，核心产物是
+**lab2000**——一个 2,000 条跨影片短评基准，全部实验数据在
+`E:\GB77_data\lab2000\`（D 盘空间不足，外置工作目录）。
+
+### lab2000 是什么
+
+- `ood1000`：从 91 万语料均匀随机抽的 1,000 条，**留出测试集**，任何模型不训练
+- `al1000`：按部署学生边际/熵采样的 1,000 条困难样本，**训练集**
+- `al5000` / `al5000b`：后续两批各 5,000 条同法采样，DeepSeek 伪标签（训练用）
+- 标注协议：两个不同家族 LLM 独立盲标两遍 → 分歧+抽查共 479 条作者人工终审 → 共识兜底
+- 权威标签文件：`lab2000_final.jsonl`（`final` 字段，`final_source` 标来源）
+- 一致性：LLM 双遍 ood κ=0.80 / al κ=0.67；真人 IAA（200 行抽样）71.5%/κ=0.57
+
+### 关键结果（ood1000 三分类 / 二分类）
+
+| 系统 | 三分类 | 二分类 |
+|---|---|---|
+| 部署 v3（gold-600） | 0.650 | 0.850 |
+| SFT gold+al1000 人工 | 0.714 | 0.880 |
+| SFT gold+al6k 混合（1K人工+4.9K DS）e4 | 0.729 | — |
+| **v3×0.5 + 上述 SFT×0.5 mix** | **0.750** | **0.912** |
+| DeepSeek-V4.1-Flash 零样本 | 0.820 (n=992) | 0.976 (n=661) |
+
+- McNemar p=4.2e-8（gold+al vs gold-only）；split-half 已验证
+- **LLM 伪标签 ≈ 人工终审**（71.3% vs 71.4%），且规模化有效：纯 DS 5.9K 已超 1K 人工
+- 三个论文级发现：AL 需要金标锚点（al-only 崩到 56%）；领域偏移下硬标签>软蒸馏；评分在文本歧义天花板处反超文本模型
+- **部署权衡已实测**：gold+al SFT 在 gold-600 交叉拟合只有 ~80%（v3 是 89.5%），任何混合权重都回退到 80-82%——**v3 仍是部署模型，mix 只是 OOD 专家候选**。想升级部署需先解决域内回退（长度/领域路由是候选方向）
+
+### 复现入口
+
+- `scripts/eval_lab2000.py` — 部署管线在 lab2000 上的批量推理（产出 v3_probs.npz）
+- `scripts/sft_lab2000.py` — Stage-2 SFT；`--lab/--lab_eval/--extra_lab/--tag_suffix` 支持自定义训练/评估标签
+- `scripts/crossfit_gold600.py` — gold-600 交叉拟合（诚实域内评估，防 resubstitution）
+- `E:/GB77_data/lab2000/deepseek_label.py` — DeepSeek API 标注（key 走环境变量 DEEPSEEK_API_KEY，**不要提交**）
+- 论文：`thesis/thesis.tex`（英）/ `thesis_zh.tex`（中）/ `PAPER.md`；lab500 已降为附录
+
+### 坑
+
+- `HF_HOME` 必须用 shell 里已有的 `D:\Project\douban-sentiment-env\hf`，不要自作主张改
+- GPU 任务必须串行（ROCm/Windows 栈，并发会崩）
+- DeepSeek flash 标注要 low reasoning effort + 紧凑 JSON prompt，否则 reasoning 吃光 completion 预算返回空
+- al1000/al5000 是**训练集**，报 OOD 数字只能用 ood1000
