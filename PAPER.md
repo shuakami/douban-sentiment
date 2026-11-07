@@ -371,8 +371,11 @@ mixture weight lands at 80–82% — training on
 terse ambiguous AL examples shifts the boundary away from the longer
 single-film gold distribution. OOD-hardening and in-domain accuracy
 are in tension; v3 stays deployed, the mix is an OOD specialist.
-Length/domain-aware routing (gold median 80 chars vs corpus 24) is the
-obvious next step.
+A length-aware router (short→mix, long→v3) traces a Pareto frontier:
+at 20 chars it gives 87.5% gold / 69.0% OOD — between v3 (89.5%/65.0%)
+and the pure mix (~82%/75.0%). Length is an imperfect domain signal
+(32% of gold <50 chars; 26% of ood1000 ≥50), so a learned domain
+router is left to future work.
 
 ### What lab2000 does not claim
 

@@ -998,7 +998,11 @@ gold-600 + al6k (all DS labels)      & 0.725 / 0.727 & 0.893 / 0.890 \\
 
 Three observations. First, \textbf{scale beats provenance}: 5{,}906
 pure-LLM labels (72.5\%) already exceed 1{,}000 human-adjudicated
-labels (71.4\%). Second, the \textbf{hybrid is best}: keeping human
+labels (71.4\%). The teachers' biases differ usefully: DeepSeek
+under-calls \emph{positive} on ambiguous rows (only 65\% agreement
+with human positives, relabelling 156/464 as neutral) while agreeing
+with humans on neutral at 88\% --- human adjudication corrects exactly
+this polarity bias, which is why the hybrid wins. Second, the \textbf{hybrid is best}: keeping human
 adjudication on the hardest 1{,}000 rows and adding 4{,}906 LLM
 labels reaches 72.9\% standalone and \textbf{75.0\% / 0.751} three-class
 and \textbf{91.2\% / 0.910} binary after mixing (split-half
@@ -1028,9 +1032,13 @@ SFT student alone reaches only \textbf{80.0\% / 0.730} on gold-600
 decision boundary away from the longer, single-film gold
 distribution. OOD-hardening and in-domain accuracy are therefore in
 tension here; we retain v3 as the deployed model and report the mix as
-an OOD-specialist candidate. A length- or domain-aware router is the
-obvious next step (gold median 80 chars vs.\ corpus median 24) and is
-left to future work.
+an OOD-specialist candidate. A length-aware router (short reviews
+$\to$ mix, long $\to$ v3) traces a Pareto frontier rather than a free
+lunch: at threshold 20 chars it gives 87.5\% gold / 69.0\% OOD,
+between v3 (89.5\% / 65.0\%) and the pure mix ($\sim$82\% / 75.0\%).
+Length is an imperfect domain signal (32\% of gold reviews are $<$50
+chars; 26\% of ood1000 are $\ge$50), so we leave a learned
+ domain router to future work.
 
 \subsection{What lab2000 does not claim}
 \label{sec:lab2000-caveats}
