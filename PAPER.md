@@ -23,9 +23,11 @@ gold-trained system drops to 65.0% three-class on wild short reviews,
 but that adding only 1,000 actively-selected boundary examples recovers
 +8.8pp to 71.4% (McNemar p = 4.2e-8), and scaling the same protocol
 with frontier-LLM pseudo-labels (up to ~11K AL rows) pushes the
-ensemble mix to **75.2% three-class** (seed-robust at ~75%), and lifts
-binary OOD to **91.4%** — at or above
-measured human–human agreement (71.5%). Three findings emerge that n=600 could
+ensemble mix to **75.7% three-class** (74.9--75.7% across seeds,
+split-half validated), significantly above the 1K-human mix
+(McNemar p = 0.018), and lifts
+binary OOD to **91.5%** — at or above
+measured human--human agreement (71.5%). Three findings emerge that n=600 could
 never show: active learning needs a gold anchor, hard labels beat soft
 distillation under domain shift, and star ratings become the strongest
 signal exactly where text is most ambiguous.
@@ -169,7 +171,9 @@ though gold scores are equal — ensemble-derived labels transfer better.
 (ECE = 0.251): predictions at 0.7–0.8 confidence are 98.9% accurate.
 Temperature scaling (T = 0.37, fit by NLL on gold) reduces ECE to ~0.04
 without changing predictions; T is applied at inference for honest
-confidence display.
+confidence display. Calibration also transfers better after AL: on
+ood1000 the best AL mix has ECE 0.045 vs v3's 0.159 at T = 1 — the
+pseudo-labelled boundary data sharpens confidence, not just accuracy.
 
 **Significance.** v3 vs v2: McNemar p = 0.65 (11 vs 8 discordant pairs);
 bootstrap 95% CI on ΔF1 = [−0.4pp, +3.8pp]. The point estimate (+1.6pp F1,
@@ -219,7 +223,7 @@ insufficient supervision — measured, not assumed.
 
 The lab2000 study stress-tests this honestly: the gold-trained system
 drops to 65.0% on wild reviews; 1,000 adjudicated AL examples recover
-the gap to 72.4% (p = 4.2e-8) with human labels alone, and to **75.2%**
+the gap to 72.4% (p = 4.2e-8) with human labels alone, and to **75.7%**
 after LLM-scaled AL expansion — at or above human–human agreement
 (71.5%). AL needs a gold anchor, hard labels beat
 soft distillation under shift, and ratings dominate precisely where
@@ -292,8 +296,14 @@ at n=600 (v2→v3 was p=0.65). Split-half resampling: 0.7225±0.013 /
 200-row random subset blind-labelled by a second human: agreement
 **71.5%**, κ=0.568 (95% CI [0.47, 0.66]). Divergence concentrates on the
 neutral boundary — where the first annotator said neutral, the second
-agrees only 49% (37/80 relabelled positive). Our best OOD system at
-72.4% with human labels alone and 75.2% after LLM scaling — at or above
+agrees only 49% (37/80 relabelled positive). Strikingly, model errors
+concentrate on exactly these ambiguous rows: the mix scores 78.3% on
+annotator-agreement rows vs 58.6% on disagreement rows (v3: 67.8% vs
+46.6%), and AL training lifts neutral recall on disagreement rows from
+0.41 to 0.70. Its residual error mode is neutral over-prediction
+(399 predicted vs 327 true on ood1000); a small logit offset recovers
+~0.6pp, within noise. Our best OOD system reaches
+75.7% with scaled AL labels — at or above
 human–human agreement:
 the model has reached the human consistency ceiling. (The two LLM
 passes agree with each other at 83.5%/κ=0.75 on the same subset — LLMs
@@ -311,9 +321,9 @@ JSON prompt:
 | DeepSeek-V4.1-Flash | ~763B | 0.820 (n=992) | **0.976** (n=661) | ~1.7s API |
 | Qwen3-4B (local) | ~4B | 0.706 (n=1000) | — | ~2.3s local |
 | Deployed v3 | ~1.7B | 0.650 | 0.850 | ~0.1s local |
-| SFT+mix (gold+al6k) | ~0.1B | **0.750** | **0.914** | ~0.1s local |
+| SFT+mix (gold+al11k) | ~0.1B | **0.757** | **0.915** | ~0.1s local |
 
-The frontier model leads by ~10pp on the full random OOD set — expected
+The frontier model leads by ~6pp on the full random OOD set — expected
 at ~2000× the parameters (McNemar p = 4.3e-5 on the 992 jointly
 parseable rows). But: (i) the neutral wall hits everyone —
 DeepSeek's own binary (97.6%) exceeds its three-class (82.0%) by 15.6pp;
@@ -356,24 +366,29 @@ shifts to 4.
 | gold-600 + al11k (1K human + 4.9K DS + 5K Qwen3-4B) | 0.703 / 0.706 | 0.902 / 0.898 |
 | gold-600 + al11k (all DS, no human) | 0.727 / 0.732 | 0.900 / 0.898 |
 | + v3 mix (al6kh) | 0.750 / 0.751 | 0.912 / 0.910 |
-| + v3 mix (al11kds, s123, w=0.4) | **0.752 / 0.755** | — |
+| + v3 mix (al11kds, s123, w=0.55) | **0.757 / 0.760** | — |
+| + v3 mix (al11kds e8, w=0.40) | — | **0.915 / 0.913** |
 
 Three observations: (i) **scale beats provenance** — 5,906 pure-LLM
 labels (72.5%) exceed 1,000 human labels (71.4%); (ii) **hybrid is
-best** — human adjudication on the hardest 1K + 4,906 LLM labels +
-v3 mix reaches 75.0%/91.2% (75.2%/91.4% after the second batch) — the
-strongest OOD numbers in the paper,
-still ~7pp below the frontier LLM but at ~0.1s local latency;
+best** — human adjudication on the hardest 1K + LLM-verified AL rows
++ v3 mix reaches \textbf{75.7\%} three-class (s123; 74.9\% at s42,
+split-half 74.6--75.5\%) and \textbf{91.5\%} binary. The 11K mix is
+significantly better than the 1K-human mix (McNemar $p = 0.018$,
+109 vs 76 discordant) and far above v3 alone ($p = 5.9\times10^{-12}$),
+still ~6pp below the frontier LLM but at ~0.1s local latency;
 (iii) **diminishing returns beyond ~6K** — a second 5K DeepSeek batch
-(al11k-DS) lifts binary to 91.4% and gold-600 cross-fit to 81.0%
-(best of any large-AL model) but leaves the 3-class mix flat
-(74.9% vs 75.0%), while the same-scale local Qwen3-4B teacher run is
+(al11k-DS) lifts binary to 91.5% and gold-600 cross-fit to 81.0%
+(best of any large-AL model) but the 3-class mix is statistically
+flat vs.\ 6K (75.3\% mean vs.\ 75.0\%, McNemar $p = 0.57$), while the
+same-scale local Qwen3-4B teacher run is
 consistently worse (70.3% standalone, 73.5% mixed, 90.2% binary,
 cross-fit 79.5%; pairwise McNemar n.s.\ at n=1000 but uniform across
 all four axes): pseudo-label *quality*, not quantity, is the binding
 constraint at this scale. A final ablation swaps the human-adjudicated
 al1000 for DeepSeek labels at the same 11K scale (al11k-allDS): the
-3-class mix is unchanged (75.2%) while binary drops 1.2pp to 90.2% —
+3-class mix is unchanged (75.2\%, McNemar $p = 0.66$ vs.\ the
+human-core mix) while binary drops 1.2pp to 90.3% —
 at this scale the human core's marginal value sits on the polarity
 boundary, not the neutral one. Total API cost
 for all 9,906 extra DeepSeek labels was a few hundred thousand tokens

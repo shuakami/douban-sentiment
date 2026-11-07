@@ -259,14 +259,19 @@ HANDOFF 写于 Stage-1 时代。此后项目进入第二阶段，核心产物是
 | SFT gold+al11k 全DS无人工（10.9K 全 DS）e4 | 0.727 | 0.900 |
 | SFT gold+al6kh binary e8 | — | 0.911 |
 | **v3×0.5 + al6kh e4 SFT×0.5 mix** | **0.750** | **0.912** |
-| v3×0.4 + al11kds e4 SFT(s123)×0.6 mix | **0.752** | — |
-| v3×0.5 + al11kds e4 SFT×0.5 mix | 0.749 | 0.914 |
+| v3×0.45 + al11kds e4 SFT(s123)×0.55 mix | **0.757** | — |
+| v3×0.5 + al11kds e4 SFT(s42)×0.5 mix | 0.749 | — |
+| v3×0.6 + al11kds e8 SFT×0.4 mix | — | **0.915** |
 | DeepSeek-V4.1-Flash 零样本 | 0.820 (n=992) | 0.976 (n=661) |
 | Qwen3-4B 零样本（label-logprob） | 0.706 (n=1000) | — |
 
-- McNemar p=4.2e-8（gold+al vs gold-only）；DS vs mix p=4.3e-5；split-half 已验证
-- **规模化曲线**：1K 人工 71.4% → 5.9K 纯 DS 72.5% → 6.9K 混合 74.5% → mix 75.0%；**11K 后收益递减**（al11kds mix 74.9-75.2% 持平，binary 升至 91.4%，gold600 CF 升至 81.0%）
-- **al11k 全 DS 消融**：去掉人工 al1000 后三分类 mix 不变（75.2%），binary 降 1.2pp 至 90.2%——11K 规模下人工核心价值集中在极性边界
+- McNemar p=4.2e-8（gold+al vs gold-only）；DS vs mix p=4.3e-5；**al11kds mix vs gold_al 1K mix p=0.018（109 vs 76）**；al11kds mix vs v3 p=5.9e-12（176 vs 69）；al11kds vs al11k-allDS p=0.66；al11kds vs al6kh p=0.57；split-half 已验证
+- **规模化曲线**：1K 人工 71.4% → 5.9K 纯 DS 72.5% → 6.9K 混合 74.5% → mix 75.0%；**11K 后收益递减**（al11kds mix 74.9-75.7% 持平——s123 w=0.55 拿 75.7%/f1 0.760，split-half 75.5±1.1%，s42 w=0.50 拿 74.9%；binary 升至 91.5%，gold600 CF 升至 81.0%）
+- **al11k 全 DS 消融**：去掉人工 al1000 后三分类 mix 不变（75.2%，p=0.66），binary 降 1.2pp 至 90.3%（mix 口径）——11K 规模下人工核心价值集中在极性边界
+- **标注分歧预测模型错误**（mix_analysis.py + error_vs_ambiguity.py）：ood1000 上 agree 行 mix 78.3% vs disagree 行 58.6%（v3 为 67.8%/46.6%）；人工终审子集（n=200）v3 46.5% / mix 55.0%；disagree 行中性召回 0.41→0.70
+- **mix 残余误差模式 = 中性过预测**：mix 预测中性 399 次 vs 真实 327（v3 为 280 次欠预测）；中性 P/R = 0.637/0.777。中性 logit offset -0.17 split-half 验证 +0.6pp（75.7→76.3%，噪声内）。DS-only-correct 145 行中 mix 误判 77 条为中性——前沿模型优势集中在 mix 读成中性的正面评论
+- **DS vs mix 分歧分析**（ds_vs_mix_analysis.py，992 条联合标注行）：mix 75.9% / v3 65.1% / DS 82.0%；DS-only-correct 145、mix-only-correct 85、both-wrong 94（gold 正面占 58）
+- **OOD 校准**：al11kds mix 在 ood1000 上 ECE=0.045（T=1），v3 为 0.159——AL 伪标签同时改善精度与置信度校准
 - **教师质量 > 数量**：同规模下 Qwen3-4B 教师（OOD 零样本 70.6%）训出的学生全面落后 DS 教师（82.0%）——al11kq mix 仅 73.5%
 - **LLM 伪标签 ≈ 人工终审**（71.3% vs 71.4%）；规模胜过来源，但人工标签纠正 DS 的正面极性偏差（人工正面仅 65% 与 DS 一致）
 - 三个论文级发现：AL 需要金标锚点（al-only 崩到 56%）；领域偏移下硬标签>软蒸馏；评分在文本歧义天花板处反超文本模型
@@ -277,6 +282,8 @@ HANDOFF 写于 Stage-1 时代。此后项目进入第二阶段，核心产物是
 - `scripts/eval_lab2000.py` — 部署管线在 lab2000 上的批量推理（产出 v3_probs.npz）
 - `scripts/sft_lab2000.py` — Stage-2 SFT；`--lab/--lab_eval/--extra_lab/--tag_suffix` 支持自定义训练/评估标签
 - `scripts/crossfit_gold600.py` — gold-600 交叉拟合（诚实域内评估，防 resubstitution）
+- `E:/GB77_data/lab2000/mix_analysis.py` — v3×SFT 混合权重扫描 + split-half + ECE/McNemar（修正：probsb 与 SFT binary 均为模型序 [负面,正面]）
+- `E:/GB77_data/lab2000/error_vs_ambiguity.py` — 模型错误 vs 标注分歧相关性分析
 - `E:/GB77_data/lab2000/deepseek_label.py` — DeepSeek API 标注（key 走环境变量 DEEPSEEK_API_KEY，**不要提交**）
 - 论文：`thesis/thesis.tex`（英）/ `thesis_zh.tex`（中）/ `PAPER.md`；lab500 已降为附录
 

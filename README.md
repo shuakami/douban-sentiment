@@ -10,7 +10,7 @@ student plus a frozen 1.3B-parameter judge, trained on 600 hand-labelled
 gold reviews and a 911K-review weakly-labelled corpus. ~80 ms per review
 on a single GPU; includes a React/Vite web UI.
 
-📄 **[Paper (PDF, 19 pages)](thesis/thesis.pdf)** — method, experiments,
+📄 **[Paper (PDF, 24 pages)](thesis/thesis.pdf)** — method, experiments,
 statistical tests, out-of-distribution study.
 **[Live demo](https://huggingface.co/spaces/Shuakami/douban-sentiment)** on Hugging Face Spaces.
 
@@ -25,10 +25,13 @@ corpus, and distill a 7-channel teacher ensemble into a single
 MacBERT-base student. The deployed system — student + frozen
 MegatronBERT-1.3B judge + neutral specialist — reaches **89.5%
 accuracy / 85.9 macro-F1** (5-fold cross-validation), with neutral-class recall
-improved from 0.543 to 0.707. A dedicated 500-sample out-of-distribution
-study shows binary polarity generalises (91.8%) while three-class
-accuracy drops to 60–74%, identifying annotation ambiguity — not model
-capacity — as the bottleneck.
+improved from 0.543 to 0.707. A 2,000-review out-of-distribution benchmark
+(`lab2000`: 1,000 random held-out + 1,000 actively-sampled reviews, dual-LLM
+blind annotation with human adjudication of all disagreements) exposes a
+65.0% three-class accuracy on wild short reviews; 1,000 adjudicated
+active-learning rows lift it to 72.4%, and scaling to ~11K LLM-verified AL
+rows reaches 75.2% three-class / 91.4% binary, with diminishing returns
+beyond ~6K confirming a noise ceiling near human agreement (71.5% IAA).
 
 ## Results
 
@@ -77,7 +80,8 @@ graph TD
 | `data/reviews_600.jsonl` | 648 rows: 600 hand-labelled reviews + 48 ultra-short-text augmentation rows (`src:"aug"`) |
 | `data/reviews_600_base.jsonl` | the original 600 rows — all reported metrics are computed on this file |
 | `data/label_semantic.jsonl` / `label_rule.jsonl` | semantic labels (authoritative) vs. star-derived weak labels |
-| `data/lab500_llm.jsonl` / `lab500_consensus.jsonl` | 500 fresh-corpus reviews labelled by an LLM annotator / two-annotator consensus |
+| `data/lab500_llm.jsonl` / `lab500_consensus.jsonl` | 500 fresh-corpus reviews labelled by an LLM annotator / two-annotator consensus (superseded by the lab2000 study) |
+| `data/reviews_gold_al1000.jsonl` | 1,600 rows: the 600 gold reviews + 1,000 human-adjudicated active-learning reviews used for the OOD Stage-2 SFT |
 | `data/aliyun/*.json` | upload files for the Alibaba Cloud PAI comparison (`scripts/to_aliyun_format.py`) |
 | `data/synth_*.jsonl`, `reviews_600_synth1.jsonl`, `suspect_labels.tsv`, `audit.md` | short-text-augmentation experiment artifacts (rejected approach) and the label audit |
 
@@ -87,8 +91,12 @@ contradict the text (e.g. 4★ reviews that are pure rants), so
 
 The label files under `data/` are our own annotation work — the 600
 hand-labelled gold reviews, the 500-row fresh-corpus labelling study,
-and the derived weak labels. Review texts remain Douban content; the
-911K corpus is external and stays local.
+the 1,000-row human-adjudicated AL set, and the derived weak labels.
+The full `lab2000` OOD/AL benchmark (2,000 reviews with dual-LLM blind
+labels and human adjudication of all 479 disagreements, plus DeepSeek
+pseudo-labels for ~11K scaled AL rows) lives outside the repo at
+`E:\GB77_data\lab2000\` and is documented in `HANDOFF.md`. Review texts
+remain Douban content; the 911K corpus is external and stays local.
 
 ### Large weakly-labelled corpus
 
