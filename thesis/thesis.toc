@@ -53,7 +53,7 @@
 \contentsline {paragraph}{Diminishing returns and teacher quality at 11K.}{18}{paragraph*.33}%
 \contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{18}{paragraph*.34}%
 \contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{18}{subsection.8.6}%
-\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{18}{section.9}%
+\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{19}{section.9}%
 \contentsline {section}{\numberline {10}Conclusion and Future Work}{19}{section.10}%
 \contentsline {section}{Reproducibility}{19}{section.10}%
 \contentsline {section}{\numberline {A}Training Details and Reproducibility}{20}{appendix.A}%

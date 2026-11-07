@@ -354,6 +354,7 @@ shifts to 4.
 | **gold-600 + al6k (hybrid)** | **0.729 / 0.731** | **0.911 / 0.908** |
 | gold-600 + al11k (1K human + 9.9K DS) | 0.734 / 0.737 | **0.914 / 0.912** |
 | gold-600 + al11k (1K human + 4.9K DS + 5K Qwen3-4B) | 0.703 / 0.706 | 0.902 / 0.898 |
+| gold-600 + al11k (all DS, no human) | 0.727 / 0.732 | 0.900 / 0.898 |
 | + v3 mix (al6kh) | 0.750 / 0.751 | 0.912 / 0.910 |
 | + v3 mix (al11kds, s123, w=0.4) | **0.752 / 0.755** | — |
 
@@ -370,7 +371,11 @@ still ~7pp below the frontier LLM but at ~0.1s local latency;
 consistently worse (70.3% standalone, 73.5% mixed, 90.2% binary,
 cross-fit 79.5%; pairwise McNemar n.s.\ at n=1000 but uniform across
 all four axes): pseudo-label *quality*, not quantity, is the binding
-constraint at this scale. Total API cost
+constraint at this scale. A final ablation swaps the human-adjudicated
+al1000 for DeepSeek labels at the same 11K scale (al11k-allDS): the
+3-class mix is unchanged (75.2%) while binary drops 1.2pp to 90.2% —
+at this scale the human core's marginal value sits on the polarity
+boundary, not the neutral one. Total API cost
 for all 9,906 extra DeepSeek labels was a few hundred thousand tokens
 — orders of magnitude cheaper than human annotation. This validates
 the protocol lab2000 itself used: LLM-label at scale,

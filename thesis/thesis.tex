@@ -996,6 +996,7 @@ gold-600 + al6k (all DS labels)      & 0.725 / 0.727 & 0.893 / 0.890 \\
 \textbf{gold-600 + al6k (hybrid)}    & \textbf{0.729 / 0.731} & \textbf{0.911 / 0.908} \\
 gold-600 + al11k (1K human + 9.9K DS)& 0.734 / 0.737 & \textbf{0.914 / 0.912} \\
 gold-600 + al11k (1K human + 4.9K DS + 5K Qwen3-4B) & 0.703 / 0.706 & 0.902 / 0.898 \\
+gold-600 + al11k (all DS, no human) & 0.727 / 0.732 & 0.900 / 0.898 \\
 \midrule
 + v3 mix (al6kh)                     & 0.750 / 0.751 & 0.912 / 0.910 \\
 + v3 mix (al11kds, s123, $w{=}0.4$)  & \textbf{0.752 / 0.755} & --- \\
@@ -1033,7 +1034,12 @@ cross-fit 79.5\%; pairwise McNemar vs.\ the DS-teacher mix is
 n.s.\ at $n{=}1000$, but the deficit is consistent across all four
 evaluation axes): at identical scale, pseudo-label quality --- not
 quantity --- is the binding constraint, and a 4B open teacher cannot
-substitute for the frontier API here. The honest scaling curve is
+substitute for the frontier API here. A final ablation replaces the
+human-adjudicated al1000 with DeepSeek labels at the same 11K scale
+(al11k-allDS): the three-class mix is unchanged (75.2\%) while binary
+drops 1.2pp to 90.2\% --- at this scale the human-verification core's
+marginal value concentrates in the polarity boundary, not the neutral
+one. The honest scaling curve is
 therefore: rapid gains to $\sim$6K AL rows, then saturation on the
 three-class task while binary and in-domain robustness keep improving.
 The total API cost for all 9{,}906 additional DeepSeek labels was a
