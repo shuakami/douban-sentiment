@@ -449,3 +449,12 @@ reproduce under any weight/seed protocol. Corpus-wide pseudo-vs-rating
 3-class agreement (47.8% / 54.0% confident-pool) now has a repo script
 `scripts/corpus_tri_agreement.py` → `out/corpus_tri_agreement.json`
 (distinct from `corpus_rating_crosstab.json`'s 81.2% binary figure).
+Second-pass artifact audit (same day): scaling-curve ~1K row corrected
+to the goldprobs-derived 0.7867/0.7217 (was 0.7883/0.7237 in all docs —
+likely a stale eval); fig_lab2000 mix bar updated to the five-seed
+headline 0.771/0.923 (was 0.766/0.918, the pre-avg5 3-seed value);
+PAPER.md crosstab 1★→neg aligned to 91.0%; REPRODUCE.md Qwen3 artifact
+glob fixed (`out/qwen3_*_score.json`). All other table rows re-verified
+against `*_goldprobs.npy` / `mix_crossfit_results.json` /
+`stage2_results.json` — binary pseudo 0.9488/0.9455, TF-IDF pseudo
+0.8117/0.7766, TF-IDF rating 0.6183/0.5369, neu recall 0.848 all match.
