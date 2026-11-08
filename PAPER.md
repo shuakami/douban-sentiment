@@ -72,7 +72,7 @@ pseudo pool, the row-normalized rating→prediction crosstab shows:
 
 | rating | →pos | →neu | →neg |
 |---|---|---|---|
-| 1★ | 1.7% | 7.3% | 90.9% |
+| 1★ | 1.7% | 7.3% | 91.0% |
 | 2★ | 1.6% | 13.7% | 84.7% |
 | 3★ | 9.9% | 33.3% | **56.8%** |
 | 4★ | 38.3% | 32.7% | 29.0% |
