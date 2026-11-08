@@ -153,7 +153,7 @@ that label quality, not model capacity, is the binding constraint.
 
 | Pseudo rows (per-class cap) | Acc | Macro-F1 |
 |---|---|---|
-| ~1K | 0.7883 | 0.7237 |
+| ~1K | 0.7867 | 0.7217 |
 | ~5K | 0.8033 | 0.7535 |
 | ~19K | 0.8433 | 0.8016 |
 | ~48K | 0.8550 | 0.8146 |
