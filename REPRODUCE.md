@@ -26,7 +26,7 @@ $env:DOUBAN_DATA_ROOT='E:/GB77_data'     # corpus + experiment artifacts (not in
 | 3-class 89.5% acc / 85.9 macro-F1, neutral recall 70.7% | `out/ens_lite_3class_v3.json` | `python scripts/eval_lite_v3.py` |
 | Binary 95.9% / 95.6 | `out/ens_lite_binary.json` | `python scripts/eval_lite.py` |
 | TF-IDF baseline 72.3/61.9, 84.1/82.3 | `out/tfidf_*.json` | `python scripts/tfidf_oof.py` |
-| Qwen3 zero-shot 78.3% (4B) | `out/eval_qwen3_score*.json` | `python scripts/eval_qwen3_score.py` |
+| Qwen3 zero-shot 78.3% (4B) | `out/qwen3_*_score.json` | `python scripts/eval_qwen3_score.py` |
 | Per-channel OOF probs | `out/distill_*.json`, `out/headmlp_*.json` | `scripts/distill.py`, `scripts/distill_head.py` |
 
 All gold metrics are stratified 5-fold OOF on
