@@ -28,7 +28,7 @@ ensemble mix to **76.6% three-class** (74.6--76.3% across three
 seeds, 76.6% seed-averaged by averaging the seeds' probability
 outputs before decoding, 5-fold cross-fit validated), significantly
 above the 1K-AL mix
-(McNemar p ≈ 0.002), and lifts
+(McNemar p = 0.0015), and lifts
 binary OOD to **91.8%** — above the measured 71.5%
 second-annotator agreement reference. Three findings emerge that n=600 could
 never show: active learning needs a gold anchor, hard labels beat soft
@@ -404,16 +404,17 @@ see Limitations).
 
 All "mix" rows use fusion weights selected by stratified 5-fold
 cross-validation on ood1000 (out-of-fold predictions — no row's label
-influences its own weight); ranges denote three random seeds.
+influences its own weight); ranges denote spread across random seeds
+(three for three-class, two for binary).
 
-Three observations: (i) **scale beats provenance** — 5,906 pure-LLM
+Three observations: (i) **scale beats provenance** — 5,893 pure-LLM
 labels (72.5%) exceed the al1000 released labels (71.4%); (ii) **hybrid is
 best** — the released al1000 labels on the hardest 1K + LLM-verified AL rows
 + v3 mix reaches \textbf{76.6\%} three-class (74.6--76.3\% across
 three seeds s42/s123/s456, 76.6\% seed-averaged; 5-fold
 cross-fit validated) and \textbf{91.8\%} binary. The 17K mix is
-significantly better than the 1K-AL mix (McNemar $p \approx 0.002$,
-119 vs 75 discordant) and far above v3 alone ($p = 5.8\times10^{-14}$),
+significantly better than the 1K-AL mix (McNemar $p = 0.0015$,
+124 vs 78 discordant) and far above v3 alone ($p = 2.0\times10^{-13}$),
 still ~5pp below DeepSeek-Flash (~8pp below V4-Pro) but at ~0.1s
 local latency;
 (iii) **diminishing returns beyond ~6K** — a second 5K DeepSeek batch
@@ -433,7 +434,8 @@ al3kds standalone reaches 70.3\% and its mix 71.5\% — roughly matching
 the 1K-al1000-label mix (72.0\%) with 3$\times$ the label count but
 at API-token rather than human-adjudication cost.
 The same-scale local Qwen3-4B teacher run is
-consistently worse (70.3% standalone, 72.4% mixed, 90.2% binary,
+consistently worse (70.3% standalone, 72.4% mixed, 90.2% standalone
+binary,
 cross-fit 79.5%; pairwise McNemar vs.\ the DS-teacher mix reaches
 $p = 0.041$ — teacher quality is a real, measurable gap): pseudo-label
 *quality*, not quantity, is the binding

@@ -112,7 +112,7 @@ $\sim$17K actively-selected examples --- pushes the ensemble mix to
 \textbf{76.6\% three-class} (74.6--76.3\% across three seeds,
 76.6\% seed-averaged by averaging the seeds' probability outputs
 before decoding; 5-fold cross-fit validated; significantly above
-the 1K-AL mix, McNemar $p \approx 0.002$), above the measured 71.5\%
+the 1K-AL mix, McNemar $p = 0.0015$), above the measured 71.5\%
 second-annotator agreement reference, and lifts
 binary OOD to \textbf{91.8\%}. We
 further document three findings invisible at $n{=}600$: active-learning
@@ -329,7 +329,7 @@ crosstab is:
 \toprule
 Rating & $\to$ Positive & $\to$ Neutral & $\to$ Negative \\
 \midrule
-1$\star$ & 1.7\%  & 7.3\%  & \textbf{90.9\%} \\
+1$\star$ & 1.7\%  & 7.3\%  & \textbf{91.0\%} \\
 2$\star$ & 1.6\%  & 13.7\% & \textbf{84.7\%} \\
 3$\star$ & 9.9\%  & 33.3\% & \textbf{56.8\%} \\
 4$\star$ & 38.3\% & 32.7\% & 29.0\% \\
@@ -506,7 +506,7 @@ was tested and rejected: re-labelling with round-2 models produces
 degenerate probabilities (mean confidence 0.986, memorisation), so
 exactly one round is used. This saturation is consistent with the
 confirmation-bias dynamics documented for self-training and pseudo-
-labeling \citep{arazo2020,xie2020,sohn2020}: once the pseudo-labels
+labelling \citep{arazo2020,xie2020,sohn2020}: once the pseudo-labels
 encode the teacher's own decision boundary, additional rounds amplify
 self-consistency rather than add information.
 
@@ -610,7 +610,7 @@ with 20 random half-splits.
 \caption{Gold-600 results. ``Deployed'' rows are the production system
 (5-fold out-of-fold); StructBERT and Qwen rows are zero-shot external
 baselines --- StructBERT is binary-only and scored on the 508
-non-neutral base rows.}
+non-neutral base rows. ``---'' = metric not reported.}
 \label{tab:main}
 \begin{tabular}{llcc}
 \toprule
@@ -656,7 +656,7 @@ errors concentrate in neutral$\leftrightarrow$polar confusions
 \begin{table}[H]
 \centering\small
 \caption{Corpus-trained models evaluated on gold-600 (zero gold
-training unless noted).}
+training unless noted). ``---'' = metric not reported.}
 \label{tab:corpus}
 \begin{tabular}{llccc}
 \toprule
@@ -701,7 +701,8 @@ ranges tested.
 
 \begin{table}[H]
 \centering\small
-\caption{Pseudo-label scaling (gold-600 eval; no gold rows in training).}
+\caption{Pseudo-label scaling (gold-600 eval; no gold rows in training).
+``---'' = metric not reported.}
 \label{tab:scaling}
 \begin{tabular}{lccc}
 \toprule
@@ -738,7 +739,8 @@ slightly better out-of-domain even where gold scores are equal.
 quantities are computed on the same 600 out-of-fold rows). The lower
 panel shows the sample count per equal-width confidence bin; the
 high-confidence region is sparse, so local fluctuations are expected
-even though the global ECE improves substantially.}
+even though the global ECE improves substantially. The accuracy axis
+is truncated at 0.45 to show the pre-scaling miscalibration.}
 \label{fig:calib}
 \end{figure}
 
@@ -866,7 +868,8 @@ our local models and the last two are off-the-shelf DeepSeek LLMs
 space); the dashed line marks the measured 71.5\% second-annotator
 agreement with the released labels. (b) Raw pairwise agreement on the
 same 200-row subset: two passes of the same LLM annotator model vs.\
-two humans. Raw agreement rate is reported here, not Cohen's $\kappa$;
+a second human annotator scored against the released (mixed-provenance)
+labels. Raw agreement rate is reported here, not Cohen's $\kappa$;
 higher LLM self-agreement reflects shared inductive bias (same model)
 and literal rubric following rather than superior annotation
 quality.}
@@ -959,7 +962,7 @@ low reasoning effort.
 \caption{Frontier-LLM vs.\ local pipeline on lab2000 (API snapshots
 evaluated November 2026). Parse failures
 are excluded from accuracy denominators and reported separately.
-Latency is mean per-request wall time.}
+Latency is mean per-request wall time. ``---'' = metric not reported.}
 \label{tab:llm}
 \begin{tabular}{lcccc}
 \toprule
@@ -1052,7 +1055,8 @@ Section~\ref{sec:lab2000-data}). All rows are
 gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability
 averages of v3 and the SFT model; the fusion weight is selected by
 stratified 5-fold cross-validation (out-of-fold predictions, no row's
-label influences its own weight). Ranges denote three random seeds.
+label influences its own weight). Ranges denote spread across random
+seeds (three for three-class, two for binary).
 Binary evaluation excludes neutral examples; ``---'' = not reported.}
 \label{tab:al-scaling}
 \begin{tabular}{lcc}
@@ -1073,8 +1077,9 @@ gold-600 + al14k (1K AL + 12.9K DS) & 0.744 / 0.747 & 0.914 / 0.911 \\
 gold-600 + al17k (1K AL + 15.9K DS) & 0.731--0.741 / 0.734--0.743 & 0.912--0.918 / 0.910--0.916 \\
 \midrule
 + v3 mix (al6kh)                     & 0.742 / 0.743 & 0.909 / 0.907 \\
-+ v3 mix (al11kds, s123)             & 0.757 / 0.760 & --- \\
-+ v3 mix (al11kds binary e8)         & --- & 0.915 / 0.913 \\
++ v3 mix (al11kds, best of 3 seeds)    & 0.757 / 0.760 & --- \\
++ v3 mix (al11kds 3-seed avg)           & 0.749 / 0.752 & --- \\
++ v3 mix (al11kds binary e8)            & --- & 0.915 / 0.913 \\
 + v3 mix (al14kds, 3 seeds)          & 0.748--0.757 & --- \\
 + v3 mix (al14kds 3-seed avg)        & 0.755 / 0.758 & --- \\
 + v3 mix (al14kds binary)            & --- & 0.909 / 0.907 \\
@@ -1085,7 +1090,7 @@ gold-600 + al17k (1K AL + 15.9K DS) & 0.731--0.741 / 0.734--0.743 & 0.912--0.918
 \end{tabular}
 \end{table}
 
-Three observations. First, \textbf{scale beats provenance}: 5{,}906
+Two observations. First, \textbf{scale beats provenance}: 5{,}893
 pure-LLM labels (72.5\%) already exceed the 1{,}000-row al1000 set's
 mixed-provenance labels (71.4\%). The teachers' biases differ usefully: DeepSeek
 under-calls \emph{positive} on ambiguous rows (only 65\% agreement
@@ -1114,8 +1119,8 @@ onset of diminishing returns in the ambiguity region. The gain over
 the 1K-AL mix is nonetheless significant (McNemar $p = 0.041$,
 109 vs.\ 80 discordant pairs), and the mix's OOD calibration improves
 with it (ECE 0.037 vs.\ v3's 0.159). The local-teacher run is
-clearly worse (70.3\% standalone, 72.4\% mixed, 90.2\% binary,
-cross-fit 79.5\%; pairwise McNemar vs.\ the DS-teacher mix reaches
+clearly worse (70.3\% standalone, 72.4\% mixed, 90.2\% standalone
+binary, cross-fit 79.5\%; pairwise McNemar vs.\ the DS-teacher mix reaches
 $p = 0.041$ --- teacher quality is a real, measurable gap, not noise):
 at identical scale, pseudo-label quality --- not
 quantity --- is the binding constraint, and a 4B open teacher cannot
@@ -1124,7 +1129,7 @@ structured, not random: on the same 5{,}000 uncertainty-sampled rows
 their labels agree on only 62.3\%, with Qwen over-calling positive
 (725 of DeepSeek's neutral rows) and under-calling negative (396 of
 its negative rows relabelled neutral) --- a distributional bias the
-student faithfully inherits. A final ablation replaces the
+student faithfully inherits. An additional ablation replaces the
 released al1000 labels with DeepSeek labels at the same 11K scale
 (al11k-allDS): the three-class mix is unchanged (75.2\%,
 McNemar $p = 0.81$ vs.\ the al1000 mix) while binary
@@ -1389,7 +1394,8 @@ zero-shot \citep{qwen2025}); the deployed v3 pipeline scored all rows.
 
 \begin{table}[H]
 \centering\small
-\caption{lab500 pilot results (superseded by lab2000).}
+\caption{lab500 pilot results (superseded by lab2000).
+``---'' = metric not reported.}
 \label{tab:lab500-app}
 \begin{tabular}{llcc}
 \toprule

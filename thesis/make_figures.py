@@ -276,8 +276,8 @@ axb.bar([0, 1], [0.835, 0.715], color=[C["purple"], C["orange"]],
 axb.text(0, 0.845, "83.5%", ha="center", fontsize=7.5, fontweight="bold")
 axb.text(1, 0.725, "71.5%", ha="center", fontsize=7.5, fontweight="bold")
 axb.set_xticks([0, 1])
-axb.set_xticklabels(["two LLM\nannotators\n(diff.\nfamilies)",
-                     "two\nhumans"], fontsize=6.4)
+axb.set_xticklabels(["same LLM\nmodel,\ntwo passes",
+                     "2nd human\nvs released"], fontsize=6.4)
 axb.set_ylabel("Raw agreement rate")
 axb.set_ylim(0.5, 1.0)
 axb.set_title("(b) Inter-annotator agreement (n=200)", fontsize=8.5)

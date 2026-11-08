@@ -10,7 +10,7 @@ student plus a frozen 1.3B-parameter judge, trained on 600 hand-labelled
 gold reviews and a 911K-review weakly-labelled corpus. ~80 ms per review
 on a single GPU; includes a React/Vite web UI.
 
-📄 **[Paper (PDF, 24 pages)](thesis/thesis.pdf)** — method, experiments,
+📄 **[Paper (PDF, 26 pages)](thesis/thesis.pdf)** — method, experiments,
 statistical tests, out-of-distribution study.
 **[Live demo](https://huggingface.co/spaces/Shuakami/douban-sentiment)** on Hugging Face Spaces.
 
@@ -85,7 +85,7 @@ graph TD
 | `data/reviews_600_base.jsonl` | the original 600 rows — all reported metrics are computed on this file |
 | `data/label_semantic.jsonl` / `label_rule.jsonl` | semantic labels (authoritative) vs. star-derived weak labels |
 | `data/lab500_llm.jsonl` / `lab500_consensus.jsonl` | 500 fresh-corpus reviews labelled by an LLM annotator / two-annotator consensus (superseded by the lab2000 study) |
-| `data/reviews_gold_al1000.jsonl` | 1,600 rows: the 600 gold reviews + 1,000 human-adjudicated active-learning reviews used for the OOD Stage-2 SFT |
+| `data/reviews_gold_al1000.jsonl` | 1,600 rows: the 600 gold reviews + 1,000 actively-selected AL reviews (279 human-adjudicated + 721 LLM-consensus labels) used for the OOD Stage-2 SFT |
 | `data/aliyun/*.json` | upload files for the Alibaba Cloud PAI comparison (`scripts/to_aliyun_format.py`) |
 | `data/synth_*.jsonl`, `reviews_600_synth1.jsonl`, `suspect_labels.tsv`, `audit.md` | short-text-augmentation experiment artifacts (rejected approach) and the label audit |
 
