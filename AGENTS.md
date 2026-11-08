@@ -387,3 +387,51 @@ Live demo: https://huggingface.co/spaces/Shuakami/douban-sentiment
   module scope with `.to("cuda")`, `@spaces.GPU(duration=120)` on inner
   fn, `@app.api(name="predict", concurrency_limit=1, time_limit=180)`.
   Env var `GRADIO_SSR_MODE=false` set on the Space (required for custom `/`).
+
+## Stage-2 lab2000 OOD / active-learning study (2026-11-08/09)
+
+Benchmark: `E:/GB77_data/lab2000/lab2000_final.jsonl` — 2,000 corpus
+reviews, disjoint sets `ood1000` (clean held-out eval, mixed-provenance
+labels: 200 human-adjudicated + 800 two-pass LLM consensus) and `al1000`
+(TRAINING set — never cite its numbers as generalisation). Per-row
+provenance in `final_source`; second-human IAA on 200 rows
+(kappa=0.568, raw agreement 71.5%).
+
+Headline OOD results (5-fold cross-fit mix on ood1000, honest protocol —
+each prediction uses weights tuned on other folds; scripts + artifacts
+under `E:/GB77_data/lab2000/`):
+
+- 3-class: `al17kds_avg5` = **0.771 / 0.7739** (five e4 seeds
+  s42/s123/s456/s789/s999 prob-averaged; per-seed 0.746–0.763)
+- binary (n=673 non-neutral): `al17kds_e8avg4` = **0.9227 / 0.9205**
+  (four e8 seeds s42/s123/s789/s999; fold weights bimodal 0.45–0.95)
+- vs v3 OOD: 0.650 3-class / 0.850 binary; vs 1K-AL mix (gold_al):
+  0.720 / 0.878 — McNemar p=3.9e-4 (126v75) and p=4.8e-15 (183v62)
+- fresh500 (500 uniform corpus rows, teacher-labelled, verified zero
+  text overlap with gold + ALL AL pools): al17kds mix w=0.6 →
+  **77.0% 3-class** (SFT alone 78.0%) / w=0.5 → **93.7% binary**
+  vs v3 58.8%/86.3%
+
+Key scripts/artifacts (all in `E:/GB77_data/lab2000/` unless noted):
+`scripts/sft_lab2000.py` (repo — SFT trainer, `--data` extra AL file),
+`scripts/mix_crossfit.py` (repo — cross-fit mixing; CFG has all
+al11k/al14k/al17k seed/epoch combos),
+`mix_crossfit_results.json` + `mix_oof_probs.npz` (per-config OOF probs),
+`mix_metrics_recompute.py` (McNemar/stratification from npz),
+`length_strat_eval.py` → `length_strat_results.json` (length buckets +
+binary section now saved), `stratification_extra_results.json`
+(provenance + fresh500 by-length incl. al17k),
+`sft_fresh500.py`/`sft_fresh500_al17k.py` + `fresh500_sft_probs*/`
++ `eval_fresh500_mix*.py` (fresh500 pipeline),
+`crossfit_gold600_al*.json` (gold-600 cross-fit SFT evals),
+`sft_results/gold_extra_al*_*.json` (per-seed OOD probs + metrics).
+
+AL pools: `extra_al{3k,6k,11k,14k,17k}*_ds.jsonl` (DeepSeek labels) —
+al17kds = al1000 core + ~15.9K DS rows incl. 3K disagreement-mined per
+round. Qwen3-4B teacher variant (`al11kq`) is a documented negative
+result (teacher quality binds, not quantity).
+
+Caveats baked into the paper: mix weights for binary e8 are bimodal
+across folds; fresh500 labels are teacher-generated; the 479
+human-adjudicated rows are disagreement-enriched (accuracy depressed
+for every system); al1000 is in-training.
