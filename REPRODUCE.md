@@ -54,7 +54,7 @@ Working dir: `$DOUBAN_DATA_ROOT/lab2000/` (released subset in
 | v3 OOD 65.0% 3-class / 85.0% binary | `sft_results/*ood*` + `eval_lab2000.py` | `python scripts/eval_lab2000.py` |
 | gold+al1000 SFT 71.4% (+8.8pp, p=4.0e-8) | `sft_results/gold_al_*.json` | `python scripts/sft_lab2000.py` |
 | al6k hybrid 74.2% mix | `sft_results/gold_extra_al6kh_*.json` | `scripts/sft_lab2000.py` |
-| al11k/al14k/al17k mixes 74.9–76.9% | `sft_results/gold_extra_al*b*_*.json` | `scripts/sft_lab2000.py` |
+| al11k/al14k/al17k mixes 74.9–77.1% | `sft_results/gold_extra_al*b*_*.json` | `scripts/sft_lab2000.py` |
 | **Cross-fit mix weights + all mix metrics** | `mix_crossfit_results.json`, `mix_oof_probs.npz` | `python scripts/mix_crossfit.py` |
 | McNemar p-values (0.0015, 5.8e-4, 0.041, …) | `mix_oof_probs.npz` | `python /e/GB77_data/lab2000/mix_metrics_recompute.py` |
 | Length/provenance stratification (this paper's §stratification) | `length_strat_results.json`, `stratification_extra_results.json` | `python /e/GB77_data/lab2000/length_strat_eval.py` |
