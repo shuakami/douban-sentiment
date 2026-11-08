@@ -53,7 +53,7 @@
 \contentsline {paragraph}{部署权衡（实测而非假设）。}{17}{paragraph*.33}%
 \contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{17}{subsection.8.6}%
 \contentsline {section}{\numberline {9}局限性与效度威胁}{17}{section.9}%
-\contentsline {section}{\numberline {10}结论与未来工作}{17}{section.10}%
+\contentsline {section}{\numberline {10}结论与未来工作}{18}{section.10}%
 \contentsline {section}{可复现性}{18}{section.10}%
 \contentsline {section}{\numberline {A}训练细节与可复现性}{19}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}超参数}{19}{subsection.A.1}%

@@ -270,16 +270,30 @@ HANDOFF 写于 Stage-1 时代。此后项目进入第二阶段，核心产物是
 | v3×0.5 + al14kds e4 SFT(s456)×0.5 mix | 0.754 | — |
 | v3×0.5 + al14kds 三种子平均×0.5 mix | **0.762 / 0.764** | — |
 | v3×0.6 + al14kds binary e4 SFT×0.4 mix | — | **0.917 / 0.915** |
+| SFT gold+al17k（1K人工+15.9K DS）e4 ×3种子 | 0.731--0.741 | 0.912--0.918 |
+| v3×0.55 + al17kds e4 SFT(s123)×0.45 mix | **0.767** | — |
+| v3×0.4 + al17kds 三种子平均×0.6 mix | **0.768 / 0.771** | — |
+| v3×0.55 + al17kds binary e4 SFT(s42)×0.55 mix | — | **0.921 / 0.919** |
 | DeepSeek-V4.1-Flash 零样本 | 0.820 (n=992) | 0.976 (n=661) |
 | Qwen3-4B 零样本（label-logprob） | 0.706 (n=1000) | — |
 
 - McNemar p=4.2e-8（gold+al vs gold-only）；DS vs mix p=4.3e-5；**al14kds mix vs gold_al 1K mix p=0.005（101 vs 64）**；al11kds mix vs gold_al 1K mix p=0.018（109 vs 76）；al14kds vs al11kds-s123 p=0.75（46 vs 42，+0.4pp 噪声内）；al14kds vs al3kds p=0.0001；al14kds binary vs al11kds-e8 p=1.0；al11kds mix vs v3 p=5.9e-12（176 vs 69）；al11kds vs al11k-allDS p=0.66；al11kds vs al6kh p=0.57；split-half 已验证（al14kds 3c 75.9±1.6%，binary 91.3±1.1%）
 - **规模化曲线**：1K 人工 71.4% → 5.9K 纯 DS 72.5% → 6.9K 混合 74.5% → mix 75.0%；**11K 后收益递减**（al11kds mix 74.9-75.7%）；**14K 分歧挖掘 round-2**：al14kds mix 75.4-76.1%（三种子，3种子平均 76.2%/f1 0.764），binary 91.7%，gold600 CF 81.5%——方向一致但 +0.4pp 在 n=1000 噪声内；**al3kds 标签效率**：仅 3K 分歧挖掘 DS 单模 70.3%、mix 71.9% ≈ 1K 人工 mix 72.4%
 - **al11k 全 DS 消融**：去掉人工 al1000 后三分类 mix 不变（75.2%，p=0.66），binary 降 1.2pp 至 90.3%（mix 口径）——11K 规模下人工核心价值集中在极性边界
-- **标注分歧预测模型错误**（mix_analysis.py + error_vs_ambiguity.py）：ood1000 上 agree 行 mix 78.3% vs disagree 行 58.6%（v3 为 67.8%/46.6%）；人工终审子集（n=200）v3 46.5% / mix 55.0%；disagree 行中性召回 0.41→0.70
+- **标注分歧预测模型错误**（mix_analysis.py + error_vs_ambiguity.py）：ood1000 上 al14k mix agree 行 78.8% vs disagree 行 59.4%（v3 为 67.8%/46.6%，al11k mix 为 78.3%/58.6%）；人工终审子集（n=200）v3 46.5% / mix 55.0%；disagree 行中性召回 0.41→0.70；长度分层：<20字 14k mix 78.7%（11k 77.2%）、≥80字 74.8%（11k 73.6%）
 - **mix 残余误差模式 = 中性过预测**：mix 预测中性 399 次 vs 真实 327（v3 为 280 次欠预测）；中性 P/R = 0.637/0.777。中性 logit offset -0.17 split-half 验证 +0.6pp（75.7→76.3%，噪声内）。DS-only-correct 145 行中 mix 误判 77 条为中性——前沿模型优势集中在 mix 读成中性的正面评论
 - **DS vs mix 分歧分析**（ds_vs_mix_analysis.py，992 条联合标注行）：mix 75.9% / v3 65.1% / DS 82.0%；DS-only-correct 145、mix-only-correct 85、both-wrong 94（gold 正面占 58）
-- **OOD 校准**：al11kds mix 在 ood1000 上 ECE=0.045（T=1），v3 为 0.159——AL 伪标签同时改善精度与置信度校准
+- **OOD 校准**：al11kds mix 在 ood1000 上 ECE=0.045（T=1），v3 为 0.159——AL 伪标签同时改善精度与置信度校准；al14k 3seed-avg mix ECE=0.043（best T=0.31）
+- **al14k mix 逐类**（3seed-avg w=0.5）：正面 P/R=0.901/0.709（398）、中性 0.651/0.777（327）、负面 0.761/0.822（275）；混淆矩阵 [[282,91,25],[27,254,46],[4,45,226]]——残余误差最大桶已变为正面→中性（91 条），中性过预测模式延续；binary mix 负面 P/R=0.879/0.924、正面 0.945/0.912
+- **SFT 概率跨变体集成（探索性，未显著）**：al14k 三种子+al11k-s123 概率平均后混 v3 → 76.6%/f1 0.768（表观新高），但 vs 14k-3seed 76.2% 的 McNemar p=0.48——噪声内，不写入论文头条；推理需 4 个 SFT 前向，复杂度不值
+- **e8 轮次（al14kds，已否决）**：3class e8 mix 峰值 75.4%（w=0.5，vs e4 76.1%）、binary e8 mix 91.2%（vs e4 91.7%）——14.5K 规模下 e4 仍最优，e8 过拟合 AL 集（al1000 acc 0.997/1.0）
+- **class_weight 消融（al14kds e4）**：3class cw 单模 75.6%（vs 无 cw 74.4%）、mix w=0.55 → **76.5%/f1 0.766**（split-half 76.5±1.1%）——表观 +0.3pp 但 vs 无 cw 3seed mix McNemar p=0.79 噪声内；逐类看正面召回 0.709→0.741、中性 0.777→0.740（cw 上调少数类权重把边界推向正面）。**binary cw 反而降**：mix 峰值 90.9% vs 无 cw 91.7%——cw 只利于三分类，不采用为默认
+- **3c→binary 边际化一致性**：al14k 3c mix 边际化二分类 90.8% vs 专用 binary mix 91.7%（行一致率 94.7%）——两任务仍然自洽，专用 binary 头略优
+- **人工终审困难子集更新**（ood1000 中 final_source=user 的 195 条 DS 可解析行）：v3 46.7% / al11k-mix 55.4% / al14k-3seed-mix 55.9% / al14k-s42 w0.5 57.9% / gold_al-e8 w0.7 59.0% / DS-flash 59.5%——AL 混合在纯人工终审困难行上逼近前沿 LLM（n=195 噪声内），论文"hard subset parity"论点成立
+- **binary s123 种子**：al14kds binary e4 s123 mix w=0.4 → **91.98%/f1 0.918**（s42 为 91.68%，2-seed avg 91.98%）——binary 头条可从 91.7% 上调至 ~92.0%
+- **cw s123 补全**：cw-s123 mix 76.0%（w=0.65）、cw-avg 76.5%/f1 0.767——cw 两种子均值 76.3% vs 无 cw 76.2%，确认噪声内不显著
+- **AL round-3 完成（al17kds/al3k_r2ds）**：`sample_al3k_r2.py`（seed=123 同判据再采 3,000，自动排除 al3k）→ DS 标注 3,000/3,000（865正/1585中/550负）→ `extra_al17k_ds.jsonl`（16,906）/`extra_al17k_tail_ds.jsonl`（15,906）。SFT e4 三种子+binary 两种子：3c 单模 73.1/74.1/73.6%，**mix s123 76.7%（w=0.55）单种子新高、3seed-avg 76.8%/f1 0.771（w=0.6）**；binary mix s42 **92.12%/f1 0.919（w=0.45）**、s123 91.23%（w=0.70）。gold600 CF **81.0%**。vs 14k-avg3 76.2% McNemar p=0.54、vs 11k p=0.28、vs human-mix p=0.0019——**三分类已饱和于 ~76-77% 噪声带，binary 微升至 ~92%**
+- **坑**：`deepseek_label.py` 需 `DEEPSEEK_API_KEY` 环境变量——新 shell 默认没有，401 会把整批行写成 label=null 且 resume 逻辑会跳过它们（done 按 i 记录不看 label），失败批次要删输出文件重跑
 - **教师质量 > 数量**：同规模下 Qwen3-4B 教师（OOD 零样本 70.6%）训出的学生全面落后 DS 教师（82.0%）——al11kq mix 仅 73.5%。两教师在 al5000b 同 5000 条上的标签一致率仅 **62.3%**（3113/5000），分歧有结构：Qwen 过判正面（DS 中性行中 725 条被 QW 改正面）、漏判负面（DS 负面行中 396 条被 QW 改中性）——教师选择的影响是分布级的
 - **AL round-2 完成（al14kds/al3kds）**：`sample_al3k.py` 按"stu3c vs stu3c_r2 双学生分歧"采样 3000 条（maxprob [0.15,0.75) 带内、argmax 不一致、中性配额 1200），DeepSeek r1 标注 **3000/3000 全可解析**（分布 1645中/852正/503负）；诊断：DS 与 r1 一致 36.8%、与 r2 一致 37.4%、**两者都不一致 25.9%**——边界区三方分歧是固有的。`build_extra14k.py` 产出 `extra_al14k_ds.jsonl`（13,906 = 1K人工+9.9K DS+3K 新DS）与 `extra_al14k_tail_ds.jsonl`（12,906，crossfit 用）。SFT e4 三类/二分类 + gold600 crossfit 全部完成：3c mix 76.1%（s42 w0.5）/75.8%（s123 w0.55）/75.4%（s456 w0.5），binary mix 91.7%（w0.4），CF 81.5%
 - **LLM 伪标签 ≈ 人工终审**（71.3% vs 71.4%）；规模胜过来源，但人工标签纠正 DS 的正面极性偏差（人工正面仅 65% 与 DS 一致）
@@ -306,3 +320,6 @@ HANDOFF 写于 Stage-1 时代。此后项目进入第二阶段，核心产物是
 - al5000b 另有一套**本地 Qwen3-4B** 标注（`qwen_label_al5000b.py`，label-logprob 打分，同 rubric prompt），用于"API 教师 vs 本地教师"对照：`qwen_al5000b_labels.jsonl` + `qwen3_4b_al5000b_probs.npy`；ood1000 的 Qwen 基线见 `qwen_label_ood1000.py`
 - AL-11K 实验文件：`extra_al11k_ds.jsonl`（al1000人工+al5000 DS+al5000b DS = 10,906，SFT 用）；`extra_al11k_hybrid.jsonl`（同结构但末批换 Qwen = 10,906）；`extra_al11k_tail{,_ds}.jsonl`（去 al1000 的 9,906/9,906，crossfit 用——crossfit 脚本自带 al1000，al6kh 那次 crossfit 曾重复计 al1000）
 - AL-14K 实验文件：`al3k.jsonl`（分歧挖掘候选 3,000）、`ds_deepseek_flash_al3k_r1_labels.jsonl`（DS 标注 3,000/3,000）、`extra_al3k_ds.jsonl`（3,000，SFT 用）、`extra_al14k_ds.jsonl`（13,906 = 1K人工+9.9K DS+3K 新DS，SFT 用）、`extra_al14k_tail_ds.jsonl`（12,906 去人工，crossfit 用）
+- AL-17K round-3 文件：`al3k_r2.jsonl`（同判据 seed=123 再采 3,000，自动排除 al3k）、`ds_deepseek_flash_al3k_r2_labels.jsonl`（3,000/3,000，分布 865正/1585中/550负）、`extra_al3k_r2_ds.jsonl`、`extra_al17k_ds.jsonl`（16,906）、`extra_al17k_tail_ds.jsonl`（15,906）
+- **fresh500 无偏确认集结果**（DS 标签 n=500，权重固定 ood1000 所选 w=0.5/0.4 不重新调参）：v3 三分类 **58.8%** → al14k 3seed-avg mix **74.6%**/f1 0.748（McNemar p=1.6e-13，100 vs 21）；SFT 单模 76.8%（fresh500 上反超 mix——与 ood1000 上 mix>SFT 不同，标签源差异）；binary v3 86.3% → mix **92.6%**/f1 0.926（ood1000 上 92.0%）。**结论：ood1000 上的 AL 增益在全新随机样本上复现，非测试集过拟合**。注意：fresh500 标签为纯 DS 标签（ood1000 为人工终审），DS 训练的模型对 DS 标签有分布对齐优势——数字应解读为"对教师分布的泛化"而非人类准确率；binary 因标签歧义小受影响较小。**附带发现**：fresh500 上 v3 仅 58.8%（比 ood1000 的 65.0% 更弱），此时 SFT 单模 76.8% 反超 mix 74.6%——最优混合权重随领域难度漂移（v3 越弱越该加大 SFT 权重，oracle w=0.6 → 76.0%），提示 mix 权重是域相关超参
+- **fresh500 文件**：`sample_fresh500.py`（seed=777 均匀随机 500 条，排除全部 lab2000+AL 训练文本，len 中位 24 与 ood1000 同型）；`eval_fresh500_v3.py`（v3 probs → `fresh500_v3_probs.npz`）、`sft_fresh500.py`（al14kds e4 三种子+binary 两种子 probs → `fresh500_sft_probs/`）、`eval_fresh500_mix.py`（固定权重评估）、DS 标注 `ds_deepseek_flash_fresh500_labels.jsonl`（500/500）
