@@ -57,7 +57,7 @@ Working dir: `$DOUBAN_DATA_ROOT/lab2000/` (released subset in
 | al6k hybrid 74.2% mix | `sft_results/gold_extra_al6kh_*.json` | `scripts/sft_lab2000.py` |
 | al11k/al14k/al17k mixes 74.9–77.1% | `sft_results/gold_extra_al*b*_*.json` | `scripts/sft_lab2000.py` |
 | **Cross-fit mix weights + all mix metrics** | `mix_crossfit_results.json`, `mix_oof_probs.npz` | `python scripts/mix_crossfit.py` |
-| McNemar p-values (0.0015, 5.8e-4, 0.041, …) | `mix_oof_probs.npz` | `python /e/GB77_data/lab2000/mix_metrics_recompute.py` |
+| McNemar p-values (0.0015, 1.7e-3, 0.041, …) | `mix_oof_probs.npz` | `python /e/GB77_data/lab2000/mix_metrics_recompute.py` |
 | Length/provenance stratification (this paper's §stratification) | `length_strat_results.json`, `stratification_extra_results.json` | `python /e/GB77_data/lab2000/length_strat_eval.py` |
 | Second-human IAA 71.5% / κ=0.568 | `data/lab2000/iaa_friend_user.json`, `friend_IAA_map.json` | aggregates released; protocol in `friend_IAA_README.md` |
 | LLM pass agreement 83.5% / κ=0.75 (on the 200-row IAA subset; 83.3%/0.74 on all 2000) | `lab2000_final.jsonl` (`label_a`/`label_b`) + `friend_IAA_map.json` | recompute from file |

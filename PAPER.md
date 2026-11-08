@@ -352,7 +352,7 @@ JSON prompt:
 DeepSeek-V4.1-Flash leads by ~5pp on the full random OOD set
 (V4-Pro by ~8pp) — expected given the orders-of-magnitude parameter
 gap (763B--1.6T vs our 0.1--1.6B local models); vs Flash the
-difference is significant (McNemar p = 5.8e-4 on the 992 jointly
+difference is significant (McNemar p = 1.7e-3 on the 992 jointly
 parseable rows). But: (i) the neutral wall hits everyone —
 DeepSeek's own binary (97.6%) exceeds its three-class (82.0%) by 15.6pp;
 (ii) on the 479 human-adjudicated hard subset the gap nearly closes
