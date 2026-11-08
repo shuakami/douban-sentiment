@@ -386,7 +386,11 @@ same-scale local Qwen3-4B teacher run is
 consistently worse (70.3% standalone, 73.5% mixed, 90.2% binary,
 cross-fit 79.5%; pairwise McNemar n.s.\ at n=1000 but uniform across
 all four axes): pseudo-label *quality*, not quantity, is the binding
-constraint at this scale. A final ablation swaps the human-adjudicated
+constraint at this scale. Their disagreement is structured — on the
+same 5,000 uncertainty-sampled rows the teachers agree on only 62.3%,
+with Qwen over-calling positive (725 of DS's neutral rows) and
+under-calling negative (396 of its negative rows relabelled neutral);
+the student inherits the bias distributionally. A final ablation swaps the human-adjudicated
 al1000 for DeepSeek labels at the same 11K scale (al11k-allDS): the
 3-class mix is unchanged (75.2\%, McNemar $p = 0.66$ vs.\ the
 human-core mix) while binary drops 1.2pp to 90.3% —

@@ -1048,7 +1048,12 @@ cross-fit 79.5\%; pairwise McNemar vs.\ the DS-teacher mix is
 n.s.\ at $n{=}1000$, but the deficit is consistent across all four
 evaluation axes): at identical scale, pseudo-label quality --- not
 quantity --- is the binding constraint, and a 4B open teacher cannot
-substitute for the frontier API here. A final ablation replaces the
+substitute for the frontier API here. The teachers' disagreement is
+structured, not random: on the same 5{,}000 uncertainty-sampled rows
+their labels agree on only 62.3\%, with Qwen over-calling positive
+(725 of DeepSeek's neutral rows) and under-calling negative (396 of
+its negative rows relabelled neutral) --- a distributional bias the
+student faithfully inherits. A final ablation replaces the
 human-adjudicated al1000 with DeepSeek labels at the same 11K scale
 (al11k-allDS): the three-class mix is unchanged (75.2\%,
 McNemar $p = 0.66$ vs.\ the human-core mix) while binary
