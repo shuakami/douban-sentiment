@@ -51,12 +51,12 @@
 \contentsline {subsection}{\numberline {8.5}LLM 伪标签能否替代人工终审？}{16}{subsection.8.5}%
 \contentsline {paragraph}{规模化：1K AL $\to $ 5.9K 混合。}{16}{paragraph*.31}%
 \contentsline {paragraph}{部署权衡（实测而非假设）。}{18}{paragraph*.33}%
-\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{18}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{19}{subsection.8.6}%
 \contentsline {section}{\numberline {9}局限性与效度威胁}{19}{section.9}%
 \contentsline {section}{\numberline {10}结论与未来工作}{19}{section.10}%
-\contentsline {section}{可复现性}{19}{section.10}%
+\contentsline {section}{可复现性}{20}{section.10}%
 \contentsline {section}{\numberline {A}训练细节与可复现性}{20}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}超参数}{20}{subsection.A.1}%
 \contentsline {subsection}{\numberline {A.2}产物清单}{20}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}环境}{20}{subsection.A.3}%
+\contentsline {subsection}{\numberline {A.3}环境}{21}{subsection.A.3}%
 \contentsline {section}{\numberline {B}附录：lab500 先导研究}{21}{appendix.B}%

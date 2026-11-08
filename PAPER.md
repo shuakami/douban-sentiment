@@ -461,6 +461,15 @@ for all 15,906 extra DeepSeek labels was a few hundred thousand tokens
 the protocol lab2000 itself used: LLM-label at scale,
 human-adjudicate a verification core.
 
+Two stratification checks preempt the obvious objections. The al17k
+gain is not an artifact of LLM-consensus labels: on the 800 consensus
+rows the mix improves over v3 by +11.7pp (69.6%→81.4%) and on the 200
+human-adjudicated rows by +11.0pp (46.5%→57.5%) — the adjudicated
+subset is intrinsically harder, yet the gain replicates. And the gain
+concentrates on terse reviews: of the +116 net discordant wins over
+v3, 55 fall on ≤20-char rows, while the >100-char slice stays weakest
+for every system (mix 72.4% vs v3 61.2% on ood1000; 64.7% on fresh500).
+
 \textbf{Fresh-sample robustness check.} Because AL rows were sampled
 on corpus uncertainty and mix weights by cross-validation on ood1000,
 we additionally sampled

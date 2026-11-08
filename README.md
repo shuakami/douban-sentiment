@@ -131,6 +131,7 @@ data/       gold-labelled datasets
 out/        OOF probability JSONs and ensemble selections (experiment logs)
 models/     trained checkpoints (gitignored)
 eval/       external benchmark models (gitignored)
+REPRODUCE.md  maps every paper number to its artifact + regeneration command
 ```
 
 ## Setup
@@ -164,6 +165,10 @@ export HF_HOME=/path/to/hf-cache
 ```
 
 ## Reproducing the models
+
+See [`REPRODUCE.md`](REPRODUCE.md) for the full number→artifact→command
+map covering every result in the paper (gold-600 OOF, lab2000 OOD/AL
+scaling, IAA, LLM comparisons, fresh500).
 
 ```bash
 # 1) teacher OOF channels + distillation students (5-fold)
