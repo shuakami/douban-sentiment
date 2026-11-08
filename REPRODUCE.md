@@ -62,7 +62,8 @@ Working dir: `$DOUBAN_DATA_ROOT/lab2000/` (released subset in
 | LLM pass agreement 83.5% / κ=0.75 | `lab2000_final.jsonl` (`label_a`/`label_b`) | recompute from file |
 | DeepSeek-V4.1-Flash / V4-Pro OOD | `data/lab2000/ds_deepseek_*.jsonl` | labels released; scoring via `scripts/eval_lab2000.py` |
 | Qwen3-4B teacher ablation | `data/lab2000/qwen_*` | labels + probs released |
-| fresh500 74.6% vs 58.8% (p=1.6e-13) | `fresh500*.jsonl/.npy`, `fresh500_sft_probs/` | `/e/GB77_data/lab2000/eval_fresh500_mix.py` |
+| fresh500 al14k 74.6%/92.6% vs v3 58.8%/86.3% | `fresh500*.jsonl/.npy`, `fresh500_sft_probs/` | `/e/GB77_data/lab2000/eval_fresh500_mix.py` |
+| fresh500 al17kds 77.0%/93.7% vs v3 (headline mix) | `fresh500_sft_probs_al17k/` | `/e/GB77_data/lab2000/sft_fresh500_al17k.py`, `eval_fresh500_mix_al17k.py` |
 | gold-600 cross-fit deployment numbers | `crossfit_gold600*.json` | `scripts/crossfit_gold600.py` |
 
 ## 4. Comparisons & audits

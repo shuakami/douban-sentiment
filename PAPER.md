@@ -468,19 +468,23 @@ human-adjudicated rows by +9.5pp (46.5%→56.0%) — the adjudicated
 subset is intrinsically harder, yet the gain replicates. And the gain
 concentrates on terse reviews: of the +121 net discordant wins over
 v3, 58 fall on ≤20-char rows, while the >100-char slice stays weakest
-for every system (mix 72.4% vs v3 61.2% on ood1000; 64.7% on fresh500).
+for every system (mix 72.4% vs v3 61.2% on ood1000; 66.7% on fresh500).
 
 \textbf{Fresh-sample robustness check.} Because AL rows were sampled
 on corpus uncertainty and mix weights by cross-validation on ood1000,
 we additionally sampled
 \textbf{fresh500} — 500 uniformly-random corpus reviews disjoint from
-all training and eval texts — labelled by the same DeepSeek teacher.
-With weights frozen at the modal cross-fit values
-($w_{\mathrm{SFT}}{=}0.5$ three-class, $0.4$ binary), the al14k mix
-scores 74.6\% three-class vs.\ v3's 58.8\% (McNemar $p = 1.6\times10^{-13}$)
-and 92.6\% binary vs.\ 86.3\% — the AL gain replicates on unseen data
-and is not an artifact of benchmark-specific tuning. (The standalone
-al14k SFT student scores comparably at 76.8% seed-averaged on
+all training and eval texts (zero text overlap verified against
+gold-600 and every AL pool through al17k) — labelled by the same
+DeepSeek teacher. With weights frozen at the ood1000 cross-fit values
+($w_{\mathrm{SFT}}{=}0.6$ three-class, the modal fold weight; $0.5$
+binary, the fold median — the e8 binary fold weights are bimodal,
+0.45--0.95), the headline al17kds mix
+scores \textbf{77.0\%} three-class vs.\ v3's 58.8\% (McNemar $p = 9.1\times10^{-15}$)
+and \textbf{93.7\%} binary vs.\ 86.3\% ($p = 1.9\times10^{-4}$) — the AL gain replicates on unseen data
+and is not an artifact of benchmark-specific tuning. (The earlier al14k checkpoint scored
+74.6\% / 92.6\% under the same protocol; the standalone al17k SFT
+student reaches 78.0\% five-seed-averaged three-class on
 fresh500 --- the frozen ood1000-tuned mix weights do not transfer
 perfectly to a new distribution.) (Caveat: fresh500
 labels are teacher-generated rather than human gold, so these numbers
