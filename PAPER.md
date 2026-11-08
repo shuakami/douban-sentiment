@@ -117,8 +117,8 @@ hand-labelled reviews.
 
 | System | Task | Acc | Macro-F1 |
 |---|---|---|---|
-| TF-IDF + LR | 3-class | 0.7233 | 0.6175 |
-| TF-IDF + LR | binary | 0.8406 | 0.8229 |
+| TF-IDF + LR | 3-class | 0.7233 | 0.6188 |
+| TF-IDF + LR | binary | 0.8406 | 0.8232 |
 | StructBERT (Ali DAMO, zero-shot) | binary | 0.8704 | 0.8538 |
 | Qwen3-4B (zero-shot) | 3-class | 0.7833 | 0.7348 |
 | Qwen3-0.6B / 1.7B (zero-shot) | 3-class | 0.6817 / 0.7067 | — |
@@ -146,7 +146,7 @@ that label quality, not model capacity, is the binding constraint.
 
 | Pseudo rows (per-class cap) | Acc | Macro-F1 |
 |---|---|---|
-| ~1K | 0.7867 | 0.7217 |
+| ~1K | 0.7883 | 0.7237 |
 | ~5K | 0.8033 | 0.7535 |
 | ~19K | 0.8433 | 0.8016 |
 | ~48K | 0.8550 | 0.8146 |
@@ -453,7 +453,7 @@ terse ambiguous AL examples shifts the boundary away from the longer
 single-film gold distribution. OOD-hardening and in-domain accuracy
 are in tension; v3 stays deployed, the mix is an OOD specialist.
 A length-aware router (short→mix, long→v3) traces a Pareto frontier:
-at 20 chars it gives 87.5% gold / 69.0% OOD — between v3 (89.5%/65.0%)
+at 20 chars it gives 87.3% gold / 70.5% OOD — between v3 (89.5%/65.0%)
 and the pure mix (~82%/76.8%). Length is an imperfect domain signal
 (32% of gold <50 chars; 26% of ood1000 ≥50), so a learned domain
 router is left to future work.

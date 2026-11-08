@@ -598,8 +598,8 @@ production system; corpus students use zero gold training.}
 \toprule
 System & Task & Acc & Macro-F1 \\
 \midrule
-TF-IDF + LR            & 3-class & 0.7233 & 0.6175 \\
-TF-IDF + LR            & binary  & 0.8406 & 0.8229 \\
+TF-IDF + LR            & 3-class & 0.7233 & 0.6188 \\
+TF-IDF + LR            & binary  & 0.8406 & 0.8232 \\
 StructBERT (DAMO)      & binary  & 0.8704 & 0.8538 \\
 Qwen3-4B zero-shot     & 3-class & 0.7833 & 0.7348 \\
 Qwen3-1.7B zero-shot   & 3-class & 0.7067 & 0.5739 \\
@@ -682,7 +682,7 @@ ranges tested.
 \toprule
 Pseudo rows & Acc & Macro-F1 & Neutral recall \\
 \midrule
-$\sim$1K   & 0.7867 & 0.7217 & --- \\
+$\sim$1K   & 0.7883 & 0.7237 & --- \\
 $\sim$5K   & 0.8033 & 0.7535 & --- \\
 $\sim$19K  & 0.8433 & 0.8016 & --- \\
 $\sim$48K  & 0.8550 & 0.8146 & --- \\
@@ -1136,7 +1136,7 @@ distribution. OOD-hardening and in-domain accuracy are therefore in
 tension here; we retain v3 as the deployed model and report the mix as
 an OOD-specialist candidate. A length-aware router (short reviews
 $\to$ mix, long $\to$ v3) traces a Pareto frontier rather than a free
-lunch: at threshold 20 chars it gives 87.5\% gold / 69.0\% OOD,
+lunch: at threshold 20 chars it gives 87.3\% gold / 70.5\% OOD,
 between v3 (89.5\% / 65.0\%) and the pure mix ($\sim$82\% / 76.8\%).
 Length is an imperfect domain signal (32\% of gold reviews are $<$50
 chars; 26\% of ood1000 are $\ge$50), so we leave a learned

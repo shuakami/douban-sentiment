@@ -40,8 +40,8 @@ reviews: the model is scored only on reviews it never saw during training.
 
 | System | Task | Accuracy | Macro-F1 |
 |---|---|---|---|
-| TF-IDF + Logistic Regression | 3-class | 0.7233 | 0.6175 |
-| TF-IDF + Logistic Regression | binary | 0.8406 | 0.8229 |
+| TF-IDF + Logistic Regression | 3-class | 0.7233 | 0.6188 |
+| TF-IDF + Logistic Regression | binary | 0.8406 | 0.8232 |
 | Alibaba DAMO StructBERT (zero-shot) | binary | 0.8704 | 0.8538 |
 | Qwen3-4B (zero-shot, label logprob) | 3-class | 0.7833 | 0.7348 |
 | **Deployed system** | **binary** | **0.9587** | **0.9558** |

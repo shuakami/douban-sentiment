@@ -79,7 +79,7 @@ npm run build   # emits to ../web/static
   0.8900/0.8432 (`out/ens_lite_3class_v2.json`). Neutral recall
   0.543 → 0.707. Split-half (20×300) confirms the gain is stable:
   neu-pool H+D beats S+H by ~+1.2pp F1 on every random half.
-- baseline (TF-IDF LR): binary 0.8406/0.8229, 3class 0.7233/0.6175
+- baseline (TF-IDF LR): binary 0.8406/0.8232, 3class 0.7233/0.6188
 
 ## Modern-LLM comparison (measured zero-shot, label-logprob scoring)
 
