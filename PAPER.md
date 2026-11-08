@@ -329,7 +329,7 @@ agreement reference:
 the model has reached the measured annotator-agreement ceiling. (As a
 reference, two independent passes of the same LLM annotator model —
 blind to each other and to star
-ratings — agree at 83.3% raw agreement/κ=0.74 on the same subset,
+ratings — agree at 83.5% raw agreement/κ=0.75 on the same subset,
 higher than the second-human raw agreement (71.5%) but reflecting shared
 inductive bias and more literal rubric-following rather than superior
 annotation quality — which is why human adjudication, not LLM
