@@ -435,3 +435,17 @@ Caveats baked into the paper: mix weights for binary e8 are bimodal
 across folds; fresh500 labels are teacher-generated; the 479
 human-adjudicated rows are disagreement-enriched (accuracy depressed
 for every system); al1000 is in-training.
+
+Reproducibility audit (2026-11-09): every paper figure re-derived from
+artifacts — all McNemar p-values, IAA (71.5%/0.568 human, 83.5%/0.75
+LLM-pass on the 200-row IAA subset only; 83.3%/0.74 on all 2000),
+stratification deltas, teacher-agreement 62.3%/725/396, gold-600
+cross-fits (al11kq 79.5% vs al11kds 81.0%). Corrections applied:
+DeepSeek-comparison McNemar updated to p=1.7e-3 (matches avg5, was
+stale 5.8e-4 from the 4-seed avg); al11k-allDS ablation rewritten —
+verified 3c 75.2%/p=0.80 and binary within noise (90.3% vs 91.4%,
+p=0.28), the earlier "binary drops to 89.2%, p=0.014" did not
+reproduce under any weight/seed protocol. Corpus-wide pseudo-vs-rating
+3-class agreement (47.8% / 54.0% confident-pool) now has a repo script
+`scripts/corpus_tri_agreement.py` → `out/corpus_tri_agreement.json`
+(distinct from `corpus_rating_crosstab.json`'s 81.2% binary figure).
