@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Stage-2 SFT experiment: does adding the 1000 human-labelled AL rows
+"""Stage-2 SFT experiment: does adding the 1000 released-label AL rows
 improve out-of-domain performance on the 1000-row random OOD set?
 
 Conditions (train sets):

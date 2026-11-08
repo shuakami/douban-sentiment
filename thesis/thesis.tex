@@ -100,7 +100,8 @@ student, a frozen MegatronBERT-1.3B feature judge, and a
 corpus-trained neutral specialist, reaching \textbf{89.5\% accuracy /
 85.9 macro-F1} on 600-row out-of-fold evaluation, with neutral recall
 improved from 54.3\% to 70.7\%. Fourth, we construct \textbf{lab2000},
-a 2{,}000-row cross-movie benchmark with dual-LLM blind annotation and
+a 2{,}000-row cross-movie benchmark with two-pass LLM blind
+annotation (same annotator model, different few-shot views) and
 479 human-adjudicated rows, and show that the gold-trained system
 generalises poorly to wild short reviews (65.0\% three-class) --- but
 that adding only 1{,}000 actively-selected boundary examples lifts the
@@ -172,7 +173,7 @@ quantify with a dedicated out-of-distribution study.
         agreement between pseudo-labels and ratings $\approx$48\%).
   \item A pseudo-label flywheel producing a 271{,}905-row confident pool
         and a single compact student (87.5\% acc / 84.8\% neutral recall)
-        trained on zero gold labels.
+        trained with no gold labels in its training set.
   \item A deployed hybrid ensemble (89.5\% acc / 85.9 macro-F1,
         neutral recall 70.7\%) combining a distilled student, a frozen
         1.3B-parameter judge, and a corpus-trained neutral specialist.
@@ -213,8 +214,8 @@ corrected variant better suited to character-level inputs, ERNIE
 \citep{sun2019} integrates entity and phrase knowledge, while
 StructBERT \citep{wang2020} injects phrase- and word-level structural
 information into pre-training. Erlangshen-MegatronBERT
-\citep{idea2023} scales this family to 1.3B parameters with a sentiment-
-specific pre-training stage. We use all three families and compare
+\citep{idea2023} scales this family to 1.3B parameters with additional
+sentiment fine-tuning. We use all three families and compare
 them directly.
 
 \paragraph{Weak supervision and self-training.}
@@ -222,7 +223,10 @@ When labelled data is scarce, distant supervision from noisy signals
 (star ratings here) and self-training on model predictions are standard
 remedies \citep{yarowsky1995,lee2013}. The Snorkel framework
 \citep{ratner2017} formalises the combination of multiple weak label
-sources. Our work differs in that we \emph{measure} the weakness of the
+sources. Active learning \citep{settles2009} instead spends a small
+annotation budget on the most informative examples; our Stage-2 study
+uses margin/entropy sampling for exactly this purpose. Our work
+differs in that we \emph{measure} the weakness of the
 dominant weak source (ratings) before relying on it, and we quantify
 where pseudo-labelling helps (neutral coverage) versus where it cannot
 (helping beyond the teacher's knowledge).
@@ -242,7 +246,8 @@ after, because honest confidence display matters for a demo system.
 
 \paragraph{LLMs as annotators and baselines.}
 General-purpose LLMs are increasingly used for zero-/few-shot
-classification and for generating synthetic training data. We evaluate
+classification \citep{gilardi2023,tornberg2023} and for generating
+synthetic training data. We evaluate
 Qwen3 models \citep{qwen2025} at 0.6B/1.7B/4B scales both as zero-shot
 classifiers and as independent annotators in our OOD study, and we
 report a negative result on LLM-generated synthetic augmentation.
@@ -626,7 +631,10 @@ Deployed v3            & binary  & 0.9587 & 0.9558 \\
 \end{table}
 
 The deployed system beats the TF-IDF baseline by $+17.2$pp accuracy and
-zero-shot Qwen3-4B by $+11.2$pp. Per-class metrics (3-class):
+zero-shot Qwen3-4B by $+11.2$pp. (3-shot variants were also measured:
+few-shot helps slightly at 4B --- 78.8\% vs.\ 78.3\% --- but collapses
+at 1.7B, 51.0\%, due to negative-class bias; we report zero-shot as the
+primary baseline.) Per-class metrics (3-class):
 positive P/R/F1 = 0.909/0.943/0.926; neutral = 0.765/0.707/0.735;
 negative = 0.931/0.906/0.918. Neutral recall improved 54.3\% $\to$
 63.0\% (v2) $\to$ 70.7\% (v3) across expert iterations.
@@ -665,7 +673,7 @@ MacBERT 3-class pseudo      & 160K pseudo  & 0.8750 & 0.8463 & \textbf{0.848} \\
 \end{table}
 
 The pseudo-label 3-class student alone reaches 87.5\%/84.6 with 84.8\%
-neutral recall --- nearly matching the 4-channel ensemble. This is the
+neutral recall --- nearly matching the deployed ensemble. This is the
 central empirical finding: \textbf{label quality at scale dominates
 model capacity}. The same MacBERT architecture trained on star ratings
 instead of pseudo-labels collapses on the three-class task.
@@ -693,7 +701,7 @@ ranges tested.
 
 \begin{table}[H]
 \centering\small
-\caption{Pseudo-label scaling (gold-600, zero gold training).}
+\caption{Pseudo-label scaling (gold-600 eval; no gold rows in training).}
 \label{tab:scaling}
 \begin{tabular}{lccc}
 \toprule
@@ -832,7 +840,7 @@ on ood1000 --- each prediction uses weights tuned on the other folds,
 so no reported row's label influences its own mix weight. Binary
 evaluation excludes neutral examples. ``---'' = metric not reported
 for this run. lab2000 labels are mixed-provenance: 479
-human-adjudicated rows (200 ood + 279 al) plus dual-LLM consensus
+human-adjudicated rows (200 ood + 279 al) plus two-pass LLM consensus
 labels for the rest (Section~\ref{sec:lab2000-data}).}
 \label{tab:ood}
 \begin{tabular}{llcc}
@@ -901,7 +909,7 @@ remaining attitude signal. This closes the loop with
 Section~\ref{sec:ratings}: ratings are a weak proxy on average, but a
 strong disambiguator at the text-entropy ceiling.
 
-\subsection{Human agreement: the real ceiling}
+\subsection{Human agreement: the annotator-agreement reference}
 \label{sec:iaa}
 
 To bound what ``correct'' even means on wild short reviews, a 200-row
@@ -948,7 +956,8 @@ low reasoning effort.
 
 \begin{table}[H]
 \centering\small
-\caption{Frontier-LLM vs.\ local pipeline on lab2000. Parse failures
+\caption{Frontier-LLM vs.\ local pipeline on lab2000 (API snapshots
+evaluated November 2026). Parse failures
 are excluded from accuracy denominators and reported separately.
 Latency is mean per-request wall time.}
 \label{tab:llm}
@@ -977,7 +986,7 @@ binary accuracy (97.6\%) exceeds its three-class accuracy (82.0\%) by
 ambiguity is not a small-model artefact. Second, on the human-adjudicated
 hard subset (195 ood rows jointly parseable by DeepSeek) the gap
 nearly closes: DeepSeek reaches
-59.5\% on the ood portion vs.\ 57.9\% for our earlier 1K-AL
+59.5\% on the ood portion vs.\ 59.0\% for our al1000
 ensemble mix
 (parity within noise); the subset is enriched for exactly the cases
 where rubric-following and world knowledge diverge. Third, the
@@ -1023,7 +1032,7 @@ $0.734 \pm 0.015$), nominally above the al1000-label mix.
 
 \paragraph{Scaling: 1K AL $\to$ 5.9K hybrid.} The parity result
 raises the obvious question --- if LLM labels substitute for the
-adjudicated al1000 labels at 1K, do they \emph{scale} where human
+released al1000 labels at 1K, do they \emph{scale} where human
 annotation cannot? We
 sampled \textbf{al5000}: the next 5{,}000 margin/entropy-selected
 corpus rows (same band and class quotas as al1000, disjoint from all
@@ -1038,7 +1047,7 @@ Section~\ref{sec:limits}).
 \begin{table}[H]
 \centering\footnotesize
 \caption{AL-scaling on ood1000 (mixed-provenance labels: 479
-human-adjudicated + dual-LLM consensus; per-set split in
+human-adjudicated + two-pass LLM consensus; per-set split in
 Section~\ref{sec:lab2000-data}). All rows are
 gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability
 averages of v3 and the SFT model; the fusion weight is selected by
@@ -1080,7 +1089,7 @@ Three observations. First, \textbf{scale beats provenance}: 5{,}906
 pure-LLM labels (72.5\%) already exceed the 1{,}000-row al1000 set's
 mixed-provenance labels (71.4\%). The teachers' biases differ usefully: DeepSeek
 under-calls \emph{positive} on ambiguous rows (only 65\% agreement
-with human-adjudicated positives, relabelling 156/464 as neutral) while agreeing
+with released-label positives, relabelling 156/464 as neutral) while agreeing
 with the released al1000 labels on neutral at 88\% --- the
 human-adjudicated core corrects exactly
 this polarity bias, which is why the hybrid wins. Second, the \textbf{hybrid is best}: keeping the al1000 set's
@@ -1116,7 +1125,7 @@ their labels agree on only 62.3\%, with Qwen over-calling positive
 (725 of DeepSeek's neutral rows) and under-calling negative (396 of
 its negative rows relabelled neutral) --- a distributional bias the
 student faithfully inherits. A final ablation replaces the
-adjudicated al1000 labels with DeepSeek labels at the same 11K scale
+released al1000 labels with DeepSeek labels at the same 11K scale
 (al11k-allDS): the three-class mix is unchanged (75.2\%,
 McNemar $p = 0.81$ vs.\ the al1000 mix) while binary
 drops $\sim$2.4pp to 89.2\% (McNemar $p = 0.014$) --- at this scale
@@ -1163,7 +1172,10 @@ teacher. With weights frozen at the modal cross-fit values
 scores 74.6\% three-class vs.\ v3's 58.8\% (McNemar
 $p = 1.6\times10^{-13}$) and 92.6\% binary vs.\ 86.3\% --- the AL
 gain replicates on unseen data and is not an artifact of
-benchmark-specific tuning. (Caveat: fresh500 labels are
+benchmark-specific tuning. (The standalone al14k SFT student scores
+comparably at 76.8\% seed-averaged on fresh500 --- the frozen
+ood1000-tuned mix weights do not transfer perfectly to a new
+distribution.) (Caveat: fresh500 labels are
 teacher-generated, not human gold, so these numbers measure
 generalisation to the teacher's label distribution; binary, being
 less ambiguous, is less affected by this alignment.)
@@ -1216,8 +1228,8 @@ sample; the released data marks per-row provenance
   \item \textbf{Domain narrowness (mitigated, not eliminated).} The
         gold set is 600 reviews from a \emph{single film page}; the
         lab2000 study quantifies the resulting OOD gap (65.0\%
-        three-class) and shows 1{,}000 actively-selected adjudicated
-        rows recover most of it (72.0\%), but ood1000 remains the only
+        three-class) and shows 1{,}000 actively-selected rows
+        (mixed-provenance labels) recover most of it (72.0\%), but ood1000 remains the only
         true held-out cross-movie test.
   \item \textbf{lab2000 label provenance.} Pre-annotations are
         LLM-generated; 479/2{,}000 rows carry human adjudication and a
@@ -1229,6 +1241,12 @@ sample; the released data marks per-row provenance
         confidence 0.986 = memorisation). The lab2000 results suggest
         the teacher's narrow-domain prior is the binding constraint on
         OOD pseudo-labels.
+  \item \textbf{Test-set-informed discrete choices.} Fusion weights
+        are cross-fit, but two single discrete decisions were made
+        using ood1000 feedback: the e4-vs-e8 epoch choice at scale
+        (Section~\ref{sec:ds-teacher}) and per-task binary mix weights.
+        These are disclosed rather than hidden, but a fully
+        label-free protocol would avoid them.
   \item \textbf{Statistical power.} At $n=600$, differences below
         $\sim$1pp are unresolvable; the lab2000 OOD study ($n=1{,}000$)
         restores power for the headline Stage-2 claims, while
@@ -1264,8 +1282,8 @@ domain shifts, and star ratings become the strongest available signal
 precisely where review text is most ambiguous. Against frontier LLMs
 of $\sim$763B--1.6T parameters the compact pipeline trails on raw OOD
 accuracy but
-reaches parity on human-adjudicated hard items at orders-of-magnitude
-lower latency, cost, and privacy exposure.
+reaches parity on human-adjudicated hard items at one-to-two
+orders of magnitude lower latency and cost, with no data egress.
 
 Future work: (i) scale the adjudicated AL set (the DS-teacher pilot in
 Section~\ref{sec:ds-teacher} tests whether frontier-LLM pseudo-labels
@@ -1337,7 +1355,7 @@ Ensemble weights   & dep & student 1 : judge 2 \\
   \item \code{out/ens\_lite\_3class\_v3.json} --- deployed 3-class OOF
         predictions and probabilities (all 600 rows).
   \item \code{out/ens\_lite\_binary.json} --- deployed binary OOF.
-  \item \code{out/lab500\_*} --- lab500 pilot: samples, dual-LLM labels,
+  \item \code{out/lab500\_*} --- lab500 pilot: samples, two-pass LLM labels,
         predictions, cross-validation results.
   \item \code{data/reviews\_gold\_al1000.jsonl} + \code{data/lab2000/}
         --- lab2000 benchmark: 2{,}000 adjudicated labels with
@@ -1379,7 +1397,7 @@ Evaluator & Reference & $n$ & Accuracy \\
 \midrule
 v3 ensemble      & LLM-A labels      & 500 & 0.604 \\
 Qwen3-4B         & LLM-A labels      & 500 & 0.662 \\
-v3 ensemble      & dual-LLM consensus & 331 & 0.740 \\
+v3 ensemble      & two-pass LLM consensus & 331 & 0.740 \\
 v3 binary        & LLM-A labels      & 255 & \textbf{0.918} \\
 MacBERT CV       & held-out labels    & --- & 0.600 OOF \\
 \bottomrule
@@ -1528,6 +1546,13 @@ Qwen Team.
 \newblock \emph{Qwen3: Technical Report and Model Release}.
 \newblock GitHub repository and model documentation, 2025.
 \newblock \url{https://github.com/QwenLM/Qwen3}.
+
+\bibitem[Settles(2009)]{settles2009}
+B.~Settles.
+\newblock \emph{Active Learning Literature Survey}.
+\newblock University of Wisconsin--Madison, Computer Sciences Technical
+Report 1648, 2009.
+\newblock \url{https://minds.wisconsin.edu/handle/1793/60660}.
 
 \bibitem[Gilardi et al.(2023)]{gilardi2023}
 F.~Gilardi, M.~Alizadeh, M.~Kubli.

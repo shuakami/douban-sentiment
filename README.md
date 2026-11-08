@@ -26,9 +26,10 @@ MacBERT-base student. The deployed system — student + frozen
 MegatronBERT-1.3B judge + neutral specialist — reaches **89.5%
 accuracy / 85.9 macro-F1** (5-fold cross-validation), with neutral-class recall
 improved from 0.543 to 0.707. A 2,000-review out-of-distribution benchmark
-(`lab2000`: 1,000 random held-out + 1,000 actively-sampled reviews, dual-LLM
-blind annotation with human adjudication of disagreements and spot
-checks — 479 rows total, mixed with dual-LLM consensus labels) exposes a
+(`lab2000`: 1,000 random held-out + 1,000 actively-sampled reviews, two-pass
+LLM blind annotation — same model, different few-shot views — with human
+adjudication of disagreements and spot
+checks — 479 rows total, mixed with LLM-consensus labels) exposes a
 65.0% three-class accuracy on wild short reviews; 1,000 actively-selected
 AL rows lift it to 72.0%, and scaling to ~17K LLM-verified AL
 rows reaches 76.6% three-class / 91.8% binary (fusion weights selected by

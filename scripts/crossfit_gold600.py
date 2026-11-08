@@ -49,7 +49,7 @@ def main():
     torch.set_float32_matmul_precision("high")
 
     gold = sl.load_gold()                       # 600 rows, label_semantic
-    al = sl.load_lab("al1000", LAB)             # human-adjudicated AL
+    al = sl.load_lab("al1000", LAB)             # released-label AL (mixed provenance)
     extra = sl.load_all(args.extra_lab) if args.extra_lab else []
     train_pool = gold + al + extra
     print(f"train_pool={len(train_pool)} (gold={len(gold)} al={len(al)} "

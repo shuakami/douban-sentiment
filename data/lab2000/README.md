@@ -20,6 +20,20 @@ Moviedata-10M license); labels are our own annotation work.
 | `ds_deepseek_flash_fresh500_labels.jsonl` | DeepSeek labels for fresh500. |
 | `qwen_ood1000_labels.jsonl` / `qwen_al5000b_labels.jsonl` | Local Qwen3-4B teacher labels (label-logprob scoring) for ood1000 and the second AL batch — the open-teacher ablation. |
 | `qwen3_4b_ood1000_probs.npy` / `qwen3_4b_al5000b_probs.npy` | Raw 3-class probability arrays for the Qwen runs. |
+| `friend_IAA_200.jsonl` / `friend_IAA_map.json` | The 200-row second-human IAA subset: texts given to the second annotator and the `n → (set, i)` mapping back to `lab2000_final.jsonl`. |
+| `friend_IAA_README.md` | The annotation instructions given to the second human annotator. |
+| `iaa_friend_user.json` | Aggregate IAA statistics: second-human vs released labels 71.5% / κ=0.568 (95% CI [0.47, 0.66]); passA-vs-passB 83.5% / κ=0.75. Per-row second-human labels were collected via the README protocol; aggregates are released here. |
+
+## Annotation protocol detail
+
+`label_a`/`label_b` are two independent passes of the **same** LLM
+annotator agent with **different few-shot example sets**
+(`fewshot_A.json` / `fewshot_B.json`, built from gold-600 semantic
+labels), blind to star ratings and to each other's output — equivalent
+to two annotators with different rubric views, not two different
+models. All 335 pass-disagreements plus 144 spot-checked agreements
+were adjudicated by the author (`final_source == "user"`, 479 rows);
+the remaining 1,521 rows use two-pass consensus.
 
 ## Notes
 

@@ -18,7 +18,8 @@ with a frozen MegatronBERT-1.3B feature judge and a corpus-trained neutral
 specialist, reaching **89.5% accuracy / 85.9 macro-F1** on the gold set,
 beating both a TF-IDF baseline (+17pp) and zero-shot Qwen3-4B (+11pp).
 Finally, we build **lab2000** — a 2,000-row cross-movie benchmark with
-dual-LLM blind annotation and 479 human-adjudicated rows — and show the
+two-pass LLM blind annotation (same annotator model, different few-shot
+views) and 479 human-adjudicated rows — and show the
 gold-trained system drops to 65.0% three-class on wild short reviews,
 but that adding only 1,000 actively-selected boundary examples lifts
 the SFT student by +8.8pp (62.6%→71.4%, McNemar p = 4.0e-8), and scaling the same protocol
@@ -53,7 +54,7 @@ examples. Two questions drive this work:
 |---|---|---|
 | Gold | 600 reviews (30 pages × 20, single film) | `label_semantic`, human-verified 3-class; `label_rule`, star-derived weak |
 | Corpus | 910,998 reviews, 20,966 films, 249,105 users | star rating 1–5 only |
-| lab2000-ood | 1,000 random cross-movie reviews | dual-LLM blind + human adjudication |
+| lab2000-ood | 1,000 random cross-movie reviews | two-pass LLM blind + human adjudication |
 | lab2000-al | 1,000 margin/entropy-selected hard reviews | same protocol; training set only |
 
 The corpus derives from the Moviedata-10M Douban dataset (csuldw, CSU
@@ -141,7 +142,7 @@ Neutral recall improved 0.543 → 0.707 across expert iterations.
 | TF-IDF + pseudo | 200K pseudo | 0.8117 | 0.7766 | — |
 | TF-IDF + star labels | 300K rating | 0.6183 | 0.5369 | — |
 
-The pseudo student alone nearly matches the 4-model ensemble — evidence
+The pseudo student alone nearly matches the deployed ensemble — evidence
 that label quality, not model capacity, is the binding constraint.
 
 ### Pseudo-label scaling curve (gold-600)
@@ -174,7 +175,7 @@ though gold scores are equal — ensemble-derived labels transfer better.
 Temperature scaling (T = 0.37, fit by NLL on gold) reduces ECE to ~0.04
 without changing predictions; T is applied at inference for honest
 confidence display. Calibration also transfers better after AL: on
-ood1000 AL mixes reach ECE 0.043–0.048 vs v3's 0.159 at T = 1 — the
+ood1000 AL mixes reach ECE 0.027–0.054 vs v3's 0.159 at T = 1 — the
 pseudo-labelled boundary data sharpens confidence, not just accuracy.
 
 **Significance.** v3 vs v2: McNemar p = 0.65 (11 vs 8 discordant pairs);
@@ -204,7 +205,7 @@ when present, and only 6/56 explicit scores contradict the semantic label.
 
 - Gold set is 600 reviews from a **single film page** — quantified by
   lab2000 (65.0% OOD three-class), partially mitigated by 1,000
-  adjudicated AL rows (72.0%), but ood1000 remains the only true
+  actively-selected AL rows with mixed-provenance labels (72.0%), but ood1000 remains the only true
   held-out cross-movie test.
 - lab2000 pre-annotations are LLM-generated; 479/2,000 rows carry human
   adjudication and a 200-row second-human IAA sample (κ=0.57).
@@ -233,7 +234,8 @@ soft distillation under shift, and ratings dominate precisely where
 text is most ambiguous. Against frontier LLMs (~763B--1.6T parameters)
 we trail on raw
 OOD accuracy but reach parity on human-adjudicated hard items at
-orders-of-magnitude lower latency, cost, and privacy exposure.
+one-to-two orders of magnitude lower latency and cost, with no data
+egress.
 
 ## Reproducibility
 
@@ -300,7 +302,7 @@ at n=600 (v2→v3 was p=0.65).
    the text-only model — when text entropy maxes out, the rating is the
    only remaining attitude signal.
 
-### Human agreement: the real ceiling
+### Human agreement: the annotator-agreement reference
 
 200-row random subset blind-labelled by a second human: raw agreement
 with the released labels
@@ -339,16 +341,16 @@ JSON prompt:
 | DeepSeek-V4.1-Flash | ~763B | 0.820 (n=992) | **0.976** (n=661) | ~1.7s API |
 | Qwen3-4B (local) | ~4B | 0.706 (n=1000) | — | ~2.3s local |
 | Deployed v3 | ~1.5B | 0.650 | 0.850 | ~0.1s local |
-| SFT+mix (gold+al17k) | ~0.1B | **0.766** | **0.918** | ~0.1s local |
+| SFT+mix (gold+al17k) | ~1.6B | **0.766** | **0.918** | ~0.1s local |
 
 DeepSeek-V4.1-Flash leads by ~5pp on the full random OOD set
 (V4-Pro by ~8pp) — expected given the orders-of-magnitude parameter
-gap (763B--1.6T vs our 0.1--1.5B local models); vs Flash the
-difference is significant (McNemar p = 9.6e-4 on the 992 jointly
+gap (763B--1.6T vs our 0.1--1.6B local models); vs Flash the
+difference is significant (McNemar p = 5.8e-4 on the 992 jointly
 parseable rows). But: (i) the neutral wall hits everyone —
 DeepSeek's own binary (97.6%) exceeds its three-class (82.0%) by 15.6pp;
 (ii) on the 479 human-adjudicated hard subset the gap nearly closes
-(59.5% vs 57.9% on the ood portion — parity within noise); (iii) the
+(59.5% vs 59.0% for the al1000 mix on the ood portion — parity within noise); (iii) the
 local system runs offline at ~0.1s/review with zero per-token cost and
 no data egress. Positioning: task-calibrated compact model at the
 human-agreement ceiling, at edge-deployable cost — not "beats LLMs".
@@ -460,7 +462,10 @@ With weights frozen at the modal cross-fit values
 ($w_{\mathrm{SFT}}{=}0.5$ three-class, $0.4$ binary), the al14k mix
 scores 74.6\% three-class vs.\ v3's 58.8\% (McNemar $p = 1.6\times10^{-13}$)
 and 92.6\% binary vs.\ 86.3\% — the AL gain replicates on unseen data
-and is not an artifact of benchmark-specific tuning. (Caveat: fresh500
+and is not an artifact of benchmark-specific tuning. (The standalone
+al14k SFT student scores comparably at 76.8% seed-averaged on
+fresh500 --- the frozen ood1000-tuned mix weights do not transfer
+perfectly to a new distribution.) (Caveat: fresh500
 labels are teacher-generated rather than human gold, so these numbers
 measure generalisation to the teacher's label distribution; binary,
 being less ambiguous, is less affected by this alignment.)
@@ -496,7 +501,7 @@ system and are used only for the LLM comparison. Per-row
 
 The 500-row pilot that motivated lab2000: 500 random corpus reviews
 labelled by two LLM annotators (assistant model + Qwen3-4B zero-shot).
-v3 scored 0.604 vs LLM-A labels / 0.740 vs dual-LLM consensus; binary
+v3 scored 0.604 vs LLM-A labels / 0.740 vs two-pass LLM consensus; binary
 0.918. LLM–LLM agreement was only 66.2%; a MacBERT trained on 400
 in-domain labels reproduced held-out labels at 60% OOF. Terse comments
 (median 25 chars vs gold's 80) are intrinsically ambiguous — the pilot

@@ -46,7 +46,7 @@
 \contentsline {paragraph}{F1: Active learning needs an anchor.}{15}{paragraph*.26}%
 \contentsline {paragraph}{F2: Under domain shift, hard labels beat soft distillation.}{16}{paragraph*.27}%
 \contentsline {paragraph}{F3: Ratings beat text exactly where text fails.}{16}{paragraph*.28}%
-\contentsline {subsection}{\numberline {8.3}Human agreement: the real ceiling}{16}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.3}Human agreement: the annotator-agreement reference}{16}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{16}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{17}{subsection.8.5}%
 \contentsline {paragraph}{Scaling: 1K AL $\to $ 5.9K hybrid.}{17}{paragraph*.31}%
@@ -56,8 +56,8 @@
 \contentsline {section}{\numberline {9}Limitations and Threats to Validity}{20}{section.9}%
 \contentsline {section}{\numberline {10}Conclusion and Future Work}{20}{section.10}%
 \contentsline {section}{Reproducibility}{21}{section.10}%
-\contentsline {section}{\numberline {A}Training Details and Reproducibility}{21}{appendix.A}%
-\contentsline {subsection}{\numberline {A.1}Hyperparameters}{21}{subsection.A.1}%
+\contentsline {section}{\numberline {A}Training Details and Reproducibility}{22}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Hyperparameters}{22}{subsection.A.1}%
 \contentsline {subsection}{\numberline {A.2}Artifacts}{22}{subsection.A.2}%
 \contentsline {subsection}{\numberline {A.3}Environment}{22}{subsection.A.3}%
-\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{22}{appendix.B}%
+\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{23}{appendix.B}%

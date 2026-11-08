@@ -20,9 +20,11 @@
 \@writefile{toc}{\contentsline {paragraph}{Sentiment analysis of Chinese text.}{4}{paragraph*.2}\protected@file@percent }
 \citation{yarowsky1995,lee2013}
 \citation{ratner2017}
+\citation{settles2009}
 \citation{hinton2015}
 \citation{gou2021}
 \citation{guo2017}
+\citation{gilardi2023,tornberg2023}
 \citation{qwen2025}
 \@writefile{toc}{\contentsline {paragraph}{Pre-trained language models.}{5}{paragraph*.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Weak supervision and self-training.}{5}{paragraph*.4}\protected@file@percent }
@@ -87,8 +89,8 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Pseudo-label scaling}{12}{subsection.6.3}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Accuracy and macro-F1 of corpus-trained pseudo-label students on gold-600 versus training-set size (log scale). \emph  {Zero gold training}: gold-600 is the held-out evaluation set only and is never used for training. The dashed reference is the deployed ensemble (accuracy 0.895, macro-F1 0.859). The y-axis starts at 0.70 to highlight the performance differences. Performance grows monotonically and is still rising at 160K rows.}}{12}{figure.caption.21}\protected@file@percent }
 \newlabel{fig:scaling}{{4}{12}{Accuracy and macro-F1 of corpus-trained pseudo-label students on gold-600 versus training-set size (log scale). \emph {Zero gold training}: gold-600 is the held-out evaluation set only and is never used for training. The dashed reference is the deployed ensemble (accuracy 0.895, macro-F1 0.859). The y-axis starts at 0.70 to highlight the performance differences. Performance grows monotonically and is still rising at 160K rows}{figure.caption.21}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Pseudo-label scaling (gold-600, zero gold training).}}{12}{table.caption.22}\protected@file@percent }
-\newlabel{tab:scaling}{{5}{12}{Pseudo-label scaling (gold-600, zero gold training)}{table.caption.22}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Pseudo-label scaling (gold-600 eval; no gold rows in training).}}{12}{table.caption.22}\protected@file@percent }
+\newlabel{tab:scaling}{{5}{12}{Pseudo-label scaling (gold-600 eval; no gold rows in training)}{table.caption.22}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Cross-domain silver evaluation}{12}{subsection.6.4}\protected@file@percent }
 \citation{mcnemar1947}
 \citation{efron1993}
@@ -106,8 +108,8 @@
 \newlabel{sec:lab2000}{{8}{14}{Stage-2: The lab2000 OOD and Active-Learning Study}{section.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Exposing the OOD gap}{14}{subsection.8.1}\protected@file@percent }
 \newlabel{sec:ood-expose}{{8.1}{14}{Exposing the OOD gap}{subsection.8.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed training data; ``mix'' = probability average of v3 and the SFT model, with the fusion weight selected by stratified 5-fold cross-validation on ood1000 --- each prediction uses weights tuned on the other folds, so no reported row's label influences its own mix weight. Binary evaluation excludes neutral examples. ``---'' = metric not reported for this run. lab2000 labels are mixed-provenance: 479 human-adjudicated rows (200 ood + 279 al) plus dual-LLM consensus labels for the rest (Section~\ref {sec:lab2000-data}).}}{15}{table.caption.24}\protected@file@percent }
-\newlabel{tab:ood}{{6}{15}{ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed training data; ``mix'' = probability average of v3 and the SFT model, with the fusion weight selected by stratified 5-fold cross-validation on ood1000 --- each prediction uses weights tuned on the other folds, so no reported row's label influences its own mix weight. Binary evaluation excludes neutral examples. ``---'' = metric not reported for this run. lab2000 labels are mixed-provenance: 479 human-adjudicated rows (200 ood + 279 al) plus dual-LLM consensus labels for the rest (Section~\ref {sec:lab2000-data})}{table.caption.24}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed training data; ``mix'' = probability average of v3 and the SFT model, with the fusion weight selected by stratified 5-fold cross-validation on ood1000 --- each prediction uses weights tuned on the other folds, so no reported row's label influences its own mix weight. Binary evaluation excludes neutral examples. ``---'' = metric not reported for this run. lab2000 labels are mixed-provenance: 479 human-adjudicated rows (200 ood + 279 al) plus two-pass LLM consensus labels for the rest (Section~\ref {sec:lab2000-data}).}}{15}{table.caption.24}\protected@file@percent }
+\newlabel{tab:ood}{{6}{15}{ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed training data; ``mix'' = probability average of v3 and the SFT model, with the fusion weight selected by stratified 5-fold cross-validation on ood1000 --- each prediction uses weights tuned on the other folds, so no reported row's label influences its own mix weight. Binary evaluation excludes neutral examples. ``---'' = metric not reported for this run. lab2000 labels are mixed-provenance: 479 human-adjudicated rows (200 ood + 279 al) plus two-pass LLM consensus labels for the rest (Section~\ref {sec:lab2000-data})}{table.caption.24}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces (a) ood1000 accuracy by system; the first three groups are our local models and the last two are off-the-shelf DeepSeek LLMs (the local Qwen3-4B baseline from Table~\ref {tab:llm} is omitted for space); the dashed line marks the measured 71.5\% second-annotator agreement with the released labels. (b) Raw pairwise agreement on the same 200-row subset: two passes of the same LLM annotator model vs.\ two humans. Raw agreement rate is reported here, not Cohen's $\kappa $; higher LLM self-agreement reflects shared inductive bias (same model) and literal rubric following rather than superior annotation quality.}}{15}{figure.caption.25}\protected@file@percent }
 \newlabel{fig:lab2000}{{6}{15}{(a) ood1000 accuracy by system; the first three groups are our local models and the last two are off-the-shelf DeepSeek LLMs (the local Qwen3-4B baseline from Table~\ref {tab:llm} is omitted for space); the dashed line marks the measured 71.5\% second-annotator agreement with the released labels. (b) Raw pairwise agreement on the same 200-row subset: two passes of the same LLM annotator model vs.\^^Mtwo humans. Raw agreement rate is reported here, not Cohen's $\kappa $; higher LLM self-agreement reflects shared inductive bias (same model) and literal rubric following rather than superior annotation quality}{figure.caption.25}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Three findings invisible at $n{=}600$}{15}{subsection.8.2}\protected@file@percent }
@@ -115,19 +117,19 @@
 \@writefile{toc}{\contentsline {paragraph}{F1: Active learning needs an anchor.}{15}{paragraph*.26}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{F2: Under domain shift, hard labels beat soft distillation.}{16}{paragraph*.27}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{F3: Ratings beat text exactly where text fails.}{16}{paragraph*.28}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Human agreement: the real ceiling}{16}{subsection.8.3}\protected@file@percent }
-\newlabel{sec:iaa}{{8.3}{16}{Human agreement: the real ceiling}{subsection.8.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Human agreement: the annotator-agreement reference}{16}{subsection.8.3}\protected@file@percent }
+\newlabel{sec:iaa}{{8.3}{16}{Human agreement: the annotator-agreement reference}{subsection.8.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{16}{subsection.8.4}\protected@file@percent }
 \newlabel{sec:llm}{{8.4}{16}{Comparison with a frontier LLM}{subsection.8.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Frontier-LLM vs.\ local pipeline on lab2000. Parse failures are excluded from accuracy denominators and reported separately. Latency is mean per-request wall time.}}{17}{table.caption.29}\protected@file@percent }
-\newlabel{tab:llm}{{7}{17}{Frontier-LLM vs.\ local pipeline on lab2000. Parse failures are excluded from accuracy denominators and reported separately. Latency is mean per-request wall time}{table.caption.29}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Frontier-LLM vs.\ local pipeline on lab2000 (API snapshots evaluated November 2026). Parse failures are excluded from accuracy denominators and reported separately. Latency is mean per-request wall time.}}{17}{table.caption.29}\protected@file@percent }
+\newlabel{tab:llm}{{7}{17}{Frontier-LLM vs.\ local pipeline on lab2000 (API snapshots evaluated November 2026). Parse failures are excluded from accuracy denominators and reported separately. Latency is mean per-request wall time}{table.caption.29}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{17}{subsection.8.5}\protected@file@percent }
 \newlabel{sec:ds-teacher}{{8.5}{17}{Can LLM pseudo-labels replace human adjudication?}{subsection.8.5}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Released al1000 labels vs.\ DeepSeek pseudo-labels for AL expansion (ood1000, mixed-provenance reference: 200 human + 800 LLM-consensus rows).}}{17}{table.caption.30}\protected@file@percent }
 \newlabel{tab:ds-teacher}{{8}{17}{Released al1000 labels vs.\ DeepSeek pseudo-labels for AL expansion (ood1000, mixed-provenance reference: 200 human + 800 LLM-consensus rows)}{table.caption.30}{}}
 \@writefile{toc}{\contentsline {paragraph}{Scaling: 1K AL $\to $ 5.9K hybrid.}{17}{paragraph*.31}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL-scaling on ood1000 (mixed-provenance labels: 479 human-adjudicated + dual-LLM consensus; per-set split in Section~\ref {sec:lab2000-data}). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability averages of v3 and the SFT model; the fusion weight is selected by stratified 5-fold cross-validation (out-of-fold predictions, no row's label influences its own weight). Ranges denote three random seeds. Binary evaluation excludes neutral examples; ``---'' = not reported.}}{18}{table.caption.32}\protected@file@percent }
-\newlabel{tab:al-scaling}{{9}{18}{AL-scaling on ood1000 (mixed-provenance labels: 479 human-adjudicated + dual-LLM consensus; per-set split in Section~\ref {sec:lab2000-data}). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability averages of v3 and the SFT model; the fusion weight is selected by stratified 5-fold cross-validation (out-of-fold predictions, no row's label influences its own weight). Ranges denote three random seeds. Binary evaluation excludes neutral examples; ``---'' = not reported}{table.caption.32}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL-scaling on ood1000 (mixed-provenance labels: 479 human-adjudicated + two-pass LLM consensus; per-set split in Section~\ref {sec:lab2000-data}). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability averages of v3 and the SFT model; the fusion weight is selected by stratified 5-fold cross-validation (out-of-fold predictions, no row's label influences its own weight). Ranges denote three random seeds. Binary evaluation excludes neutral examples; ``---'' = not reported.}}{18}{table.caption.32}\protected@file@percent }
+\newlabel{tab:al-scaling}{{9}{18}{AL-scaling on ood1000 (mixed-provenance labels: 479 human-adjudicated + two-pass LLM consensus; per-set split in Section~\ref {sec:lab2000-data}). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability averages of v3 and the SFT model; the fusion weight is selected by stratified 5-fold cross-validation (out-of-fold predictions, no row's label influences its own weight). Ranges denote three random seeds. Binary evaluation excludes neutral examples; ``---'' = not reported}{table.caption.32}{}}
 \@writefile{toc}{\contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{18}{paragraph*.33}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{19}{paragraph*.34}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{20}{subsection.8.6}\protected@file@percent }
@@ -137,20 +139,16 @@
 \@writefile{toc}{\contentsline {section}{\numberline {10}Conclusion and Future Work}{20}{section.10}\protected@file@percent }
 \newlabel{sec:conclusion}{{10}{20}{Conclusion and Future Work}{section.10}{}}
 \@writefile{toc}{\contentsline {section}{Reproducibility}{21}{section.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Training Details and Reproducibility}{21}{appendix.A}\protected@file@percent }
-\newlabel{app:repro}{{A}{21}{Training Details and Reproducibility}{appendix.A}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Hyperparameters}{21}{subsection.A.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Key hyperparameters of the deployed pipeline.}}{21}{table.caption.35}\protected@file@percent }
-\newlabel{tab:hparams}{{10}{21}{Key hyperparameters of the deployed pipeline}{table.caption.35}{}}
 \citation{qwen2025}
-\bibcite{devlin2019}{{1}{2019}{{Devlin et al.}}{{}}}
-\bibcite{liu2019}{{2}{2019}{{Liu et al.}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Training Details and Reproducibility}{22}{appendix.A}\protected@file@percent }
+\newlabel{app:repro}{{A}{22}{Training Details and Reproducibility}{appendix.A}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Hyperparameters}{22}{subsection.A.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Key hyperparameters of the deployed pipeline.}}{22}{table.caption.35}\protected@file@percent }
+\newlabel{tab:hparams}{{10}{22}{Key hyperparameters of the deployed pipeline}{table.caption.35}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Artifacts}{22}{subsection.A.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Environment}{22}{subsection.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{22}{appendix.B}\protected@file@percent }
-\newlabel{app:lab500}{{B}{22}{Appendix: The lab500 Pilot Study}{appendix.B}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces lab500 pilot results (superseded by lab2000).}}{22}{table.caption.36}\protected@file@percent }
-\newlabel{tab:lab500-app}{{11}{22}{lab500 pilot results (superseded by lab2000)}{table.caption.36}{}}
+\bibcite{devlin2019}{{1}{2019}{{Devlin et al.}}{{}}}
+\bibcite{liu2019}{{2}{2019}{{Liu et al.}}{{}}}
 \bibcite{cui2020}{{3}{2020}{{Cui et al.}}{{}}}
 \bibcite{wang2020}{{4}{2020}{{Wang et al.}}{{}}}
 \bibcite{sun2019}{{5}{2019}{{Sun et al.}}{{}}}
@@ -159,6 +157,10 @@
 \bibcite{socher2013}{{8}{2013}{{Socher et al.}}{{}}}
 \bibcite{pang2008}{{9}{2008}{{Pang and Lee}}{{}}}
 \bibcite{tan2008}{{10}{2008}{{Tan and Zhang}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{23}{appendix.B}\protected@file@percent }
+\newlabel{app:lab500}{{B}{23}{Appendix: The lab500 Pilot Study}{appendix.B}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces lab500 pilot results (superseded by lab2000).}}{23}{table.caption.36}\protected@file@percent }
+\newlabel{tab:lab500-app}{{11}{23}{lab500 pilot results (superseded by lab2000)}{table.caption.36}{}}
 \bibcite{yarowsky1995}{{11}{1995}{{Yarowsky}}{{}}}
 \bibcite{lee2013}{{12}{2013}{{Lee}}{{}}}
 \bibcite{arazo2020}{{13}{2020}{{Arazo et al.}}{{}}}
@@ -171,11 +173,12 @@
 \bibcite{reimers2019}{{20}{2019}{{Reimers and Gurevych}}{{}}}
 \bibcite{guo2017}{{21}{2017}{{Guo et al.}}{{}}}
 \bibcite{qwen2025}{{22}{2025}{{Qwen Team}}{{}}}
-\bibcite{gilardi2023}{{23}{2023}{{Gilardi et al.}}{{}}}
-\bibcite{tornberg2023}{{24}{2023}{{T\"ornberg}}{{}}}
-\bibcite{dietterich1998}{{25}{1998}{{Dietterich}}{{}}}
-\bibcite{demsar2006}{{26}{2006}{{Dem\v {s}ar}}{{}}}
-\bibcite{efron1993}{{27}{1993}{{Efron and Tibshirani}}{{}}}
-\bibcite{mcnemar1947}{{28}{1947}{{McNemar}}{{}}}
-\bibcite{douban2024}{{29}{2019}{{csuldw}}{{}}}
-\gdef \@abspage@last{25}
+\bibcite{settles2009}{{23}{2009}{{Settles}}{{}}}
+\bibcite{gilardi2023}{{24}{2023}{{Gilardi et al.}}{{}}}
+\bibcite{tornberg2023}{{25}{2023}{{T\"ornberg}}{{}}}
+\bibcite{dietterich1998}{{26}{1998}{{Dietterich}}{{}}}
+\bibcite{demsar2006}{{27}{2006}{{Dem\v {s}ar}}{{}}}
+\bibcite{efron1993}{{28}{1993}{{Efron and Tibshirani}}{{}}}
+\bibcite{mcnemar1947}{{29}{1947}{{McNemar}}{{}}}
+\bibcite{douban2024}{{30}{2019}{{csuldw}}{{}}}
+\gdef \@abspage@last{26}
