@@ -27,12 +27,14 @@ MegatronBERT-1.3B judge + neutral specialist — reaches **89.5%
 accuracy / 85.9 macro-F1** (5-fold cross-validation), with neutral-class recall
 improved from 0.543 to 0.707. A 2,000-review out-of-distribution benchmark
 (`lab2000`: 1,000 random held-out + 1,000 actively-sampled reviews, dual-LLM
-blind annotation with human adjudication of all disagreements) exposes a
-65.0% three-class accuracy on wild short reviews; 1,000 adjudicated
-active-learning rows lift it to 72.0%, and scaling to ~17K LLM-verified AL
+blind annotation with human adjudication of disagreements and spot
+checks — 479 rows total, mixed with dual-LLM consensus labels) exposes a
+65.0% three-class accuracy on wild short reviews; 1,000 actively-selected
+AL rows lift it to 72.0%, and scaling to ~17K LLM-verified AL
 rows reaches 76.6% three-class / 91.8% binary (fusion weights selected by
 5-fold cross-validation, no test-set tuning), with diminishing returns
-beyond ~6K confirming a noise ceiling near human agreement (71.5% IAA).
+beyond ~6K approaching the measured 71.5% second-annotator agreement
+reference.
 
 ## Results
 
@@ -92,10 +94,12 @@ contradict the text (e.g. 4★ reviews that are pure rants), so
 
 The label files under `data/` are our own annotation work — the 600
 hand-labelled gold reviews, the 500-row fresh-corpus labelling study,
-the 1,000-row human-adjudicated AL set, and the derived weak labels.
+the 1,000-row actively-sampled AL set (mixed provenance: 279
+human-adjudicated + 721 LLM-consensus rows), and the derived weak labels.
 The full `lab2000` OOD/AL benchmark ships in `data/lab2000/`:
-2,000 reviews with dual-LLM blind labels, human adjudication of all
-479 disagreements (`final_source` provenance per row), DeepSeek and
+2,000 reviews with two-pass LLM blind labels, human adjudication of
+all 335 disagreements plus 144 spot-checked agreements (479 rows;
+`final_source` provenance per row), DeepSeek and
 Qwen teacher labels for the ~17K scaled AL rows, fresh500, and a
 per-file README. Review texts remain Douban content; the 910K corpus
 is external and stays local.

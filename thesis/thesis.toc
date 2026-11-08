@@ -18,13 +18,13 @@
 \contentsline {subsection}{\numberline {4.1}Overview}{7}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Teacher ensemble and distillation}{8}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Frozen judge}{8}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Pseudo-label flywheel}{8}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.4}Pseudo-label flywheel}{9}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}Neutral specialist}{9}{subsection.4.5}%
 \contentsline {paragraph}{Corpus-trained detector.}{9}{paragraph*.13}%
 \contentsline {paragraph}{Specialist blend.}{9}{paragraph*.14}%
 \contentsline {subsection}{\numberline {4.6}Corpus-scale students}{9}{subsection.4.6}%
 \contentsline {subsection}{\numberline {4.7}Calibration}{9}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}Deployment}{9}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.8}Deployment}{10}{subsection.4.8}%
 \contentsline {section}{\numberline {5}Experimental Setup}{10}{section.5}%
 \contentsline {paragraph}{Evaluation protocol.}{10}{paragraph*.15}%
 \contentsline {paragraph}{Metrics.}{10}{paragraph*.16}%
@@ -49,7 +49,7 @@
 \contentsline {subsection}{\numberline {8.3}Human agreement: the real ceiling}{16}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{16}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{17}{subsection.8.5}%
-\contentsline {paragraph}{Scaling: 1K human $\to $ 5.9K hybrid.}{17}{paragraph*.31}%
+\contentsline {paragraph}{Scaling: 1K AL $\to $ 5.9K hybrid.}{17}{paragraph*.31}%
 \contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{18}{paragraph*.33}%
 \contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{19}{paragraph*.34}%
 \contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{20}{subsection.8.6}%
@@ -58,6 +58,6 @@
 \contentsline {section}{Reproducibility}{21}{section.10}%
 \contentsline {section}{\numberline {A}Training Details and Reproducibility}{21}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}Hyperparameters}{21}{subsection.A.1}%
-\contentsline {subsection}{\numberline {A.2}Artifacts}{21}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.2}Artifacts}{22}{subsection.A.2}%
 \contentsline {subsection}{\numberline {A.3}Environment}{22}{subsection.A.3}%
 \contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{22}{appendix.B}%
