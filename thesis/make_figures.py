@@ -63,11 +63,11 @@ d = json.load(open(os.path.join(ROOT, "out", "ens_lite_3class_v3.json"),
                    encoding="utf-8"))
 
 pts = [
-    ("~1K",   952,    0.7867, 0.7217),
-    ("~5K",   4751,   0.8033, 0.7535),
-    ("~19K",  19001,  0.8433, 0.8016),
-    ("~48K",  47501,  0.8550, 0.8146),
-    ("~160K", 160000, 0.8750, 0.8463),
+    ("1K",    952,    0.7883, 0.7237),
+    ("5K",    4751,   0.8033, 0.7535),
+    ("19K",   19001,  0.8433, 0.8016),
+    ("48K",   47501,  0.8550, 0.8146),
+    ("160K",  160000, 0.8750, 0.8463),
 ]
 names = [p[0] for p in pts]
 ns = np.array([p[1] for p in pts], dtype=float)
@@ -83,9 +83,13 @@ ax.plot(ns, f1, "s-", color=C["red"], ms=4, lw=1.4,
 for x, a in zip(ns, acc):
     ax.annotate(f"{a:.3f}", (x, a), textcoords="offset points",
                 xytext=(0, 6), ha="center", fontsize=6.5, color=C["blue"])
+# deployed-ensemble reference lines: accuracy (solid dots) and macro-F1
 ax.axhline(0.8950, color=C["grey"], ls=":", lw=0.9)
-ax.text(ns[-1]*0.55, 0.8975, "deployed ensemble (0.895)",
-        fontsize=6.5, color=C["grey"])
+ax.axhline(0.8594, color=C["grey"], ls=(0, (3, 2, 1, 2)), lw=0.9)
+ax.text(900, 0.902, "deployed acc = 0.895",
+        fontsize=6.5, color=C["grey"], ha="right")
+ax.text(900, 0.852, "deployed F1 = 0.859",
+        fontsize=6.5, color=C["grey"], ha="right")
 ax.set_xscale("log")
 ax.set_xlabel("Pseudo-labeled training rows (log scale)")
 ax.set_ylabel("Gold-600 score")
@@ -93,7 +97,7 @@ ax.set_xticks(ns)
 ax.set_xticklabels(names)
 ax.set_ylim(0.70, 0.92)
 ax.legend(loc="lower right")
-ax.set_title("Pseudo-label scaling (zero gold training)")
+ax.set_title("Scaling with pseudo-labeled data (no gold in training)")
 fig.savefig(f"{OUT}/fig_scaling.pdf")
 plt.close(fig)
 
@@ -226,6 +230,58 @@ ax.set_ylabel("Accuracy")
 ax.set_ylim(0.4, 1.0)
 ax.set_title("Out-of-distribution check: fresh corpus sample")
 fig.savefig(f"{OUT}/fig_lab500.pdf")
+plt.close(fig)
+
+# ---------------------------------------------------------------- Fig 6: lab2000 OOD + IAA
+# Numbers: mix rows are 5-fold cross-fit on ood1000 (mix_crossfit.py);
+# SFT/LLM rows from sft_results + ds_*_labels.jsonl.
+fig, (axa, axb) = plt.subplots(
+    1, 2, figsize=(6.6, 2.55),
+    gridspec_kw={"width_ratios": [1.55, 1], "wspace": 0.16})
+style_ax(axa); style_ax(axb)
+
+systems = ["v3\ngold-600", "SFT\ngold+al1k", "mix\ngold+al17k",
+           "DS-V4.1-\nFlash", "DS-V4-\nPro"]
+acc3 = [0.650, 0.714, 0.766, 0.820, 0.844]
+bin_ = [0.850, 0.880, 0.918, 0.976, np.nan]
+cols_sys = [C["blue"], C["blue"], C["green"], C["purple"], C["purple"]]
+x = np.arange(len(systems))
+w_ = 0.36
+b1 = axa.bar(x - w_ / 2, acc3, w_, color=cols_sys, alpha=0.92, zorder=3,
+             label="3-class")
+b2 = axa.bar(x + w_ / 2, [v if not np.isnan(v) else 0 for v in bin_],
+             w_, color=cols_sys, alpha=0.45, hatch="///", zorder=3,
+             label="binary (pos/neg)")
+for i, v in enumerate(acc3):
+    axa.text(x[i] - w_ / 2, v + 0.012, f"{v:.3f}", ha="center",
+             fontsize=6, color=C["blue"])
+for i, v in enumerate(bin_):
+    if not np.isnan(v):
+        axa.text(x[i] + w_ / 2, v + 0.012, f"{v:.3f}", ha="center",
+                 fontsize=6, color=C["blue"])
+axa.axhline(0.715, color=C["red"], ls="--", lw=0.9, zorder=2)
+axa.text(4.45, 0.722, "human IAA 71.5%", fontsize=6.2, color=C["red"],
+         ha="right")
+axa.set_xticks(x)
+axa.set_xticklabels(systems, fontsize=6.4)
+axa.set_ylabel("Accuracy on ood1000")
+axa.set_ylim(0.4, 1.02)
+axa.legend(loc="upper left", fontsize=6.3, handlelength=1.2,
+           handletextpad=0.4, borderpad=0.3, labelspacing=0.3)
+axa.set_title("(a) OOD accuracy by system", fontsize=8.5)
+
+# panel b: raw pairwise agreement on the same 200 rows
+axb.bar([0, 1], [0.835, 0.715], color=[C["purple"], C["orange"]],
+        width=0.55, zorder=3)
+axb.text(0, 0.845, "83.5%", ha="center", fontsize=7.5, fontweight="bold")
+axb.text(1, 0.725, "71.5%", ha="center", fontsize=7.5, fontweight="bold")
+axb.set_xticks([0, 1])
+axb.set_xticklabels(["two LLM\nannotators\n(diff.\nfamilies)",
+                     "two\nhumans"], fontsize=6.4)
+axb.set_ylabel("Raw agreement rate")
+axb.set_ylim(0.5, 1.0)
+axb.set_title("(b) Inter-annotator agreement (n=200)", fontsize=8.5)
+fig.savefig(f"{OUT}/fig_lab2000.pdf")
 plt.close(fig)
 
 print("figures regenerated")

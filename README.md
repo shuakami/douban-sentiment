@@ -29,8 +29,9 @@ improved from 0.543 to 0.707. A 2,000-review out-of-distribution benchmark
 (`lab2000`: 1,000 random held-out + 1,000 actively-sampled reviews, dual-LLM
 blind annotation with human adjudication of all disagreements) exposes a
 65.0% three-class accuracy on wild short reviews; 1,000 adjudicated
-active-learning rows lift it to 72.4%, and scaling to ~17K LLM-verified AL
-rows reaches 76.8% three-class / 92.1% binary, with diminishing returns
+active-learning rows lift it to 72.0%, and scaling to ~17K LLM-verified AL
+rows reaches 76.6% three-class / 91.8% binary (fusion weights selected by
+5-fold cross-validation, no test-set tuning), with diminishing returns
 beyond ~6K confirming a noise ceiling near human agreement (71.5% IAA).
 
 ## Results

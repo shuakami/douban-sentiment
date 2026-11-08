@@ -108,10 +108,10 @@ SFT student by $+8.8$pp (62.6\%$\to$71.4\%, McNemar
 $p = 4.0\times10^{-8}$).
 Scaling the same protocol with frontier-LLM pseudo-labels --- up to
 $\sim$17K actively-selected examples --- pushes the ensemble mix to
-\textbf{76.8\% three-class} (75.2--76.7\% across three seeds,
-76.8\% seed-averaged, split-half validated; significantly above the
-1K-human mix, McNemar $p = 0.002$), and lifts
-binary OOD to \textbf{92.1\%}, above measured
+\textbf{76.6\% three-class} (74.6--76.3\% across three seeds,
+76.6\% seed-averaged, 5-fold cross-fit validated; significantly above
+the 1K-human mix, McNemar $p = 0.002$), and lifts
+binary OOD to \textbf{91.8\%}, above measured
 human--human agreement (71.5\%). We
 further document three findings invisible at $n{=}600$: active-learning
 samples require a gold anchor to avoid prior collapse, hard labels beat
@@ -176,11 +176,12 @@ quantify with a dedicated out-of-distribution study.
         neutral recall 70.7\%) combining a distilled student, a frozen
         1.3B-parameter judge, and a corpus-trained neutral specialist.
   \item A reproducible evaluation protocol (stratified 5-fold OOF,
-        McNemar/bootstrap significance tests, temperature calibration)
+        cross-fit fusion-weight selection, McNemar/bootstrap
+        significance tests, temperature calibration)
         plus a 2{,}000-row cross-movie benchmark (lab2000) under which
         active-learning expansion adds +8.8pp over gold-only SFT
         ($p \approx 4\times10^{-8}$) and scaling to 17K LLM labels
-        reaches 76.8\% three-class accuracy --- at or above measured
+        reaches 76.6\% three-class accuracy --- at or above measured
         human--human agreement (71.5\%).
   \item A documented catalogue of more than twenty measured-but-rejected
         architectures, which we argue is itself a contribution: it maps
@@ -550,7 +551,7 @@ $T = 0.37$ by NLL on the gold-600 OOF predictions, reducing ECE to
 $\approx$0.04 without changing any predicted label or accuracy. $T$ is
 applied at inference so displayed confidence is honest. Calibration
 also transfers better after AL training: on ood1000 the AL mixes reach
-ECE $0.043$--$0.048$ vs.\ v3's 0.159 at $T{=}1$ --- pseudo-labelled
+ECE $0.027$--$0.054$ vs.\ v3's 0.159 at $T{=}1$ --- pseudo-labelled
 boundary data sharpens confidence, not just accuracy.
 
 \subsection{Deployment}
@@ -666,13 +667,17 @@ instead of pseudo-labels collapses on the three-class task.
 \centering
 \includegraphics[width=0.68\textwidth]{fig_scaling.pdf}
 \caption{Accuracy and macro-F1 of corpus-trained pseudo-label students
-on gold-600 versus training-set size (log scale). Performance grows
-monotonically and is still rising at 160K rows.}
+on gold-600 versus training-set size (log scale). \emph{Zero gold
+training}: gold-600 is the held-out evaluation set only and is never
+used for training. The dashed reference is the deployed ensemble
+(accuracy 0.895, macro-F1 0.859). The y-axis starts at 0.70 to
+highlight the performance differences. Performance grows monotonically
+and is still rising at 160K rows.}
 \label{fig:scaling}
 \end{figure}
 
 Table~\ref{tab:scaling} and Figure~\ref{fig:scaling} show a monotone
-scaling curve: $\sim$1K rows $\to$ 78.7\%, 5K $\to$ 80.3\%, 19K $\to$
+scaling curve: $\sim$1K rows $\to$ 78.8\%, 5K $\to$ 80.3\%, 19K $\to$
 84.3\%, 48K $\to$ 85.5\%, 160K $\to$ 87.5\%. The curve has not saturated
 --- corpus scale, not model size, is the active ingredient within the
 ranges tested.
@@ -812,9 +817,13 @@ pilot predicted: the neutral boundary.
 \begin{table}[H]
 \centering\small
 \caption{ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed
-training data; ``mix'' = probability average of v3 and SFT(gold+al)
-with weights tuned per task on ood1000 (0.7 SFT for 3-class, 0.3 for
-binary). Binary rows exclude neutral examples.}
+training data; ``mix'' = probability average of v3 and the SFT model,
+with the fusion weight selected by stratified 5-fold cross-validation
+on ood1000 --- each prediction uses weights tuned on the other folds,
+so no reported row's label influences its own mix weight. Binary
+evaluation excludes neutral examples. ``---'' = metric not reported
+for this run. lab2000 labels: 479 human-adjudicated rows plus
+dual-LLM consensus labels (Section~\ref{sec:lab2000-data}).}
 \label{tab:ood}
 \begin{tabular}{llcc}
 \toprule
@@ -825,7 +834,7 @@ SFT student                 & gold-600        & 0.626 / 0.611 & 0.832 / 0.831 \\
 SFT student                 & al1000 only     & 0.560 / 0.519 & 0.577 / 0.512 \\
 SFT student                 & gold-600+al1000 & 0.714 / 0.710 & 0.880 / 0.875 \\
 SFT student (distilled)     & gold-600+al1000 & 0.710 / ---   & 0.825 / ---   \\
-\textbf{mix (deployed cand.)}& gold-600+al1000 & \textbf{0.724 / 0.721} & \textbf{0.889 / 0.885} \\
+\textbf{mix (deployed cand.)}& gold-600+al1000 & \textbf{0.720 / 0.717} & \textbf{0.878 / 0.876} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -833,10 +842,14 @@ SFT student (distilled)     & gold-600+al1000 & 0.710 / ---   & 0.825 / ---   \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{fig_lab2000.pdf}
-\caption{(a) ood1000 accuracy by system; the dashed line marks measured
-human--human agreement (71.5\%). (b) Inter-annotator agreement on the
-same 200-row subset: two LLM passes agree more with each other than
-two humans do.}
+\caption{(a) ood1000 accuracy by system; the first three groups are
+our MacBERT-scale models and the last two are off-the-shelf DeepSeek
+LLMs; the dashed line marks the raw human--human pairwise agreement
+rate (71.5\%). (b) Raw pairwise agreement on the same 200-row subset:
+two LLM annotators from different model families vs.\ two humans.
+Raw agreement rate is reported here, not Cohen's $\kappa$; higher LLM
+self-agreement reflects shared inductive bias and literal rubric
+following rather than superior annotation quality.}
 \label{fig:lab2000}
 \end{figure}
 
@@ -844,10 +857,9 @@ Adding the 1{,}000 actively-selected human-adjudicated rows to the
 training set lifts three-class OOD accuracy by \textbf{+8.8pp}
 (62.6\%$\to$71.4\%, McNemar $p = 4.0\times10^{-8}$) --- a gain that was
 statistically unresolvable at $n{=}600$ ($p = 0.65$ for v3-vs-v2). The
-ensemble mix reaches \textbf{72.4\% / 0.721} three-class and
-\textbf{88.9\% / 0.885} binary; 20 random split-half resamples give
-$0.7225 \pm 0.013$ and $0.8878 \pm 0.008$, so the improvement is not
-test-set overfitting.
+ensemble mix reaches \textbf{72.0\% / 0.717} three-class and
+\textbf{87.8\% / 0.876} binary under cross-fit weight selection ---
+the improvement is not test-set overfitting by construction.
 
 \subsection{Three findings invisible at $n{=}600$}
 \label{sec:findings}
@@ -887,19 +899,22 @@ disagreement is not uniform: on items the first annotator labelled
 neutral, the second agrees only 49\% of the time, relabelling 37 of 80
 as positive. Two humans do not share a stable neutral boundary.
 Model errors concentrate on exactly these ambiguous rows: the best AL
-mix (al17k) scores 78.9\% on annotator-agreement items vs.\ 63.2\% on
+mix (al17k) scores 78.7\% on annotator-agreement items vs.\ 63.2\% on
 disagreement items (v3: 67.8\% vs.\ 46.6\%), and AL training lifts
 neutral recall on disagreement rows from 0.41 to 0.76.
 
-Meanwhile our best OOD system scores \textbf{76.8\%} after AL
-scaling (72.4\% with human labels alone) --- at or above
+Meanwhile our best OOD system scores \textbf{76.6\%} after AL
+scaling (72.0\% with human labels alone) --- at or above
 human--human agreement. The appropriate reading
 is not ``the model is imperfect'' but ``the model has reached and
 slightly exceeded the human consistency ceiling; residual error is
-dominated by annotator-level ambiguity.'' For reference, the two LLM annotation
-passes agree with each other at 83.5\% ($\kappa = 0.75$) on the same
-subset --- LLMs follow the rubric more literally than humans do, which
-is why human adjudication, not pass-consensus, anchors the final
+dominated by annotator-level ambiguity.'' For reference, the two LLM
+annotators (from different model families, blind to each other and to
+star ratings) agree with each other at 83.5\% raw agreement
+($\kappa = 0.75$) on the same subset --- higher than human--human raw
+agreement (71.5\%), but this reflects shared inductive bias and more
+literal rubric following rather than superior annotation quality;
+which is why human adjudication, not LLM consensus, anchors the final
 labels.
 
 \subsection{Comparison with a frontier LLM}
@@ -926,7 +941,7 @@ DeepSeek-V4-Pro     & $\sim$1.6T     & 0.844 (n=950) & --- & $\sim$5.9s API \\
 DeepSeek-V4.1-Flash & $\sim$763B    & 0.820 (n=992) & \textbf{0.976} (n=661) & $\sim$1.7s API \\
 Qwen3-4B (local)    & $\sim$4B      & 0.706 (n=1000) & --- & $\sim$2.3s local \\
 Deployed v3         & $\sim$1.5B    & 0.650 & 0.850 & $\sim$0.1s local \\
-SFT+mix (gold+al17k) & $\sim$0.1B    & \textbf{0.768} & \textbf{0.921} & $\sim$0.1s local \\
+SFT+mix (gold+al17k) & $\sim$0.1B    & \textbf{0.766} & \textbf{0.918} & $\sim$0.1s local \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -942,7 +957,8 @@ binary accuracy (97.6\%) exceeds its three-class accuracy (82.0\%) by
 15.6pp, the same polarity-vs-neutral gap we document --- intrinsic
 ambiguity is not a small-model artefact. Second, on the 479
 human-adjudicated hard subset the gap nearly closes: DeepSeek reaches
-59.5\% on the ood portion vs.\ 58.5\% for our earlier ensemble mix
+59.5\% on the ood portion vs.\ 57.9\% for our earlier 1K-human
+ensemble mix
 (parity within noise); the subset is enriched for exactly the cases
 where rubric-following and world knowledge diverge. Third, the
 deployment economics differ by orders of magnitude: the local system
@@ -996,10 +1012,13 @@ $\sim$6.5K AL rows the epoch optimum shifts to 4 (8 epochs overfits).
 
 \begin{table}[H]
 \centering\footnotesize
-\caption{AL-scaling on ood1000 (human-adjudicated reference). All
-rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are
-probability averages of v3 and the SFT model; $w$ denotes the SFT
-weight, tuned per row on ood1000.}
+\caption{AL-scaling on ood1000 (479 human-adjudicated + dual-LLM
+consensus labels; Section~\ref{sec:lab2000-data}). All rows are
+gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability
+averages of v3 and the SFT model; the fusion weight is selected by
+stratified 5-fold cross-validation (out-of-fold predictions, no row's
+label influences its own weight). Ranges denote three random seeds.
+Binary evaluation excludes neutral examples; ``---'' = not reported.}
 \label{tab:al-scaling}
 \begin{tabular}{lcc}
 \toprule
@@ -1018,15 +1037,15 @@ gold-600 + al3k (disagreement-mined DS) & 0.703 / 0.704 & 0.877 / 0.874 \\
 gold-600 + al14k (1K human + 12.9K DS) & 0.744 / 0.747 & 0.914 / 0.911 \\
 gold-600 + al17k (1K human + 15.9K DS) & 0.731--0.741 / 0.734--0.743 & 0.912--0.918 / 0.910--0.916 \\
 \midrule
-+ v3 mix (al6kh)                     & 0.750 / 0.751 & 0.912 / 0.910 \\
-+ v3 mix (al11kds, s123, $w{=}0.55$) & 0.757 / 0.760 & --- \\
-+ v3 mix (al11kds e8, $w{=}0.40$)    & --- & 0.915 / 0.913 \\
-+ v3 mix (al14kds, $w{=}0.50$, 3 seeds) & 0.754--0.761 & --- \\
-+ v3 mix (al14kds 3-seed avg)        & 0.762 / 0.764 & --- \\
-+ v3 mix (al14kds binary, $w{=}0.40$) & --- & 0.917 / 0.915 \\
-+ v3 mix (al17kds, $w{=}0.55$, 3 seeds) & 0.752--0.767 & --- \\
-+ v3 mix (al17kds 3-seed avg, $w{=}0.60$) & \textbf{0.768 / 0.771} & --- \\
-+ v3 mix (al17kds binary s42, $w{=}0.45$) & --- & \textbf{0.921 / 0.919} \\
++ v3 mix (al6kh)                     & 0.742 / 0.743 & 0.909 / 0.907 \\
++ v3 mix (al11kds, s123)             & 0.757 / 0.760 & --- \\
++ v3 mix (al11kds binary e8)         & --- & 0.915 / 0.913 \\
++ v3 mix (al14kds, 3 seeds)          & 0.748--0.757 & --- \\
++ v3 mix (al14kds 3-seed avg)        & 0.755 / 0.758 & --- \\
++ v3 mix (al14kds binary)            & --- & 0.909 / 0.907 \\
++ v3 mix (al17kds, 3 seeds)          & 0.746--0.763 & --- \\
++ v3 mix (al17kds 3-seed avg)        & \textbf{0.766 / 0.769} & --- \\
++ v3 mix (al17kds binary s42)        & --- & \textbf{0.918 / 0.916} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1039,10 +1058,9 @@ with human positives, relabelling 156/464 as neutral) while agreeing
 with humans on neutral at 88\% --- human adjudication corrects exactly
 this polarity bias, which is why the hybrid wins. Second, the \textbf{hybrid is best}: keeping human
 adjudication on the hardest 1{,}000 rows and adding 4{,}906 LLM
-labels reaches 72.9\% standalone and \textbf{75.0\% / 0.751} three-class
-and \textbf{91.2\% / 0.910} binary after mixing (split-half
-$0.748 \pm 0.015$ / $0.913 \pm 0.010$) --- the strongest OOD numbers
-at this scale, still $\sim$7pp below the frontier LLM but at
+labels reaches 72.9\% standalone and \textbf{74.2\% / 0.743} three-class
+and \textbf{90.9\% / 0.907} binary after mixing --- the strongest OOD
+numbers at this scale, still $\sim$7pp below the frontier LLM but at
 $\sim$0.1s local latency.
 
 \paragraph{Diminishing returns and teacher quality at scale.} We pushed
@@ -1053,17 +1071,17 @@ label-logprob (al11k-Qwen; the local model reaches only 70.6\% on
 ood1000 zero-shot vs.\ DeepSeek's 82.0\%). The all-API-teacher run
 edges the hybrid forward (73.4\% standalone, 91.5\% binary, and the
 best gold-600 cross-fit of any large-AL model at 81.0\%), but the
-three-class mix is statistically flat vs.\ 6K (74.9--75.7\% across
-three seeds, mean 75.3\% vs.\ 75.0\%, McNemar $p = 0.57$) --- the
-1K$\to$6K gain of +3.6pp does not repeat at 6K$\to$11K, marking the
+three-class mix is statistically flat vs.\ 6K (74.9\% seed-averaged
+vs.\ 74.2\%, McNemar $p = 0.56$) --- the
+1K$\to$6K gain does not repeat at 6K$\to$11K, marking the
 onset of diminishing returns in the ambiguity region. The gain over
-the 1K-human mix is nonetheless significant (McNemar $p = 0.018$,
-109 vs.\ 76 discordant pairs), and the mix's OOD calibration improves
-with it (ECE 0.045 vs.\ v3's 0.159). The local-teacher run is
-clearly worse (70.3\% standalone, 73.5\% mixed, 90.2\% binary,
-cross-fit 79.5\%; pairwise McNemar vs.\ the DS-teacher mix is
-n.s.\ at $n{=}1000$, but the deficit is consistent across all four
-evaluation axes): at identical scale, pseudo-label quality --- not
+the 1K-human mix is nonetheless significant (McNemar $p = 0.041$,
+109 vs.\ 80 discordant pairs), and the mix's OOD calibration improves
+with it (ECE 0.037 vs.\ v3's 0.159). The local-teacher run is
+clearly worse (70.3\% standalone, 72.4\% mixed, 90.2\% binary,
+cross-fit 79.5\%; pairwise McNemar vs.\ the DS-teacher mix reaches
+$p = 0.041$ --- teacher quality is a real, measurable gap, not noise):
+at identical scale, pseudo-label quality --- not
 quantity --- is the binding constraint, and a 4B open teacher cannot
 substitute for the frontier API here. The teachers' disagreement is
 structured, not random: on the same 5{,}000 uncertainty-sampled rows
@@ -1073,30 +1091,31 @@ its negative rows relabelled neutral) --- a distributional bias the
 student faithfully inherits. A final ablation replaces the
 human-adjudicated al1000 with DeepSeek labels at the same 11K scale
 (al11k-allDS): the three-class mix is unchanged (75.2\%,
-McNemar $p = 0.66$ vs.\ the human-core mix) while binary
-drops 1.2pp to 90.3\% --- at this scale the human-verification core's
+McNemar $p = 0.81$ vs.\ the human-core mix) while binary
+drops $\sim$2.4pp to 89.2\% (McNemar $p = 0.014$) --- at this scale
+the human-verification core's
 marginal value concentrates in the polarity boundary, not the neutral
 one. A third round then tests whether \emph{where} AL rows are drawn
 matters at the margin: we mined 3{,}000 new rows from the
 student-disagreement pool (rows where the deployed ensemble's own
 channels split), labelled them with DeepSeek (al3kds), and added them
 to form al14kds (1K human + 12.9K DS). The 3K subset alone is
-strikingly label-efficient --- 70.3\% standalone, 71.9\% mixed,
-roughly matching the 1K-\emph{human}-label mix (72.4\%) at 3$\times$
+strikingly label-efficient --- 70.3\% standalone, 71.5\% mixed,
+roughly matching the 1K-\emph{human}-label mix (72.0\%) at 3$\times$
 the label count but API-token rather than adjudication cost --- while
-the full 14K mix reaches \textbf{76.1\%} three-class
-(75.4--76.1\% across three seeds, 76.2\% seed-averaged;
-split-half $0.759 \pm 0.016$) and \textbf{91.7\%} binary, with
-gold-600 cross-fit 81.5\%. The +0.4pp over the best 11K seed is
-directionally consistent across all seeds but within noise at
-$n{=}1000$ (McNemar $p = 0.75$), and the 14K mix remains significantly
-above the 1K-human mix ($p \approx 0.004$, 101 vs.\ 63 discordant). A
+the full 14K mix reaches \textbf{75.5\%} three-class
+(74.8--75.7\% across three seeds, 75.5\% seed-averaged)
+and \textbf{90.9\%} binary, with
+gold-600 cross-fit 81.5\%. The difference over the best 11K seed is
+within noise at
+$n{=}1000$ (McNemar $p = 0.91$), and the 14K mix remains significantly
+above the 1K-human mix ($p \approx 0.01$, 107 vs.\ 72 discordant). A
 fourth identical round (al17kds, another 3{,}000 disagreement-mined
-DeepSeek rows) reaches \textbf{76.8\%} three-class seed-averaged
-(75.2--76.7\% single seeds, split-half $0.767 \pm 0.013$) and
-\textbf{92.1\%} binary, with gold-600 cross-fit 81.0\% --- the best
-observed numbers, though +0.6pp over 14K is again within noise
-(McNemar $p = 0.54$), confirming saturation in the 75--77\% band ---
+DeepSeek rows) reaches \textbf{76.6\%} three-class seed-averaged
+(74.6--76.3\% single seeds) and
+\textbf{91.8\%} binary, with gold-600 cross-fit 81.0\% --- the best
+observed numbers, though +1.1pp over 14K is again within noise
+(McNemar $p = 0.23$), confirming saturation in the $\sim$75--77\% band ---
 the
 honest reading is that disagreement-targeted sampling helps, but the
 three-class curve is approaching its ceiling. The honest scaling curve is
@@ -1106,18 +1125,20 @@ The total API cost for all 15{,}906 additional DeepSeek labels was a
 few hundred thousand tokens --- orders of magnitude cheaper than
 equivalent human annotation.
 
-\textbf{Fresh-sample robustness check.} Because every AL round and
-mix weight was selected on ood1000, we additionally sampled
+\textbf{Fresh-sample robustness check.} Because AL rows were sampled
+on corpus uncertainty and mix weights by cross-validation on ood1000,
+we additionally sampled
 \textbf{fresh500} --- 500 uniformly-random corpus reviews disjoint
 from all training and eval texts --- labelled by the same DeepSeek
-teacher. With weights frozen at their ood1000 values, the al14k mix
-scores 74.6\% three-class vs.\ v3's 58.8\% (McNemar
-$p = 1.6\times10^{-13}$) and 92.6\% binary vs.\ 86.3\% --- the AL
+teacher. With weights frozen at their cross-fit values
+($w{=}0.55$ three-class, $w{=}0.50$ binary), the al14k mix
+scores 75.2\% three-class vs.\ v3's 58.8\% (McNemar
+$p = 1.1\times10^{-12}$) and 92.6\% binary vs.\ 86.3\% --- the AL
 gain replicates on unseen data and is not an artifact of
 benchmark-specific tuning. (Caveat: fresh500 labels are
-teacher-generated, so these numbers measure generalisation to the
-teacher's label distribution; binary, being less ambiguous, is less
-affected by this alignment.)
+teacher-generated, not human gold, so these numbers measure
+generalisation to the teacher's label distribution; binary, being
+less ambiguous, is less affected by this alignment.)
 
 The practical protocol this validates is exactly the one lab2000
 itself used: \emph{LLM-label at scale, human-adjudicate a verification
@@ -1140,7 +1161,7 @@ tension here; we retain v3 as the deployed model and report the mix as
 an OOD-specialist candidate. A length-aware router (short reviews
 $\to$ mix, long $\to$ v3) traces a Pareto frontier rather than a free
 lunch: at threshold 20 chars it gives 87.3\% gold / 70.6\% OOD,
-between v3 (89.5\% / 65.0\%) and the pure mix ($\sim$82\% / 76.8\%).
+between v3 (89.5\% / 65.0\%) and the pure mix ($\sim$82\% / 76.6\%).
 Length is an imperfect domain signal (32\% of gold reviews are $<$50
 chars; 26\% of ood1000 are $\ge$50), so we leave a learned
  domain router to future work.
@@ -1167,7 +1188,7 @@ sample; the released data marks per-row provenance
         gold set is 600 reviews from a \emph{single film page}; the
         lab2000 study quantifies the resulting OOD gap (65.0\%
         three-class) and shows 1{,}000 actively-selected adjudicated
-        rows recover most of it (72.4\%), but ood1000 remains the only
+        rows recover most of it (72.0\%), but ood1000 remains the only
         true held-out cross-movie test.
   \item \textbf{lab2000 label provenance.} Pre-annotations are
         LLM-generated; 479/2{,}000 rows carry human adjudication and a
@@ -1202,10 +1223,10 @@ insufficient supervision --- measured, not assumed.
 The lab2000 study then stress-tests the result honestly. The
 gold-trained system drops to 65.0\% three-class on wild cross-movie
 reviews; 1{,}000 actively-selected, human-adjudicated boundary examples
-recover the gap to 72.4\% (the underlying SFT gain: $+8.8$pp,
+recover the gap to 72.0\% (the underlying SFT gain: $+8.8$pp,
 McNemar $p = 4.0\times10^{-8}$), and scaling the
-same protocol with frontier-LLM pseudo-labels reaches \textbf{76.8\%}
-three-class and \textbf{92.1\%} binary --- at or above measured
+same protocol with frontier-LLM pseudo-labels reaches \textbf{76.6\%}
+three-class and \textbf{91.8\%} binary --- at or above measured
 human--human agreement (71.5\%).
 Three transferable findings emerge: active learning requires a gold
 anchor, hard labels outperform soft distillation once the evaluation

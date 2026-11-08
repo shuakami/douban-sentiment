@@ -49,14 +49,14 @@
 \contentsline {subsection}{\numberline {8.3}人类一致率：真正的天花板}{14}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}与前沿大模型的对比}{15}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}LLM 伪标签能否替代人工终审？}{15}{subsection.8.5}%
-\contentsline {paragraph}{规模化：1K 人工 $\to $ 5.9K 混合。}{15}{paragraph*.31}%
+\contentsline {paragraph}{规模化：1K 人工 $\to $ 5.9K 混合。}{16}{paragraph*.31}%
 \contentsline {paragraph}{部署权衡（实测而非假设）。}{17}{paragraph*.33}%
-\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{17}{subsection.8.6}%
-\contentsline {section}{\numberline {9}局限性与效度威胁}{17}{section.9}%
+\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{18}{subsection.8.6}%
+\contentsline {section}{\numberline {9}局限性与效度威胁}{18}{section.9}%
 \contentsline {section}{\numberline {10}结论与未来工作}{18}{section.10}%
 \contentsline {section}{可复现性}{18}{section.10}%
 \contentsline {section}{\numberline {A}训练细节与可复现性}{19}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}超参数}{19}{subsection.A.1}%
 \contentsline {subsection}{\numberline {A.2}产物清单}{19}{subsection.A.2}%
 \contentsline {subsection}{\numberline {A.3}环境}{19}{subsection.A.3}%
-\contentsline {section}{\numberline {B}附录：lab500 先导研究}{19}{appendix.B}%
+\contentsline {section}{\numberline {B}附录：lab500 先导研究}{20}{appendix.B}%

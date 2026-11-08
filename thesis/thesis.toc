@@ -44,8 +44,8 @@
 \contentsline {subsection}{\numberline {8.1}Exposing the OOD gap}{14}{subsection.8.1}%
 \contentsline {subsection}{\numberline {8.2}Three findings invisible at $n{=}600$}{15}{subsection.8.2}%
 \contentsline {paragraph}{F1: Active learning needs an anchor.}{15}{paragraph*.26}%
-\contentsline {paragraph}{F2: Under domain shift, hard labels beat soft distillation.}{15}{paragraph*.27}%
-\contentsline {paragraph}{F3: Ratings beat text exactly where text fails.}{15}{paragraph*.28}%
+\contentsline {paragraph}{F2: Under domain shift, hard labels beat soft distillation.}{16}{paragraph*.27}%
+\contentsline {paragraph}{F3: Ratings beat text exactly where text fails.}{16}{paragraph*.28}%
 \contentsline {subsection}{\numberline {8.3}Human agreement: the real ceiling}{16}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{16}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{17}{subsection.8.5}%
