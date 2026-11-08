@@ -14,8 +14,8 @@
 \contentsline {subsection}{\numberline {3.4}Star ratings are not sentiment labels}{6}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Stage-2 benchmark: lab2000}{7}{subsection.3.5}%
 \contentsline {paragraph}{Annotation protocol.}{7}{paragraph*.11}%
-\contentsline {section}{\numberline {4}Methodology}{7}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Overview}{7}{subsection.4.1}%
+\contentsline {section}{\numberline {4}Methodology}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Overview}{8}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Teacher ensemble and distillation}{8}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Frozen judge}{8}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}Pseudo-label flywheel}{9}{subsection.4.4}%
@@ -23,38 +23,38 @@
 \contentsline {paragraph}{Corpus-trained detector.}{9}{paragraph*.13}%
 \contentsline {paragraph}{Specialist blend.}{9}{paragraph*.14}%
 \contentsline {subsection}{\numberline {4.6}Corpus-scale students}{9}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Calibration}{9}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.7}Calibration}{10}{subsection.4.7}%
 \contentsline {subsection}{\numberline {4.8}Deployment}{10}{subsection.4.8}%
 \contentsline {section}{\numberline {5}Experimental Setup}{10}{section.5}%
 \contentsline {paragraph}{Evaluation protocol.}{10}{paragraph*.15}%
 \contentsline {paragraph}{Metrics.}{10}{paragraph*.16}%
 \contentsline {paragraph}{Baselines.}{10}{paragraph*.17}%
-\contentsline {section}{\numberline {6}Results}{10}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Main results}{10}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Corpus-scale single models}{11}{subsection.6.2}%
+\contentsline {section}{\numberline {6}Results}{11}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Main results}{11}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Corpus-scale single models}{12}{subsection.6.2}%
 \contentsline {subsection}{\numberline {6.3}Pseudo-label scaling}{12}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Cross-domain silver evaluation}{12}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.4}Cross-domain silver evaluation}{13}{subsection.6.4}%
 \contentsline {section}{\numberline {7}Analysis}{13}{section.7}%
 \contentsline {subsection}{\numberline {7.1}Calibration}{13}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Statistical significance}{13}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Error analysis}{13}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.2}Statistical significance}{14}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Error analysis}{14}{subsection.7.3}%
 \contentsline {subsection}{\numberline {7.4}Rejected architectures}{14}{subsection.7.4}%
 \contentsline {subsection}{\numberline {7.5}Comparison with a commercial training platform}{14}{subsection.7.5}%
-\contentsline {section}{\numberline {8}Stage-2: The lab2000 OOD and Active-Learning Study}{14}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Exposing the OOD gap}{14}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Three findings invisible at $n{=}600$}{15}{subsection.8.2}%
-\contentsline {paragraph}{F1: Active learning needs an anchor.}{15}{paragraph*.26}%
-\contentsline {paragraph}{F2: Under domain shift, hard labels beat soft distillation.}{16}{paragraph*.27}%
+\contentsline {section}{\numberline {8}Stage-2: The lab2000 OOD and Active-Learning Study}{15}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Exposing the OOD gap}{15}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Three empirical observations invisible at $n{=}600$}{16}{subsection.8.2}%
+\contentsline {paragraph}{F1: Active learning needs an anchor.}{16}{paragraph*.26}%
+\contentsline {paragraph}{F2: Under domain shift, hard labels may beat soft distillation.}{16}{paragraph*.27}%
 \contentsline {paragraph}{F3: Ratings beat text exactly where text fails.}{16}{paragraph*.28}%
 \contentsline {subsection}{\numberline {8.3}Human agreement: the annotator-agreement reference}{16}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{16}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{17}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{17}{subsection.8.5}%
-\contentsline {paragraph}{Scaling: 1K AL $\to $ 5.9K hybrid.}{17}{paragraph*.31}%
-\contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{18}{paragraph*.33}%
-\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{19}{paragraph*.34}%
+\contentsline {paragraph}{Scaling: 1K AL $\to $ 5.9K hybrid.}{18}{paragraph*.31}%
+\contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{19}{paragraph*.33}%
+\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{20}{paragraph*.34}%
 \contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{20}{subsection.8.6}%
 \contentsline {section}{\numberline {9}Limitations and Threats to Validity}{20}{section.9}%
-\contentsline {section}{\numberline {10}Conclusion and Future Work}{20}{section.10}%
+\contentsline {section}{\numberline {10}Conclusion and Future Work}{21}{section.10}%
 \contentsline {section}{Reproducibility}{21}{section.10}%
 \contentsline {section}{\numberline {A}Training Details and Reproducibility}{22}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}Hyperparameters}{22}{subsection.A.1}%

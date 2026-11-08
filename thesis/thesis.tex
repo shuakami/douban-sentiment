@@ -115,9 +115,10 @@ before decoding; 5-fold cross-fit validated; significantly above
 the 1K-AL mix, McNemar $p = 0.0015$), above the measured 71.5\%
 second-annotator agreement reference, and lifts
 binary OOD to \textbf{91.8\%}. We
-further document three findings invisible at $n{=}600$: active-learning
-samples require a gold anchor to avoid prior collapse, hard labels beat
-soft distillation under domain shift, and star ratings become the
+further report three empirical observations invisible at $n{=}600$:
+active-learning
+samples require a gold anchor to avoid prior collapse, hard labels may
+beat soft distillation under domain shift, and star ratings become the
 strongest signal precisely where text is most ambiguous. All negative
 results --- more than twenty rejected architectures --- are documented.
 \par\endgroup
@@ -202,9 +203,14 @@ comprehensive surveys are given by \citet{pang2008} and, for Chinese
 specifically, by \citet{tan2008}. For Chinese, the absence of
 whitespace tokenization makes character-level features and pretrained
 language models especially effective. Douban reviews specifically have
-been used in earlier Chinese sentiment work, but almost exclusively as
+been used in earlier Chinese sentiment work --- including weak-label
+pipelines combining dictionaries with rating-derived supervision
+\citep{fan2018} --- but almost exclusively as
 a binary (positive/negative) task; the three-class setting with a
 genuine neutral/mixed class is less studied and substantially harder.
+The difficulty of the neutral/mixed class is documented for
+document-level polarity classification more broadly
+\citep{martins2021}.
 
 \paragraph{Pre-trained language models.}
 BERT \citep{devlin2019} and its robustly-optimised successor RoBERTa
@@ -222,8 +228,13 @@ them directly.
 When labelled data is scarce, distant supervision from noisy signals
 (star ratings here) and self-training on model predictions are standard
 remedies \citep{yarowsky1995,lee2013}. The Snorkel framework
-\citep{ratner2017} formalises the combination of multiple weak label
-sources. Active learning \citep{settles2009} instead spends a small
+\citep{ratner2017} and the WRENCH benchmark \citep{zhang2021wrench}
+formalise the combination of multiple weak label
+sources. The gap between star ratings and textual sentiment is itself
+long documented --- ratings were already treated as imperfect proxies
+in early work \citep{pang2005seeing} and rating--sentiment
+incongruence has been measured directly on review corpora
+\citep{abaiyan2026stars}. Active learning \citep{settles2009} instead spends a small
 annotation budget on the most informative examples; our Stage-2 study
 uses margin/entropy sampling for exactly this purpose. Our work
 differs in that we \emph{measure} the weakness of the
@@ -237,6 +248,10 @@ Hinton et al.'s dark-knowledge distillation \citep{hinton2015}
 small student mimic a large teacher's soft predictions. We distil a
 7-channel teacher ensemble into a single MacBERT-base student and
 validate every ensemble decision with out-of-fold predictions.
+Knowledge distillation under distribution shift is itself an active
+research area \citep{zhang2023shiftkd}; our hard-vs-soft comparison
+in Section~\ref{sec:findings} is a small-scale instance of the same
+question.
 
 \paragraph{Calibration.}
 Neural classifiers are systematically over- or under-confident
@@ -246,8 +261,10 @@ after, because honest confidence display matters for a demo system.
 
 \paragraph{LLMs as annotators and baselines.}
 General-purpose LLMs are increasingly used for zero-/few-shot
-classification \citep{gilardi2023,tornberg2023} and for generating
-synthetic training data. We evaluate
+classification \citep{gilardi2023,tornberg2023}, for generating
+synthetic training data, and as annotators whose agreement with human
+labels is known to overstate quality on subjective tasks
+\citep{moller2024parrot,schroeder2025}. We evaluate
 Qwen3 models \citep{qwen2025} at 0.6B/1.7B/4B scales both as zero-shot
 classifiers and as independent annotators in our OOD study, and we
 report a negative result on LLM-generated synthetic augmentation.
@@ -338,12 +355,16 @@ Rating & $\to$ Positive & $\to$ Neutral & $\to$ Negative \\
 \end{tabular}
 \end{table}
 
-Three findings stand out. Only $\sim$59\% of 5-star reviews are
+Three patterns stand out. Only $\sim$59\% of 5-star reviews are
 semantically positive; 3-star reviews skew \emph{negative} (56.8\%)
 rather than neutral; and even at 1--2$\star$, $\sim$8--14\% of reviews
 are predicted neutral. Rating-vs-model binary agreement on the
 confident pool is 81.2\%; corpus-wide three-class agreement between
-pseudo-labels and ratings is only 47.8\% (71.2\% on the gold set). We
+pseudo-labels and ratings is only 47.8\% (71.2\% on the gold set).
+These patterns are consistent with the long-documented
+rating--sentiment gap \citep{pang2005seeing,abaiyan2026stars}; our
+contribution is the quantification at corpus scale, not the phenomenon
+itself. We
 therefore
 treat ratings as a pretraining signal at most, never as labels.
 Figure~\ref{fig:crosstab} visualises the same table.
@@ -885,7 +906,7 @@ ensemble mix reaches \textbf{72.0\% / 0.717} three-class and
 \textbf{87.8\% / 0.876} binary under cross-fit weight selection ---
 the improvement is not test-set overfitting by construction.
 
-\subsection{Three findings invisible at $n{=}600$}
+\subsection{Three empirical observations invisible at $n{=}600$}
 \label{sec:findings}
 
 \paragraph{F1: Active learning needs an anchor.} Training on al1000
@@ -895,13 +916,13 @@ distorts the class prior; without the gold anchor the model loses its
 reference for ordinary high-confidence reviews. Gold and AL are
 complements, not substitutes.
 
-\paragraph{F2: Under domain shift, hard labels beat soft
+\paragraph{F2: Under domain shift, hard labels may beat soft
 distillation.} The gold+al teacher's soft targets transfer at 71.0\%
-three-class, slightly \emph{below} hard-label SFT at 71.4\%. A teacher
-trained on narrow-domain data transmits its OOD biases through soft
-probabilities; real cross-domain hard labels break that prior. This
-inverts the usual distillation ordering and only becomes visible once
-the evaluation set leaves the training domain.
+three-class vs.\ 71.4\% for hard-label SFT --- a 0.4pp gap that is
+within noise at $n{=}600$, so we report it as directional only. The
+direction is nonetheless consistent with the documented tendency of
+teachers to transmit their own biases through soft probabilities under
+distribution shift \citep{zhang2023shiftkd}.
 
 \paragraph{F3: Ratings beat text exactly where text fails.} On the
 al1000 ambiguity set, the star-rating rule reaches 64.3\% agreement
@@ -910,7 +931,9 @@ $\approx$47\%. When review text is maximally ambiguous --- the regime
 margin sampling selects for --- the author's star rating is the only
 remaining attitude signal. This closes the loop with
 Section~\ref{sec:ratings}: ratings are a weak proxy on average, but a
-strong disambiguator at the text-entropy ceiling.
+strong disambiguator at the text-entropy ceiling. We flag this as an
+exploratory observation on a small, disagreement-enriched subset, not
+a general claim.
 
 \subsection{Human agreement: the annotator-agreement reference}
 \label{sec:iaa}
@@ -1281,8 +1304,8 @@ McNemar $p = 4.0\times10^{-8}$), and scaling the
 same protocol with frontier-LLM pseudo-labels reaches \textbf{76.6\%}
 three-class --- above the measured 71.5\% second-annotator agreement
 reference --- and \textbf{91.8\%} binary.
-Three transferable findings emerge: active learning requires a gold
-anchor, hard labels outperform soft distillation once the evaluation
+Three empirical observations emerge: active learning requires a gold
+anchor, hard labels may outperform soft distillation once the evaluation
 domain shifts, and star ratings become the strongest available signal
 precisely where review text is most ambiguous. Against frontier LLMs
 of $\sim$763B--1.6T parameters the compact pipeline trails on raw OOD
@@ -1602,6 +1625,56 @@ films, 4{,}428{,}475 comments, collected 2019).
 \newblock AntSpider project, Central South University, 2019.
 \newblock \url{https://github.com/csuldw/AntSpider}. Research use only;
 the raw corpus is not redistributed here.
+
+\bibitem[Pang and Lee(2005)]{pang2005seeing}
+Pang, Bo and Lillian Lee. 2005.
+\newblock Seeing stars: Exploiting class relationships for sentiment
+categorization with respect to rating scales.
+\newblock In \emph{Proceedings of ACL 2005}, pp.~115--124.
+
+\bibitem[Abaiyan et al.(2026)]{abaiyan2026stars}
+Abaiyan, Ramanaish, et al. 2026.
+\newblock Fault of our stars: Behavioral drivers of rating--sentiment
+incongruence.
+\newblock arXiv:2606.25518.
+
+\bibitem[Fan et al.(2018)]{fan2018}
+Fan, Zhen, Yi Guo, Zhenhao Zhang, and Meiqi Han. 2018.
+\newblock \emph{Jiyu cidian he ruobiao zhu xinxi de dianying pinglun
+qinggan fenxi} (Sentiment analysis of movie reviews based on
+lexicons and weak-label information).
+\newblock \emph{Journal of Computer Applications} 38(11):3084--3088.
+
+\bibitem[Martins et al.(2021)]{martins2021}
+Martins, Karen, Pedro O.~S. Vaz-de-Melo, and Rodrygo Santos. 2021.
+\newblock Why do document-level polarity classifiers fail?
+\newblock In \emph{Proceedings of NAACL 2021}, pp.~1782--1794.
+
+\bibitem[Zhang et al.(2021)]{zhang2021wrench}
+Zhang, Jieyu, Yue Yu, Yinghao Li, Yujing Wang, Yaming Yang, Mao Yang,
+and Alexander Ratner. 2021.
+\newblock WRENCH: A comprehensive benchmark for weak supervision.
+\newblock In \emph{Advances in Neural Information Processing Systems
+(Datasets and Benchmarks)}.
+
+\bibitem[Zhang et al.(2023)]{zhang2023shiftkd}
+Zhang, Songming, Yuxiao Luo, Ziyu Lyu, and Xiaofeng Chen. 2023.
+\newblock ShiftKD: Benchmarking knowledge distillation under
+distribution shift.
+\newblock arXiv:2312.16242. Accepted to \emph{Neural Networks}, 2025.
+
+\bibitem[M\o{}ller et al.(2024)]{moller2024parrot}
+M\o{}ller, Anders Giovanni, Jacob Aarup Dalsgaard, Arianna Pera, and
+Luca Maria Aiello. 2024.
+\newblock The Parrot Dilemma: Human-labeled vs.\ LLM-augmented data in
+classification tasks.
+\newblock In \emph{Proceedings of EACL 2024}.
+
+\bibitem[Schroeder et al.(2025)]{schroeder2025}
+Schroeder, Hope, Deb Roy, and Jad Kabbara. 2025.
+\newblock Just put a human in the loop? Investigating LLM-assisted
+annotation for subjective tasks.
+\newblock In \emph{Findings of ACL 2025}, pp.~25771--25795.
 
 \end{thebibliography}
 

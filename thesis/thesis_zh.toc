@@ -12,17 +12,17 @@
 \contentsline {subsection}{\numberline {3.2}金标集（600 条评论）}{5}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}弱标注语料（910{,}998 条评论）}{6}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}星级评分不是情感标签}{6}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}第二阶段基准：lab2000}{6}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.5}第二阶段基准：lab2000}{7}{subsection.3.5}%
 \contentsline {paragraph}{标注协议。}{7}{paragraph*.11}%
 \contentsline {section}{\numberline {4}方法}{7}{section.4}%
 \contentsline {subsection}{\numberline {4.1}概述}{7}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}教师集成与蒸馏}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.2}教师集成与蒸馏}{8}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}冻结判别器}{8}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}伪标签飞轮}{8}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}中性专家}{8}{subsection.4.5}%
 \contentsline {paragraph}{语料训练检测器。}{8}{paragraph*.13}%
 \contentsline {paragraph}{专家混合。}{8}{paragraph*.14}%
-\contentsline {subsection}{\numberline {4.6}语料规模学生模型}{8}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.6}语料规模学生模型}{9}{subsection.4.6}%
 \contentsline {subsection}{\numberline {4.7}模型校准}{9}{subsection.4.7}%
 \contentsline {subsection}{\numberline {4.8}部署}{9}{subsection.4.8}%
 \contentsline {section}{\numberline {5}实验设置}{9}{section.5}%
@@ -42,10 +42,10 @@
 \contentsline {subsection}{\numberline {7.5}与商业训练平台的对比}{13}{subsection.7.5}%
 \contentsline {section}{\numberline {8}第二阶段：lab2000 分布外与主动学习研究}{13}{section.8}%
 \contentsline {subsection}{\numberline {8.1}暴露分布外差距}{13}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的发现}{14}{subsection.8.2}%
-\contentsline {paragraph}{发现一：主动学习需要锚点。}{14}{paragraph*.26}%
-\contentsline {paragraph}{发现二：领域偏移下，硬标签优于软蒸馏。}{14}{paragraph*.27}%
-\contentsline {paragraph}{发现三：评分恰恰在文本失效处胜出。}{15}{paragraph*.28}%
+\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的经验观察}{14}{subsection.8.2}%
+\contentsline {paragraph}{观察一：主动学习需要锚点。}{14}{paragraph*.26}%
+\contentsline {paragraph}{观察二：领域偏移下，硬标签可能优于软蒸馏。}{14}{paragraph*.27}%
+\contentsline {paragraph}{观察三：评分恰恰在文本失效处胜出。}{15}{paragraph*.28}%
 \contentsline {subsection}{\numberline {8.3}人类一致率：标注者一致性参照}{15}{subsection.8.3}%
 \contentsline {subsection}{\numberline {8.4}与前沿大模型的对比}{15}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}LLM 伪标签能否替代人工终审？}{16}{subsection.8.5}%

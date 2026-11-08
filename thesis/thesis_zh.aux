@@ -6,6 +6,8 @@
 \citation{kim2014,socher2013,joulin2017,reimers2019}
 \citation{pang2008}
 \citation{tan2008}
+\citation{fan2018}
+\citation{martins2021}
 \citation{devlin2019}
 \citation{liu2019}
 \citation{cui2020}
@@ -14,6 +16,9 @@
 \citation{idea2023}
 \citation{yarowsky1995,lee2013}
 \citation{ratner2017}
+\citation{zhang2021wrench}
+\citation{pang2005seeing}
+\citation{abaiyan2026stars}
 \citation{settles2009}
 \@writefile{toc}{\contentsline {section}{\numberline {1}引言}{4}{section.1}\protected@file@percent }
 \newlabel{sec:intro}{{1}{4}{引言}{section.1}{}}
@@ -24,10 +29,11 @@
 \@writefile{toc}{\contentsline {paragraph}{预训练语言模型。}{4}{paragraph*.3}\protected@file@percent }
 \citation{hinton2015}
 \citation{gou2021}
+\citation{zhang2023shiftkd}
 \citation{guo2017}
 \citation{gilardi2023,tornberg2023}
+\citation{moller2024parrot,schroeder2025}
 \citation{qwen2025}
-\citation{douban2024}
 \@writefile{toc}{\contentsline {paragraph}{弱监督与自训练。}{5}{paragraph*.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{知识蒸馏。}{5}{paragraph*.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{模型校准。}{5}{paragraph*.6}\protected@file@percent }
@@ -39,6 +45,8 @@
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{tab:examples}{{1}{5}{代表性金标评论（中文原文附中文释义）。``混合$\to $负面'' 指先扬后抑、最终极性为负面的评论。}{table.caption.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}金标集（600 条评论）}{5}{subsection.3.2}\protected@file@percent }
+\citation{douban2024}
+\citation{pang2005seeing,abaiyan2026stars}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}弱标注语料（910{,}998 条评论）}{6}{subsection.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}星级评分不是情感标签}{6}{subsection.3.4}\protected@file@percent }
 \newlabel{sec:ratings}{{3.4}{6}{星级评分不是情感标签}{subsection.3.4}{}}
@@ -46,17 +54,17 @@
 \newlabel{tab:crosstab}{{2}{6}{星级评分与模型预测情感的对照（行归一化，271{,}905 条高置信 伪标注）。}{table.caption.9}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces 272K 高置信伪标签池上星级评分与预测情感的对照。对角线 占优并不明显：评分与语义情感存在显著分歧。}}{6}{figure.caption.10}\protected@file@percent }
 \newlabel{fig:crosstab}{{1}{6}{272K 高置信伪标签池上星级评分与预测情感的对照。对角线 占优并不明显：评分与语义情感存在显著分歧。}{figure.caption.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}第二阶段基准：lab2000}{6}{subsection.3.5}\protected@file@percent }
-\newlabel{sec:lab2000-data}{{3.5}{6}{第二阶段基准：lab2000}{subsection.3.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}第二阶段基准：lab2000}{7}{subsection.3.5}\protected@file@percent }
+\newlabel{sec:lab2000-data}{{3.5}{7}{第二阶段基准：lab2000}{subsection.3.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{标注协议。}{7}{paragraph*.11}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {4}方法}{7}{section.4}\protected@file@percent }
 \newlabel{sec:method}{{4}{7}{方法}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}概述}{7}{subsection.4.1}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces 部署的 v3 架构。$p_s,p_j,\mathrm  {dep},\mathrm  {spec}, \mathrm  {final}\in \Delta ^{3}$ 为三分类概率向量，$p_n^{(1)}, p_n^{(2)},p_n\in [0,1]$ 为中性标量概率；$w_s,w_j$ 为融合权重而非 模型参数。$r_\pm $ 为 $\mathrm  {dep}$ 中正/负分量归一化（和为 1） 后的份额。两个基于 MegatronBERT 的头共享同一次冻结骨干特征计算； 中性专家将判别器特征 MLP 与语料训练的 MacBERT 检测器相混合。}}{7}{figure.caption.12}\protected@file@percent }
 \newlabel{fig:arch}{{2}{7}{部署的 v3 架构。$p_s,p_j,\mathrm {dep},\mathrm {spec}, \mathrm {final}\in \Delta ^{3}$ 为三分类概率向量，$p_n^{(1)}, p_n^{(2)},p_n\in [0,1]$ 为中性标量概率；$w_s,w_j$ 为融合权重而非 模型参数。$r_\pm $ 为 $\mathrm {dep}$ 中正/负分量归一化（和为 1） 后的份额。两个基于 MegatronBERT 的头共享同一次冻结骨干特征计算； 中性专家将判别器特征 MLP 与语料训练的 MacBERT 检测器相混合。}{figure.caption.12}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}教师集成与蒸馏}{7}{subsection.4.2}\protected@file@percent }
-\newlabel{sec:distill}{{4.2}{7}{教师集成与蒸馏}{subsection.4.2}{}}
 \citation{arazo2020,xie2020,sohn2020}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}教师集成与蒸馏}{8}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:distill}{{4.2}{8}{教师集成与蒸馏}{subsection.4.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}冻结判别器}{8}{subsection.4.3}\protected@file@percent }
 \newlabel{sec:judge}{{4.3}{8}{冻结判别器}{subsection.4.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}伪标签飞轮}{8}{subsection.4.4}\protected@file@percent }
@@ -65,8 +73,8 @@
 \newlabel{sec:neu}{{4.5}{8}{中性专家}{subsection.4.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{语料训练检测器。}{8}{paragraph*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{专家混合。}{8}{paragraph*.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}语料规模学生模型}{8}{subsection.4.6}\protected@file@percent }
-\newlabel{sec:corpus}{{4.6}{8}{语料规模学生模型}{subsection.4.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}语料规模学生模型}{9}{subsection.4.6}\protected@file@percent }
+\newlabel{sec:corpus}{{4.6}{9}{语料规模学生模型}{subsection.4.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.7}模型校准}{9}{subsection.4.7}\protected@file@percent }
 \newlabel{sec:calib}{{4.7}{9}{模型校准}{subsection.4.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.8}部署}{9}{subsection.4.8}\protected@file@percent }
@@ -108,15 +116,16 @@
 \newlabel{sec:lab2000}{{8}{13}{第二阶段：lab2000 分布外与主动学习研究}{section.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.1}暴露分布外差距}{13}{subsection.8.1}\protected@file@percent }
 \newlabel{sec:ood-expose}{{8.1}{13}{暴露分布外差距}{subsection.8.1}{}}
+\citation{zhang2023shiftkd}
 \@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= v3 与 SFT 模型的概率平均，融合权重由 ood1000 上的分层 5 折交叉验证选定——每条预测所用权重均在其余折上调优，不会使用 该行自身的标签。二分类评测剔除中性样本。“---”= 本次未报告。 lab2000 标签为混合来源：479 条人工终审（ood1000 200 + al1000 279） + 其余行双遍 LLM 共识（第~\ref {sec:lab2000-data}~节）。}}{14}{table.caption.24}\protected@file@percent }
 \newlabel{tab:ood}{{6}{14}{ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= v3 与 SFT 模型的概率平均，融合权重由 ood1000 上的分层 5 折交叉验证选定——每条预测所用权重均在其余折上调优，不会使用 该行自身的标签。二分类评测剔除中性样本。“---”= 本次未报告。 lab2000 标签为混合来源：479 条人工终审（ood1000 200 + al1000 279） + 其余行双遍 LLM 共识（第~\ref {sec:lab2000-data}~节）。}{table.caption.24}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces (a) 各系统在 ood1000 上的准确率；前三组为本文 MacBERT 级模型，后两组为开箱即用的 DeepSeek LLM（本地 Qwen3-4B 基线因版面 省略，见表~\ref {tab:llm}）；虚线为实测的 71.5\% 第二标注者与发布 标签的一致率。(b) 同一 200 行子集上的原始两两一致率：同一 LLM 标注模型的两个独立推理 pass vs.\ 第二名人类标注员与发布 （混合来源）标签的一致率。此处报告原始一致率而 非 Cohen's $\kappa $；LLM 自一致率更高源于同源模型的共享归纳偏置 与更字面地执行标注细则，而非标注质量更高。}}{14}{figure.caption.25}\protected@file@percent }
 \newlabel{fig:lab2000}{{6}{14}{(a) 各系统在 ood1000 上的准确率；前三组为本文 MacBERT 级模型，后两组为开箱即用的 DeepSeek LLM（本地 Qwen3-4B 基线因版面 省略，见表~\ref {tab:llm}）；虚线为实测的 71.5\% 第二标注者与发布 标签的一致率。(b) 同一 200 行子集上的原始两两一致率：同一 LLM 标注模型的两个独立推理 pass vs.\ 第二名人类标注员与发布 （混合来源）标签的一致率。此处报告原始一致率而 非 Cohen's $\kappa $；LLM 自一致率更高源于同源模型的共享归纳偏置 与更字面地执行标注细则，而非标注质量更高。}{figure.caption.25}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的发现}{14}{subsection.8.2}\protected@file@percent }
-\newlabel{sec:findings}{{8.2}{14}{三个在 $n{=}600$ 下不可见的发现}{subsection.8.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{发现一：主动学习需要锚点。}{14}{paragraph*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{发现二：领域偏移下，硬标签优于软蒸馏。}{14}{paragraph*.27}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{发现三：评分恰恰在文本失效处胜出。}{15}{paragraph*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的经验观察}{14}{subsection.8.2}\protected@file@percent }
+\newlabel{sec:findings}{{8.2}{14}{三个在 $n{=}600$ 下不可见的经验观察}{subsection.8.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{观察一：主动学习需要锚点。}{14}{paragraph*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{观察二：领域偏移下，硬标签可能优于软蒸馏。}{14}{paragraph*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{观察三：评分恰恰在文本失效处胜出。}{15}{paragraph*.28}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.3}人类一致率：标注者一致性参照}{15}{subsection.8.3}\protected@file@percent }
 \newlabel{sec:iaa}{{8.3}{15}{人类一致率：标注者一致性参照}{subsection.8.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.4}与前沿大模型的对比}{15}{subsection.8.4}\protected@file@percent }
@@ -180,4 +189,12 @@
 \bibcite{efron1993}{{28}{1993}{{Efron and Tibshirani}}{{}}}
 \bibcite{mcnemar1947}{{29}{1947}{{McNemar}}{{}}}
 \bibcite{douban2024}{{30}{2019}{{csuldw}}{{}}}
+\bibcite{pang2005seeing}{{31}{2005}{{Pang and Lee}}{{}}}
+\bibcite{abaiyan2026stars}{{32}{2026}{{Abaiyan et al.}}{{}}}
+\bibcite{fan2018}{{33}{2018}{{Fan et al.}}{{}}}
+\bibcite{martins2021}{{34}{2021}{{Martins et al.}}{{}}}
+\bibcite{zhang2021wrench}{{35}{2021}{{Zhang et al.}}{{}}}
+\bibcite{zhang2023shiftkd}{{36}{2023}{{Zhang et al.}}{{}}}
+\bibcite{moller2024parrot}{{37}{2024}{{M\o {}ller et al.}}{{}}}
+\bibcite{schroeder2025}{{38}{2025}{{Schroeder et al.}}{{}}}
 \gdef \@abspage@last{24}

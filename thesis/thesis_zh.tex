@@ -107,8 +107,8 @@ $p = 4.0\times10^{-8}$）；同一协议
 5 折交叉拟合验证；显著优于 1K AL 混合，
 McNemar $p = 0.0015$），高于实测的 71.5\% 第二标注者一致率参照，
 并将二分类分布外准确率提升至 \textbf{91.8\%}。本文还揭示了三个在
-$n{=}600$ 下不可见的发现：主动学习样本必须以金标锚定、领域偏移下
-硬标签优于软蒸馏、以及星级评分恰恰在文本最歧义处成为最强信号。
+$n{=}600$ 下不可见的经验观察：主动学习样本必须以金标锚定、领域偏移下
+硬标签可能优于软蒸馏、以及星级评分恰恰在文本最歧义处成为最强信号。
 本文完整记录了二十余种经过实测但被否决的架构方案。
 \par\endgroup
 \end{abstract}
@@ -176,8 +176,11 @@ $n{=}600$ 下不可见的发现：主动学习样本必须以金标锚定、领�
 $n$-gram）发展到神经网络架构 \citep{kim2014,socher2013,joulin2017,
 reimers2019}；\citet{pang2008} 给出了全面综述，中文领域的专门综述见
 \citet{tan2008}。由于中文没有空格分词，字符级特征与预训练语言模型
-尤其有效。豆瓣评论此前也被用于中文情感研究，但几乎全部是二分类
-（正/负）设定；包含真正中性/混合类的三分类问题研究较少且困难得多。
+尤其有效。豆瓣评论此前也被用于中文情感研究——包括将词典与
+评分派生弱标签相结合的弱标注流水线 \citep{fan2018}——但几乎全部是
+二分类（正/负）设定；包含真正中性/混合类的三分类问题研究较少
+且困难得多。文档级极性分类中中性/混合类的困难已有文献记载
+\citep{martins2021}。
 
 \paragraph{预训练语言模型。}
 BERT \citep{devlin2019} 及其鲁棒性改进版 RoBERTa \citep{liu2019}
@@ -191,7 +194,11 @@ BERT \citep{devlin2019} 及其鲁棒性改进版 RoBERTa \citep{liu2019}
 \paragraph{弱监督与自训练。}
 标注数据稀缺时，来自噪声信号的远程监督（此处为星级评分）与基于
 模型预测的自训练是标准补救手段 \citep{yarowsky1995,lee2013}。
-Snorkel 框架 \citep{ratner2017} 将多弱标签源的组合形式化。主动
+Snorkel 框架 \citep{ratner2017} 与 WRENCH 基准
+\citep{zhang2021wrench} 将多弱标签源的组合形式化。星级评分与文本
+情感之间的差距本身亦有长期记载——早期工作已将评分视为不完美的
+代理 \citep{pang2005seeing}，评分—情感不一致也已在评论语料上被
+直接测量 \citep{abaiyan2026stars}。主动
 学习 \citep{settles2009} 则把有限标注预算花在信息量最大的样本上；
 本文第二阶段正是用边际/熵采样实现这一点。本文的
 不同之处在于：我们在依赖星级评分之前\emph{实测}了它的弱点，并量化
@@ -201,7 +208,9 @@ Snorkel 框架 \citep{ratner2017} 将多弱标签源的组合形式化。主动
 Hinton 等人的“暗知识”蒸馏 \citep{hinton2015}——\citet{gou2021}
 给出了全面综述——使小学生模型模仿大教师的软预测。我们将一个
 7 通道教师集成蒸馏为单一 MacBERT-base 学生，并用交叉验证预测
-验证集成中的每个决策。
+验证集成中的每个决策。分布偏移下的知识蒸馏本身是活跃的研究
+方向 \citep{zhang2023shiftkd}；第~\ref{sec:findings}~节的硬标签
+对软蒸馏比较正是同一问题的小规模实例。
 
 \paragraph{模型校准。}
 神经分类器存在系统性的过度或不足自信 \citep{guo2017}。我们采用
@@ -210,7 +219,9 @@ Hinton 等人的“暗知识”蒸馏 \citep{hinton2015}——\citet{gou2021}
 
 \paragraph{大模型作为标注器与基线。}
 通用大模型正被越来越多地用于零样本/少样本分类
-\citep{gilardi2023,tornberg2023}与合成训练数据生成。
+\citep{gilardi2023,tornberg2023}、合成训练数据生成，以及作为
+标注器——其与人类标签的一致性在主观任务上已知会高估标注质量
+\citep{moller2024parrot,schroeder2025}。
 我们在 0.6B/1.7B/4B 三个规模上评估了 Qwen3 模型 \citep{qwen2025}，
 既作为零样本分类器，也作为分布外研究中的独立标注器，并报告了
 LLM 合成增强的一个负面结果。
@@ -292,11 +303,13 @@ Moviedata-10M 语料 \citep{douban2024}（443 万条原始豆瓣评论）
 \end{tabular}
 \end{table}
 
-有三个发现尤为突出：五星评论中语义为正面的仅约 59\%；三星评论
+有三个规律在量化中尤为突出：五星评论中语义为正面的仅约 59\%；三星评论
 更多偏向\emph{负面}（56.8\%）而非中性；即便在 1--2 星评论中，
 也有约 8--14\% 被预测为中性。评分与模型的二分类一致率（高置信池上）
 为 81.2\%；全语料上伪标签与评分的三分类一致率仅 47.8\%（金标集上
-为 71.2\%）。因此我们将评分至多视为
+为 71.2\%）。这些规律与评分—情感差距的长期记载一致
+\citep{pang2005seeing,abaiyan2026stars}；本文的贡献在于语料规模
+上的量化，而非现象本身。因此我们将评分至多视为
 预训练信号，绝不作为标签使用。图~\ref{fig:crosstab} 直观展示了
 同一张表。
 
@@ -777,26 +790,27 @@ McNemar $p = 4.0\times10^{-8}$）——这一级增益在 $n{=}600$ 时
 \textbf{72.0\% / 0.717} 三分类与 \textbf{87.8\% / 0.876}
 二分类——按构造即非测试集调参过拟合。
 
-\subsection{三个在 $n{=}600$ 下不可见的发现}
+\subsection{三个在 $n{=}600$ 下不可见的经验观察}
 \label{sec:findings}
 
-\paragraph{发现一：主动学习需要锚点。} 仅用 al1000 训练会崩溃至
+\paragraph{观察一：主动学习需要锚点。} 仅用 al1000 训练会崩溃至
 56.0\%——比仅用金标-600（62.6\%）还差。边际采样专挑边界样本，
 会系统性扭曲类别先验；缺少金标锚点，模型便失去了对普通高置信
 评论的参照。金标与 AL 是互补而非替代关系。
 
-\paragraph{发现二：领域偏移下，硬标签优于软蒸馏。} 金标+AL
-教师的软目标迁移后为 71.0\% 三分类，反而略\emph{低于}硬标签
-SFT 的 71.4\%。在狭窄领域训练的教师会通过软概率把自身的分布外
-偏差传染给学生；真实的跨领域硬标签才能打破这一先验。这颠覆了
-蒸馏通常更优的排序，且只有当评估集离开训练域时才可见。
+\paragraph{观察二：领域偏移下，硬标签可能优于软蒸馏。} 金标+AL
+教师的软目标迁移后为 71.0\% 三分类，对比硬标签
+SFT 的 71.4\%——0.4pp 的差距在 $n{=}600$ 下属于噪声范围，
+故我们仅将其作为方向性报告。其方向与文献记载的教师在分布偏移下
+经软概率传递自身偏差的倾向一致 \citep{zhang2023shiftkd}。
 
-\paragraph{发现三：评分恰恰在文本失效处胜出。} 在 al1000 歧义集
+\paragraph{观察三：评分恰恰在文本失效处胜出。} 在 al1000 歧义集
 上，星级评分规则与终审标签的一致率达 64.3\%，而纯文本部署模型
 仅约 47\%。当评论文本歧义达到极限——正是边际采样所选取的区间
 ——作者给出的星级成为唯一残存的态度信号。这与第~\ref{sec:ratings}~
 节形成闭环：评分平均而言是弱代理，但在文本熵天花板处是最强的
-消歧信号。
+消歧信号。我们将此标注为在小规模、分歧富集子集上的探索性观察，
+而非一般性结论。
 
 \subsection{人类一致率：标注者一致性参照}
 \label{sec:iaa}
@@ -1099,8 +1113,8 @@ lab2000 研究随后对这一结果进行了诚实的压力测试。金标训练
 LLM 共识）将其恢复至 72.0\%
 （对应 SFT 增益 +8.8pp，McNemar $p = 4.0\times10^{-8}$），同一协议经规模扩展并借助前沿
 LLM 伪标签可达 \textbf{76.6\%} 三分类与 \textbf{91.8\%} 二分类
-——高于实测的 71.5\% 第二标注者一致率参照。三个可迁移的发现由此浮现：主动学习需要
-金标锚点、领域偏移下硬标签优于软蒸馏、以及星级评分恰恰在文本
+——高于实测的 71.5\% 第二标注者一致率参照。三个经验观察由此浮现：主动学习需要
+金标锚点、领域偏移下硬标签可能优于软蒸馏、以及星级评分恰恰在文本
 最歧义处成为最强可用信号。与参数量 7630 亿至 1.6 万亿的前沿
 LLM 相比，紧凑管线在原始分布外准确率上落后，但在人工终审困难样本上达到
 持平，且延迟与成本低 1--2 个数量级、数据不出本机。
@@ -1410,6 +1424,59 @@ films, 4{,}428{,}475 comments, collected 2019).
 \newblock AntSpider project, Central South University, 2019.
 \newblock \url{https://github.com/csuldw/AntSpider}. Research use only;
 the raw corpus is not redistributed here.
+
+\bibitem[Pang and Lee(2005)]{pang2005seeing}
+B.~Pang, L.~Lee.
+\newblock \emph{Seeing Stars: Exploiting Class Relationships for Sentiment
+Categorization with Respect to Rating Scales}.
+\newblock In \emph{Proceedings of ACL 2005}, pages 115--124, 2005.
+\newblock \url{https://aclanthology.org/P05-1015/}.
+
+\bibitem[Abaiyan et al.(2026)]{abaiyan2026stars}
+R.~Abaiyan et al.
+\newblock \emph{Fault of Our Stars: Behavioral Drivers of Rating--Sentiment
+Incongruence}.
+\newblock arXiv:2606.25518, 2026.
+\newblock \url{https://arxiv.org/abs/2606.25518}.
+
+\bibitem[Fan et al.(2018)]{fan2018}
+樊振, 过弋, 张振豪, 韩美琪.
+\newblock \emph{基于词典和弱标注信息的电影评论情感分析}.
+\newblock 《计算机应用》38(11):3084--3088, 2018.
+
+\bibitem[Martins et al.(2021)]{martins2021}
+K.~Martins, P.~O.~S.~Vaz-de-Melo, R.~Santos.
+\newblock \emph{Why Do Document-Level Polarity Classifiers Fail?}
+\newblock In \emph{Proceedings of NAACL 2021}, pages 1782--1794, 2021.
+\newblock \url{https://aclanthology.org/2021.naacl-main.143/}.
+
+\bibitem[Zhang et al.(2021)]{zhang2021wrench}
+J.~Zhang, Y.~Yu, Y.~Li, Y.~Wang, Y.~Yang, M.~Yang, A.~Ratner.
+\newblock \emph{WRENCH: A Comprehensive Benchmark for Weak Supervision}.
+\newblock In \emph{Advances in Neural Information Processing Systems
+(Datasets and Benchmarks)}, 2021.
+\newblock \url{https://arxiv.org/abs/2109.11377}.
+
+\bibitem[Zhang et al.(2023)]{zhang2023shiftkd}
+S.~Zhang, Y.~Luo, Z.~Lyu, X.~Chen.
+\newblock \emph{ShiftKD: Benchmarking Knowledge Distillation under
+Distribution Shift}.
+\newblock arXiv:2312.16242, 2023. Accepted to \emph{Neural Networks}, 2025.
+\newblock \url{https://arxiv.org/abs/2312.16242}.
+
+\bibitem[M\o{}ller et al.(2024)]{moller2024parrot}
+A.~G.~M\o{}ller, J.~A.~Dalsgaard, A.~Pera, L.~M.~Aiello.
+\newblock \emph{The Parrot Dilemma: Human-Labeled vs.\ LLM-Augmented Data
+in Classification Tasks}.
+\newblock In \emph{Proceedings of EACL 2024}, 2024.
+\newblock \url{https://arxiv.org/abs/2304.13861}.
+
+\bibitem[Schroeder et al.(2025)]{schroeder2025}
+H.~Schroeder, D.~Roy, J.~Kabbara.
+\newblock \emph{Just Put a Human in the Loop? Investigating LLM-Assisted
+Annotation for Subjective Tasks}.
+\newblock In \emph{Findings of ACL 2025}, pages 25771--25795, 2025.
+\newblock \url{https://aclanthology.org/2025.findings-acl.1323/}.
 
 \end{thebibliography}
 

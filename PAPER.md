@@ -30,10 +30,11 @@ outputs before decoding, 5-fold cross-fit validated), significantly
 above the 1K-AL mix
 (McNemar p = 0.0015), and lifts
 binary OOD to **91.8%** — above the measured 71.5%
-second-annotator agreement reference. Three findings emerge that n=600 could
-never show: active learning needs a gold anchor, hard labels beat soft
-distillation under domain shift, and star ratings become the strongest
-signal exactly where text is most ambiguous.
+second-annotator agreement reference. Three empirical observations
+emerge that n=600 could
+never resolve: active learning needs a gold anchor, hard labels may beat
+soft distillation under domain shift, and star ratings become the
+strongest signal exactly where text is most ambiguous.
 
 ## 1. Introduction
 
@@ -80,7 +81,10 @@ pseudo pool, the row-normalized rating→prediction crosstab shows:
 Only ~59% of 5-star reviews are semantically positive; 3-star reviews skew
 negative rather than neutral. Rating-vs-model binary agreement on the
 confident pool is 81.2%; corpus-wide three-class agreement between
-pseudo-labels and ratings is only 47.8% (71.2% on the gold set). We
+pseudo-labels and ratings is only 47.8% (71.2% on the gold set) —
+consistent with the long-documented rating–sentiment gap (Pang & Lee
+2005; Abaiyan et al. 2026); our contribution is the corpus-scale
+quantification, not the phenomenon itself. We
 therefore treat ratings
 as weak supervision for pretraining only, never as gold.
 
@@ -287,20 +291,22 @@ weight), so these are honest generalisation numbers, not test-set
 tuning. Gold+AL vs gold-only: +8.8pp, McNemar p = 4.0e-8 — a gain unresolvable
 at n=600 (v2→v3 was p=0.65).
 
-### Three findings
+### Three empirical observations
 
 1. **AL needs an anchor.** al1000-only training collapses to 56.0% —
    margin sampling distorts the class prior; gold provides the reference
    for ordinary high-confidence reviews.
-2. **Hard labels beat soft distillation under shift.** Teacher soft
-   targets transfer at 71.0% vs 71.4% for hard-label SFT — a
-   narrow-domain teacher transmits its OOD bias through soft
-   probabilities. Inverts the usual distillation ordering; only visible
-   once eval leaves the training domain.
-3. **Ratings beat text at the ambiguity ceiling.** On al1000, the
+2. **Hard labels may beat soft distillation under shift.** Teacher soft
+   targets transfer at 71.0% vs 71.4% for hard-label SFT — a 0.4pp gap
+   within noise at n=600, reported as directional only; the direction
+   matches the documented tendency of teachers to transmit biases
+   through soft probabilities under distribution shift (ShiftKD,
+   Zhang et al. 2023).
+3. **Ratings beat text at the ambiguity ceiling (exploratory).** On al1000, the
    star-rating rule agrees with adjudicated labels at 64.3% vs ~47% for
    the text-only model — when text entropy maxes out, the rating is the
-   only remaining attitude signal.
+   only remaining attitude signal. Small, disagreement-enriched subset;
+   not a general claim.
 
 ### Human agreement: the annotator-agreement reference
 
