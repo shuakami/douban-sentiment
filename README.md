@@ -20,7 +20,7 @@ We study three-class sentiment classification (positive / neutral /
 negative) of short Douban movie reviews under extreme label scarcity.
 Starting from 600 semantic labels, we show that star ratings are poor
 sentiment labels (only ~59% of 5★ reviews are semantically positive),
-build a 271,905-row confident pseudo-label pool from a 911,998-review
+build a 271,905-row confident pseudo-label pool from a 910,998-review
 corpus, and distill a 7-channel teacher ensemble into a single
 MacBERT-base student. The deployed system — student + frozen
 MegatronBERT-1.3B judge + neutral specialist — reaches **89.5%
@@ -92,11 +92,12 @@ contradict the text (e.g. 4★ reviews that are pure rants), so
 The label files under `data/` are our own annotation work — the 600
 hand-labelled gold reviews, the 500-row fresh-corpus labelling study,
 the 1,000-row human-adjudicated AL set, and the derived weak labels.
-The full `lab2000` OOD/AL benchmark (2,000 reviews with dual-LLM blind
-labels and human adjudication of all 479 disagreements, plus DeepSeek
-pseudo-labels for ~17K scaled AL rows) lives outside the repo at
-`E:\GB77_data\lab2000\` and is documented in `HANDOFF.md`. Review texts
-remain Douban content; the 911K corpus is external and stays local.
+The full `lab2000` OOD/AL benchmark ships in `data/lab2000/`:
+2,000 reviews with dual-LLM blind labels, human adjudication of all
+479 disagreements (`final_source` provenance per row), DeepSeek and
+Qwen teacher labels for the ~17K scaled AL rows, fresh500, and a
+per-file README. Review texts remain Douban content; the 910K corpus
+is external and stays local.
 
 ### Large weakly-labelled corpus
 
@@ -104,7 +105,7 @@ Built on the **Moviedata-10M** Douban dataset by csuldw (Central South
 University, 2019) — 4.43M raw comments across 140,502 films; see the
 [project repo](https://github.com/csuldw/AntSpider) (research use only,
 attribution required, raw data not redistributed). We cleaned and
-deduplicated it to **911,998** reviews (20,966 films, 249,105 users),
+deduplicated it to **910,998** reviews (20,966 films, 249,105 users),
 each with text, rating (1–5★), votes, timestamp. Rating→label maps
 implemented in `scripts/train_bigdata.py`: `bin_strict` (1–2★→neg,
 5★→pos), `bin_all` (1–2★→neg, 4–5★→pos), `tri` (3★→neutral). Star

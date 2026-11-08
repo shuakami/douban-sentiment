@@ -184,7 +184,7 @@ Conclusion: deployed v2 (MacBERT s42 student + MegatronBERT-1.3B MLP judge
 families. Remaining 66 errors are predominantly human-ambiguous mixed
 reviews (err conf 0.51 vs 0.63 correct; 中性→正面 still largest bucket).
 
-## Big-corpus pipeline (2026-11-06, Moviedata-10M — 911,998 reviews)
+## Big-corpus pipeline (2026-11-06, Moviedata-10M — 910,998 reviews)
 
 Source: Moviedata-10M Douban dataset by csuldw (CSU, 2019;
 https://github.com/csuldw/AntSpider — research use only, attribution

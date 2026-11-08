@@ -10,7 +10,7 @@
 \contentsline {section}{\numberline {3}Task and Datasets}{5}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Task definition}{5}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Gold set (600 reviews)}{6}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Weakly-labelled corpus (911{,}998 reviews)}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.3}Weakly-labelled corpus (910{,}998 reviews)}{6}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Star ratings are not sentiment labels}{6}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Stage-2 benchmark: lab2000}{7}{subsection.3.5}%
 \contentsline {paragraph}{Annotation protocol.}{7}{paragraph*.11}%

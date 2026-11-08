@@ -7,7 +7,7 @@
 We study three-class sentiment classification (positive / neutral /
 negative) of Chinese Douban movie short reviews under a realistic
 low-resource setting: 600 human-verified semantic labels, plus a large
-weakly-labelled corpus of 911,998 reviews with star ratings. We show that
+weakly-labelled corpus of 910,998 reviews with star ratings. We show that
 star ratings are a poor proxy for semantic sentiment (corpus-wide
 three-class agreement between pseudo-labels and ratings only ~48%), and
 that pseudo-labelling the corpus
@@ -20,8 +20,8 @@ beating both a TF-IDF baseline (+17pp) and zero-shot Qwen3-4B (+11pp).
 Finally, we build **lab2000** — a 2,000-row cross-movie benchmark with
 dual-LLM blind annotation and 479 human-adjudicated rows — and show the
 gold-trained system drops to 65.0% three-class on wild short reviews,
-but that adding only 1,000 actively-selected boundary examples recovers
-+8.8pp to 71.4% (McNemar p = 4.2e-8), and scaling the same protocol
+but that adding only 1,000 actively-selected boundary examples lifts
+the SFT student by +8.8pp (62.6%→71.4%, McNemar p = 4.2e-8), and scaling the same protocol
 with frontier-LLM pseudo-labels (up to ~17K AL rows) pushes the
 ensemble mix to **76.8% three-class** (75.2--76.7% across three
 seeds, 76.8% seed-averaged, split-half validated), significantly above the 1K-human mix
@@ -50,7 +50,7 @@ examples. Two questions drive this work:
 | Dataset | Size | Labels |
 |---|---|---|
 | Gold | 600 reviews (30 pages × 20, single film) | `label_semantic`, human-verified 3-class; `label_rule`, star-derived weak |
-| Corpus | 911,998 reviews, 20,966 films, 249,105 users | star rating 1–5 only |
+| Corpus | 910,998 reviews, 20,966 films, 249,105 users | star rating 1–5 only |
 | lab2000-ood | 1,000 random cross-movie reviews | dual-LLM blind + human adjudication |
 | lab2000-al | 1,000 margin/entropy-selected hard reviews | same protocol; training set only |
 
@@ -105,7 +105,7 @@ The corpus detector is a MacBERT binary classifier trained on a
 
 ### 3.4 Pseudo-label flywheel
 
-The deployed student labels all 911,998 corpus reviews; the confident
+The deployed student labels all 910,998 corpus reviews; the confident
 (≥0.7) subset of 271,905 rows (pos 56.5K / neu 68.6K / neg 146.8K) is
 re-used for training corpus-scale models. Round-2 self-labelling saturates
 (mean confidence 0.986 — memorization), so one flywheel round is used.
@@ -172,11 +172,11 @@ though gold scores are equal — ensemble-derived labels transfer better.
 Temperature scaling (T = 0.37, fit by NLL on gold) reduces ECE to ~0.04
 without changing predictions; T is applied at inference for honest
 confidence display. Calibration also transfers better after AL: on
-ood1000 the best AL mix has ECE 0.045 vs v3's 0.159 at T = 1 — the
+ood1000 AL mixes reach ECE 0.043–0.048 vs v3's 0.159 at T = 1 — the
 pseudo-labelled boundary data sharpens confidence, not just accuracy.
 
 **Significance.** v3 vs v2: McNemar p = 0.65 (11 vs 8 discordant pairs);
-bootstrap 95% CI on ΔF1 = [−0.4pp, +3.8pp]. The point estimate (+1.6pp F1,
+bootstrap 95% CI on ΔF1 = [−0.5pp, +3.9pp]. The point estimate (+1.6pp F1,
 +7.7pp neutral recall) is consistent across 20 random half-splits for every
 detector weight w∈[0.3,0.6], supporting a real but modest gain.
 
@@ -270,9 +270,9 @@ blind-labelled by a second human for true IAA.
 | SFT student | al1000 only | 0.560 / 0.519 | 0.577 / 0.512 |
 | SFT student | gold-600+al1000 | 0.714 / 0.710 | 0.880 / 0.875 |
 | SFT student (distilled) | gold-600+al1000 | 0.710 / — | 0.825 / — |
-| **mix v3×0.3 + SFT×0.7** | gold-600+al1000 | **0.724 / 0.721** | **0.889 / 0.885** |
+| **mix v3×0.3 + SFT×0.7** (binary: v3×0.7 + SFT×0.3) | gold-600+al1000 | **0.724 / 0.721** | **0.889 / 0.885** |
 
-Gold+AL vs gold-only: +8.8pp, McNemar p = 4.2e-8 — a gain unresolvable
+Mix weights are tuned per task on ood1000. Gold+AL vs gold-only: +8.8pp, McNemar p = 4.2e-8 — a gain unresolvable
 at n=600 (v2→v3 was p=0.65). Split-half resampling: 0.7225±0.013 /
 0.8878±0.008.
 
@@ -298,12 +298,12 @@ at n=600 (v2→v3 was p=0.65). Split-half resampling: 0.7225±0.013 /
 neutral boundary — where the first annotator said neutral, the second
 agrees only 49% (37/80 relabelled positive). Strikingly, model errors
 concentrate on exactly these ambiguous rows: the best AL
-mix scores 78.8% on annotator-agreement rows vs 59.4% on
+mix (al17k) scores 78.9% on annotator-agreement rows vs 63.2% on
 disagreement rows (v3: 67.8% vs.
 46.6%), and AL training lifts neutral recall on disagreement rows from
-0.41 to 0.70. Its residual error mode is neutral over-prediction
-(399 predicted vs 327 true on ood1000); a small logit offset recovers
-~0.6pp, within noise. Our best OOD system reaches
+0.41 to 0.76. Its residual error mode is neutral over-prediction
+(407 predicted vs 327 true on ood1000); a small neutral-logit
+correction recovers under 1pp — within noise. Our best OOD system reaches
 76.8% with scaled AL labels — at or above
 human–human agreement:
 the model has reached the human consistency ceiling. (The two LLM
@@ -318,15 +318,15 @@ JSON prompt:
 
 | System | Params | ood1000 3-class | ood1000 binary | Latency |
 |---|---|---|---|---|
-| DeepSeek-V4-Pro | ~763B+ | 0.846 (n=945) | — | ~5.1s API |
+| DeepSeek-V4-Pro | ~763B+ | 0.844 (n=950) | — | ~5.9s API |
 | DeepSeek-V4.1-Flash | ~763B | 0.820 (n=992) | **0.976** (n=661) | ~1.7s API |
 | Qwen3-4B (local) | ~4B | 0.706 (n=1000) | — | ~2.3s local |
-| Deployed v3 | ~1.7B | 0.650 | 0.850 | ~0.1s local |
+| Deployed v3 | ~1.5B | 0.650 | 0.850 | ~0.1s local |
 | SFT+mix (gold+al17k) | ~0.1B | **0.768** | **0.921** | ~0.1s local |
 
-The frontier model leads by ~6pp on the full random OOD set — expected
-at ~2000× the parameters (McNemar p = 4.3e-5 on the 992 jointly
-parseable rows). But: (i) the neutral wall hits everyone —
+The frontier model leads by ~5pp on the full random OOD set — expected
+given the ~500–7000× parameter gap vs our local models (McNemar
+p = 9.6e-4 on the 992 jointly parseable rows). But: (i) the neutral wall hits everyone —
 DeepSeek's own binary (97.6%) exceeds its three-class (82.0%) by 15.6pp;
 (ii) on the 479 human-adjudicated hard subset the gap nearly closes
 (59.5% vs 58.5% on the ood portion — parity within noise); (iii) the
@@ -386,7 +386,7 @@ best** — human adjudication on the hardest 1K + LLM-verified AL rows
 three seeds s42/s123/s456, 76.8\% seed-averaged; split-half
 76.7$\pm$1.3\%) and \textbf{92.1\%} binary. The 17K mix is
 significantly better than the 1K-human mix (McNemar $p = 0.002$,
-119 vs 75 discordant) and far above v3 alone ($p = 5.9\times10^{-12}$),
+119 vs 75 discordant) and far above v3 alone ($p = 5.8\times10^{-14}$),
 still ~5pp below the frontier LLM but at ~0.1s local latency;
 (iii) **diminishing returns beyond ~6K** — a second 5K DeepSeek batch
 (al11k-DS) lifts binary to 91.5% and gold-600 cross-fit to 81.0%

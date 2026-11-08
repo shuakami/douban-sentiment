@@ -37,7 +37,7 @@
 \newlabel{tab:examples}{{1}{5}{Representative gold-set reviews (Chinese original with English gloss). ``Mixed$\to $Neg'' denotes a praise-then-criticism review whose final polarity is negative}{table.caption.8}{}}
 \citation{douban2024}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Gold set (600 reviews)}{6}{subsection.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Weakly-labelled corpus (911{,}998 reviews)}{6}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Weakly-labelled corpus (910{,}998 reviews)}{6}{subsection.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Star ratings are not sentiment labels}{6}{subsection.3.4}\protected@file@percent }
 \newlabel{sec:ratings}{{3.4}{6}{Star ratings are not sentiment labels}{subsection.3.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Star rating vs.\ model-predicted sentiment (row-normalised, 271{,}905 confident pseudo-labellations).}}{6}{table.caption.9}\protected@file@percent }
@@ -106,8 +106,8 @@
 \newlabel{sec:lab2000}{{8}{14}{Stage-2: The lab2000 OOD and Active-Learning Study}{section.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Exposing the OOD gap}{14}{subsection.8.1}\protected@file@percent }
 \newlabel{sec:ood-expose}{{8.1}{14}{Exposing the OOD gap}{subsection.8.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed training data; ``mix'' = $0.3\cdot $v3 $+\,0.7\cdot $SFT(gold+al) probability average. Binary rows exclude neutral examples.}}{15}{table.caption.24}\protected@file@percent }
-\newlabel{tab:ood}{{6}{15}{ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed training data; ``mix'' = $0.3\cdot $v3 $+\,0.7\cdot $SFT(gold+al) probability average. Binary rows exclude neutral examples}{table.caption.24}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed training data; ``mix'' = probability average of v3 and SFT(gold+al) with weights tuned per task on ood1000 (0.7 SFT for 3-class, 0.3 for binary). Binary rows exclude neutral examples.}}{15}{table.caption.24}\protected@file@percent }
+\newlabel{tab:ood}{{6}{15}{ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed training data; ``mix'' = probability average of v3 and SFT(gold+al) with weights tuned per task on ood1000 (0.7 SFT for 3-class, 0.3 for binary). Binary rows exclude neutral examples}{table.caption.24}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces (a) ood1000 accuracy by system; the dashed line marks measured human--human agreement (71.5\%). (b) Inter-annotator agreement on the same 200-row subset: two LLM passes agree more with each other than two humans do.}}{15}{figure.caption.25}\protected@file@percent }
 \newlabel{fig:lab2000}{{6}{15}{(a) ood1000 accuracy by system; the dashed line marks measured human--human agreement (71.5\%). (b) Inter-annotator agreement on the same 200-row subset: two LLM passes agree more with each other than two humans do}{figure.caption.25}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Three findings invisible at $n{=}600$}{15}{subsection.8.2}\protected@file@percent }
@@ -126,8 +126,8 @@
 \@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Human vs.\ LLM pseudo-labels for AL expansion (ood1000, human-adjudicated reference).}}{17}{table.caption.30}\protected@file@percent }
 \newlabel{tab:ds-teacher}{{8}{17}{Human vs.\ LLM pseudo-labels for AL expansion (ood1000, human-adjudicated reference)}{table.caption.30}{}}
 \@writefile{toc}{\contentsline {paragraph}{Scaling: 1K human $\to $ 5.9K hybrid.}{17}{paragraph*.31}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL-scaling on ood1000 (human-adjudicated reference). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' = $0.5\cdot $v3 $+\,0.5\cdot $SFT probability average.}}{18}{table.caption.32}\protected@file@percent }
-\newlabel{tab:al-scaling}{{9}{18}{AL-scaling on ood1000 (human-adjudicated reference). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' = $0.5\cdot $v3 $+\,0.5\cdot $SFT probability average}{table.caption.32}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL-scaling on ood1000 (human-adjudicated reference). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability averages of v3 and the SFT model; $w$ denotes the SFT weight, tuned per row on ood1000.}}{18}{table.caption.32}\protected@file@percent }
+\newlabel{tab:al-scaling}{{9}{18}{AL-scaling on ood1000 (human-adjudicated reference). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability averages of v3 and the SFT model; $w$ denotes the SFT weight, tuned per row on ood1000}{table.caption.32}{}}
 \@writefile{toc}{\contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{18}{paragraph*.33}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{19}{paragraph*.34}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{20}{subsection.8.6}\protected@file@percent }
@@ -151,12 +151,12 @@
 \bibcite{sun2019}{{5}{2019}{{Sun et al.}}{{}}}
 \bibcite{idea2023}{{6}{2023}{{IDEA-CCNL}}{{}}}
 \bibcite{kim2014}{{7}{2014}{{Kim}}{{}}}
-\bibcite{socher2013}{{8}{2013}{{Socher et al.}}{{}}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Environment}{22}{subsection.A.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{22}{appendix.B}\protected@file@percent }
 \newlabel{app:lab500}{{B}{22}{Appendix: The lab500 Pilot Study}{appendix.B}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces lab500 pilot results (superseded by lab2000).}}{22}{table.caption.36}\protected@file@percent }
 \newlabel{tab:lab500-app}{{11}{22}{lab500 pilot results (superseded by lab2000)}{table.caption.36}{}}
+\bibcite{socher2013}{{8}{2013}{{Socher et al.}}{{}}}
 \bibcite{pang2008}{{9}{2008}{{Pang and Lee}}{{}}}
 \bibcite{tan2008}{{10}{2008}{{Tan and Zhang}}{{}}}
 \bibcite{yarowsky1995}{{11}{1995}{{Yarowsky}}{{}}}

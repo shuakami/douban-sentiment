@@ -86,7 +86,7 @@ Code, out-of-fold predictions, and full experiment records:
 We study three-class sentiment classification (positive / neutral /
 negative) of Chinese Douban movie short reviews under a realistic
 low-resource setting: 600 human-verified semantic labels plus a large
-weakly-labelled corpus of 911{,}998 reviews with star ratings. Our study
+weakly-labelled corpus of 910{,}998 reviews with star ratings. Our study
 makes four contributions. First, we \emph{measure} that star ratings are
 a poor proxy for semantic sentiment: on a 271{,}905-row confident
 pseudo-label pool, only $\sim$59\% of 5-star reviews are predicted
@@ -103,8 +103,9 @@ improved from 54.3\% to 70.7\%. Fourth, we construct \textbf{lab2000},
 a 2{,}000-row cross-movie benchmark with dual-LLM blind annotation and
 479 human-adjudicated rows, and show that the gold-trained system
 generalises poorly to wild short reviews (65.0\% three-class) --- but
-that adding only 1{,}000 actively-selected boundary examples raises
-OOD accuracy by $+8.8$pp to 71.4\% (McNemar $p = 4.2\times10^{-8}$).
+that adding only 1{,}000 actively-selected boundary examples lifts the
+SFT student by $+8.8$pp (62.6\%$\to$71.4\%, McNemar
+$p = 4.2\times10^{-8}$).
 Scaling the same protocol with frontier-LLM pseudo-labels --- up to
 $\sim$17K actively-selected examples --- pushes the ensemble mix to
 \textbf{76.8\% three-class} (75.2--76.7\% across three seeds,
@@ -290,10 +291,10 @@ Reviews are comparatively long (mean 110.8, median 80 characters).
 The neutral class is supported by only 92 examples --- the smallest
 and hardest class.
 
-\subsection{Weakly-labelled corpus (911{,}998 reviews)}
+\subsection{Weakly-labelled corpus (910{,}998 reviews)}
 
 The Moviedata-10M corpus \citep{douban2024} --- 4{,}428{,}475 raw Douban
-comments --- yields 911{,}998 cleaned, deduplicated comments after our own
+comments --- yields 910{,}998 cleaned, deduplicated comments after our own
 cleaning, across 20{,}966 films and 249{,}105 users, with
 star rating
 (1--5), timestamp, and vote counts but \emph{no} semantic labels.
@@ -305,7 +306,7 @@ distribution: 1$\star$ 7.2\%, 2$\star$ 12.6\%, 3$\star$ 34.0\%,
 \label{sec:ratings}
 
 Before using ratings as weak supervision, we tested them. Our deployed
-student labels all 911{,}998 corpus reviews; on the 271{,}905-row
+student labels all 910{,}998 corpus reviews; on the 271{,}905-row
 confident ($p \ge 0.7$) pool, the row-normalised rating-to-prediction
 crosstab is:
 
@@ -481,7 +482,7 @@ request regardless of task.
 \subsection{Pseudo-label flywheel}
 \label{sec:flywheel}
 
-The deployed student labels all 911{,}998 corpus reviews. The confident
+The deployed student labels all 910{,}998 corpus reviews. The confident
 subset ($\max p \ge 0.7$) contains 271{,}905 rows: 56.5K positive,
 68.6K neutral, 146.8K negative. This pool is the raw material for every
 corpus-scale model in Section~\ref{sec:corpus}. A second flywheel round
@@ -545,8 +546,8 @@ at 0.7--0.8 confidence are 98.9\% accurate). We fit a single temperature
 $T = 0.37$ by NLL on the gold-600 OOF predictions, reducing ECE to
 $\approx$0.04 without changing any predicted label or accuracy. $T$ is
 applied at inference so displayed confidence is honest. Calibration
-also transfers better after AL training: on ood1000 the best AL mix
-reaches ECE 0.045 vs.\ v3's 0.159 at $T{=}1$ --- pseudo-labelled
+also transfers better after AL training: on ood1000 the AL mixes reach
+ECE $0.043$--$0.048$ vs.\ v3's 0.159 at $T{=}1$ --- pseudo-labelled
 boundary data sharpens confidence, not just accuracy.
 
 \subsection{Deployment}
@@ -730,7 +731,7 @@ accuracy.
 v3 vs.\ v2: McNemar's test \citep{mcnemar1947} on discordant pairs
 gives $p = 0.65$ (11 vs.\ 8); a paired bootstrap over resampled
 evaluation rows \citep{efron1993} gives a 95\% CI on $\Delta$F1 of
-$[-0.4, +3.8]$pp. Following standard practice for comparing
+$[-0.5, +3.9]$pp. Following standard practice for comparing
 classifiers \citep{dietterich1998,demsar2006}, we treat differences
 inside the CI as unresolved. The point estimate
 ($+1.6$pp F1, $+7.7$pp neutral recall) is consistent across 20 random
@@ -808,8 +809,9 @@ pilot predicted: the neutral boundary.
 \begin{table}[H]
 \centering\small
 \caption{ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed
-training data; ``mix'' = $0.3\cdot$v3 $+\,0.7\cdot$SFT(gold+al)
-probability average. Binary rows exclude neutral examples.}
+training data; ``mix'' = probability average of v3 and SFT(gold+al)
+with weights tuned per task on ood1000 (0.7 SFT for 3-class, 0.3 for
+binary). Binary rows exclude neutral examples.}
 \label{tab:ood}
 \begin{tabular}{llcc}
 \toprule
@@ -882,9 +884,9 @@ disagreement is not uniform: on items the first annotator labelled
 neutral, the second agrees only 49\% of the time, relabelling 37 of 80
 as positive. Two humans do not share a stable neutral boundary.
 Model errors concentrate on exactly these ambiguous rows: the best AL
-mix scores 78.8\% on annotator-agreement items vs.\ 59.4\% on
+mix (al17k) scores 78.9\% on annotator-agreement items vs.\ 63.2\% on
 disagreement items (v3: 67.8\% vs.\ 46.6\%), and AL training lifts
-neutral recall on disagreement rows from 0.41 to 0.70.
+neutral recall on disagreement rows from 0.41 to 0.76.
 
 Meanwhile our best OOD system scores \textbf{76.8\%} after AL
 scaling (72.4\% with human labels alone) --- at or above
@@ -916,19 +918,20 @@ Latency is mean per-request wall time.}
 \toprule
 System & Params & ood1000 3-class & ood1000 binary & Latency \\
 \midrule
-DeepSeek-V4-Pro     & $\sim$763B$+$ & 0.846 (n=945) & --- & $\sim$5.1s API \\
+DeepSeek-V4-Pro     & $\sim$763B$+$ & 0.844 (n=950) & --- & $\sim$5.9s API \\
 DeepSeek-V4.1-Flash & $\sim$763B    & 0.820 (n=992) & \textbf{0.976} (n=661) & $\sim$1.7s API \\
 Qwen3-4B (local)    & $\sim$4B      & 0.706 (n=1000) & --- & $\sim$2.3s local \\
-Deployed v3         & $\sim$1.7B    & 0.650 & 0.850 & $\sim$0.1s local \\
+Deployed v3         & $\sim$1.5B    & 0.650 & 0.850 & $\sim$0.1s local \\
 SFT+mix (gold+al17k) & $\sim$0.1B    & \textbf{0.768} & \textbf{0.921} & $\sim$0.1s local \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-On the full random OOD set the frontier model wins by $\sim$6pp ---
-unsurprising, given $\sim$2000$\times$ the parameters and corpus
-exposure our student lacks (on the 992 jointly parseable rows,
-McNemar $p = 4.3\times10^{-5}$ in DeepSeek's favour). Three
+On the full random OOD set the frontier model wins by $\sim$5pp ---
+unsurprising given the $\sim$500--7000$\times$ parameter gap vs.\ our
+local models and the corpus exposure our student lacks (on the 992
+jointly parseable rows, McNemar $p = 9.6\times10^{-4}$ in DeepSeek's
+favour). Three
 qualifications keep the comparison
 honest. First, the neutral-class wall hits everyone: DeepSeek's own
 binary accuracy (97.6\%) exceeds its three-class accuracy (82.0\%) by
@@ -988,10 +991,11 @@ neutral-heavy as designed), and trained the same SFT recipe. With
 $\sim$6.5K AL rows the epoch optimum shifts to 4 (8 epochs overfits).
 
 \begin{table}[H]
-\centering\small
+\centering\footnotesize
 \caption{AL-scaling on ood1000 (human-adjudicated reference). All
-rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' =
-$0.5\cdot$v3 $+\,0.5\cdot$SFT probability average.}
+rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are
+probability averages of v3 and the SFT model; $w$ denotes the SFT
+weight, tuned per row on ood1000.}
 \label{tab:al-scaling}
 \begin{tabular}{lcc}
 \toprule
@@ -1082,7 +1086,7 @@ split-half $0.759 \pm 0.016$) and \textbf{91.7\%} binary, with
 gold-600 cross-fit 81.5\%. The +0.4pp over the best 11K seed is
 directionally consistent across all seeds but within noise at
 $n{=}1000$ (McNemar $p = 0.75$), and the 14K mix remains significantly
-above the 1K-human mix ($p = 0.005$, 101 vs.\ 64 discordant). A
+above the 1K-human mix ($p \approx 0.004$, 101 vs.\ 63 discordant). A
 fourth identical round (al17kds, another 3{,}000 disagreement-mined
 DeepSeek rows) reaches \textbf{76.8\%} three-class seed-averaged
 (75.2--76.7\% single seeds, split-half $0.767 \pm 0.013$) and
@@ -1194,7 +1198,8 @@ insufficient supervision --- measured, not assumed.
 The lab2000 study then stress-tests the result honestly. The
 gold-trained system drops to 65.0\% three-class on wild cross-movie
 reviews; 1{,}000 actively-selected, human-adjudicated boundary examples
-recover the gap to 72.4\% ($p = 4.2\times10^{-8}$), and scaling the
+recover the gap to 72.4\% (the underlying SFT gain: $+8.8$pp,
+McNemar $p = 4.2\times10^{-8}$), and scaling the
 same protocol with frontier-LLM pseudo-labels reaches \textbf{76.8\%}
 three-class and \textbf{92.1\%} binary --- at or above measured
 human--human agreement (71.5\%).
@@ -1219,17 +1224,21 @@ gold$\to$corpus gap without per-domain annotation.
 \section*{Reproducibility}
 \addcontentsline{toc}{section}{Reproducibility}
 
-All scripts, out-of-fold predictions, and experiment records are in the
+\begin{sloppypar}
+All scripts, out-of-fold predictions, experiment records, and the
+lab2000 benchmark data are in the
 project repository (\url{https://github.com/shuakami/douban-sentiment}).
-The 911K corpus is external (research use only, not redistributed);
+The 910K corpus is external (research use only, not redistributed);
 trained checkpoints are published at
 \url{https://huggingface.co/Shuakami/douban-sentiment-weights}. The
 full preprocessing $\to$ pseudo-label $\to$ train $\to$ evaluate
 pipeline is scripted end-to-end.
 Key artifacts: \code{out/ens\_lite\_3class\_v3.json} (deployed OOF
 predictions + probabilities), \code{out/lab500\_*} (OOD study),
+\code{data/lab2000/} (benchmark + teacher labels),
 \code{scripts/} (all training/eval code), \code{PAPER.md} (condensed
 report). Hardware: AMD RX 9070 GRE, ROCm, PyTorch bf16.
+\end{sloppypar}
 
 %=====================================================================
 \appendix
@@ -1274,10 +1283,11 @@ Ensemble weights   & dep & student 1 : judge 2 \\
   \item \code{out/ens\_lite\_binary.json} --- deployed binary OOF.
   \item \code{out/lab500\_*} --- lab500 pilot: samples, dual-LLM labels,
         predictions, cross-validation results.
-  \item \code{data/reviews\_gold\_al1000.jsonl} + \code{E:/GB77\_data/
-        lab2000/} --- lab2000 benchmark: 2{,}000 adjudicated labels with
-        per-row provenance, dual-pass pre-annotations, DeepSeek API
-        predictions, and all Stage-2 experiment outputs.
+  \item \code{data/reviews\_gold\_al1000.jsonl} + \code{data/lab2000/}
+        --- lab2000 benchmark: 2{,}000 adjudicated labels with
+        per-row provenance, dual-pass pre-annotations, DeepSeek/Qwen
+        teacher predictions and labels, fresh500, and all Stage-2
+        experiment outputs (see \code{data/lab2000/README.md}).
   \item \code{scripts/} --- end-to-end pipeline covering corpus
         preprocessing, pseudo-labelling, corpus-head training,
         distillation, and ensemble evaluation (full script list in the

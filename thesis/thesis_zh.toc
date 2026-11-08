@@ -10,7 +10,7 @@
 \contentsline {section}{\numberline {3}任务与数据集}{5}{section.3}%
 \contentsline {subsection}{\numberline {3.1}任务定义}{5}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}金标集（600 条评论）}{5}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}弱标注语料（911{,}998 条评论）}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.3}弱标注语料（910{,}998 条评论）}{5}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}星级评分不是情感标签}{6}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}第二阶段基准：lab2000}{6}{subsection.3.5}%
 \contentsline {paragraph}{标注协议。}{6}{paragraph*.11}%

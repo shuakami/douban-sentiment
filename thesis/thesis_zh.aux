@@ -37,7 +37,7 @@
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{tab:examples}{{1}{5}{代表性金标评论（中文原文附英文释义）。``混合$\to $负面'' 指先扬后抑、最终极性为负面的评论。}{table.caption.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}金标集（600 条评论）}{5}{subsection.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}弱标注语料（911{,}998 条评论）}{5}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}弱标注语料（910{,}998 条评论）}{5}{subsection.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}星级评分不是情感标签}{6}{subsection.3.4}\protected@file@percent }
 \newlabel{sec:ratings}{{3.4}{6}{星级评分不是情感标签}{subsection.3.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces 星级评分与模型预测情感的对照（行归一化，271{,}905 条高置信 伪标注）。}}{6}{table.caption.9}\protected@file@percent }
@@ -106,8 +106,8 @@
 \newlabel{sec:lab2000}{{8}{13}{第二阶段：lab2000 分布外与主动学习研究}{section.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.1}暴露分布外差距}{13}{subsection.8.1}\protected@file@percent }
 \newlabel{sec:ood-expose}{{8.1}{13}{暴露分布外差距}{subsection.8.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= $0.3\cdot $v3 $+\,0.7\cdot $SFT(金标+AL) 的概率平均。 二分类行已剔除中性样本。}}{13}{table.caption.24}\protected@file@percent }
-\newlabel{tab:ood}{{6}{13}{ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= $0.3\cdot $v3 $+\,0.7\cdot $SFT(金标+AL) 的概率平均。 二分类行已剔除中性样本。}{table.caption.24}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= v3 与 SFT(金标+AL) 的概率平均，权重按任务在 ood1000 上 分别调优（三分类取 SFT 权重 0.7，二分类取 0.3）。 二分类行已剔除中性样本。}}{13}{table.caption.24}\protected@file@percent }
+\newlabel{tab:ood}{{6}{13}{ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= v3 与 SFT(金标+AL) 的概率平均，权重按任务在 ood1000 上 分别调优（三分类取 SFT 权重 0.7，二分类取 0.3）。 二分类行已剔除中性样本。}{table.caption.24}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces (a) 各系统在 ood1000 上的准确率；虚线为实测人—人一致率 （71.5\%）。(b) 同一 200 行子集上的标注者一致率：两遍 LLM 互标 的一致率高于两个人类之间的一致率。}}{14}{figure.caption.25}\protected@file@percent }
 \newlabel{fig:lab2000}{{6}{14}{(a) 各系统在 ood1000 上的准确率；虚线为实测人—人一致率 （71.5\%）。(b) 同一 200 行子集上的标注者一致率：两遍 LLM 互标 的一致率高于两个人类之间的一致率。}{figure.caption.25}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的发现}{14}{subsection.8.2}\protected@file@percent }
@@ -126,8 +126,8 @@
 \@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces AL 扩展的人工标签 vs.\ LLM 伪标签（ood1000，人工终审 参照）。}}{15}{table.caption.30}\protected@file@percent }
 \newlabel{tab:ds-teacher}{{8}{15}{AL 扩展的人工标签 vs.\ LLM 伪标签（ood1000，人工终审 参照）。}{table.caption.30}{}}
 \@writefile{toc}{\contentsline {paragraph}{规模化：1K 人工 $\to $ 5.9K 混合。}{15}{paragraph*.31}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL 规模扩展在 ood1000 上的结果（人工终审参照）。所有 行均为金标-600 + 所列 AL 数据的 MacBERT SFT。“mix”= $0.5\cdot $v3 $+\,0.5\cdot $SFT 概率平均。}}{16}{table.caption.32}\protected@file@percent }
-\newlabel{tab:al-scaling}{{9}{16}{AL 规模扩展在 ood1000 上的结果（人工终审参照）。所有 行均为金标-600 + 所列 AL 数据的 MacBERT SFT。“mix”= $0.5\cdot $v3 $+\,0.5\cdot $SFT 概率平均。}{table.caption.32}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL 规模扩展在 ood1000 上的结果（人工终审参照）。所有 行均为金标-600 + 所列 AL 数据的 MacBERT SFT。“mix”行为 v3 与 SFT 模型的概率平均；$w$ 为 SFT 权重，按行在 ood1000 上调优。}}{16}{table.caption.32}\protected@file@percent }
+\newlabel{tab:al-scaling}{{9}{16}{AL 规模扩展在 ood1000 上的结果（人工终审参照）。所有 行均为金标-600 + 所列 AL 数据的 MacBERT SFT。“mix”行为 v3 与 SFT 模型的概率平均；$w$ 为 SFT 权重，按行在 ood1000 上调优。}{table.caption.32}{}}
 \@writefile{toc}{\contentsline {paragraph}{部署权衡（实测而非假设）。}{17}{paragraph*.33}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{17}{subsection.8.6}\protected@file@percent }
 \newlabel{sec:lab2000-caveats}{{8.6}{17}{lab2000 不宣称什么}{subsection.8.6}{}}
