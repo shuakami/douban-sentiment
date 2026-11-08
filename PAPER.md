@@ -227,7 +227,8 @@ the gap to 72.4% (p = 4.2e-8) with human labels alone, and to **76.8%**
 after LLM-scaled AL expansion — at or above human–human agreement
 (71.5%). AL needs a gold anchor, hard labels beat
 soft distillation under shift, and ratings dominate precisely where
-text is most ambiguous. Against a ~763B frontier LLM we trail on raw
+text is most ambiguous. Against frontier LLMs (~763B--1.6T parameters)
+we trail on raw
 OOD accuracy but reach parity on human-adjudicated hard items at
 orders-of-magnitude lower latency, cost, and privacy exposure.
 
@@ -313,20 +314,23 @@ pass-consensus, anchors final labels.)
 
 ### Frontier-LLM comparison
 
-DeepSeek-V4.1-Flash (~763B params, API) and V4-Pro, zero-shot, compact
+DeepSeek-V4.1-Flash (~763B params, API) and V4-Pro (~1.6T params),
+zero-shot, compact
 JSON prompt:
 
 | System | Params | ood1000 3-class | ood1000 binary | Latency |
 |---|---|---|---|---|
-| DeepSeek-V4-Pro | ~763B+ | 0.844 (n=950) | — | ~5.9s API |
+| DeepSeek-V4-Pro | ~1.6T | 0.844 (n=950) | — | ~5.9s API |
 | DeepSeek-V4.1-Flash | ~763B | 0.820 (n=992) | **0.976** (n=661) | ~1.7s API |
 | Qwen3-4B (local) | ~4B | 0.706 (n=1000) | — | ~2.3s local |
 | Deployed v3 | ~1.5B | 0.650 | 0.850 | ~0.1s local |
 | SFT+mix (gold+al17k) | ~0.1B | **0.768** | **0.921** | ~0.1s local |
 
-The frontier model leads by ~5pp on the full random OOD set — expected
-given the ~500–7000× parameter gap vs our local models (McNemar
-p = 9.6e-4 on the 992 jointly parseable rows). But: (i) the neutral wall hits everyone —
+DeepSeek-V4.1-Flash leads by ~5pp on the full random OOD set
+(V4-Pro by ~8pp) — expected given the orders-of-magnitude parameter
+gap (763B--1.6T vs our 0.1--1.5B local models); vs Flash the
+difference is significant (McNemar p = 9.6e-4 on the 992 jointly
+parseable rows). But: (i) the neutral wall hits everyone —
 DeepSeek's own binary (97.6%) exceeds its three-class (82.0%) by 15.6pp;
 (ii) on the 479 human-adjudicated hard subset the gap nearly closes
 (59.5% vs 58.5% on the ood portion — parity within noise); (iii) the
@@ -387,7 +391,8 @@ three seeds s42/s123/s456, 76.8\% seed-averaged; split-half
 76.7$\pm$1.3\%) and \textbf{92.1\%} binary. The 17K mix is
 significantly better than the 1K-human mix (McNemar $p = 0.002$,
 119 vs 75 discordant) and far above v3 alone ($p = 5.8\times10^{-14}$),
-still ~5pp below the frontier LLM but at ~0.1s local latency;
+still ~5pp below DeepSeek-Flash (~8pp below V4-Pro) but at ~0.1s
+local latency;
 (iii) **diminishing returns beyond ~6K** — a second 5K DeepSeek batch
 (al11k-DS) lifts binary to 91.5% and gold-600 cross-fit to 81.0%
 but the 3-class mix is statistically

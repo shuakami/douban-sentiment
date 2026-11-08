@@ -904,7 +904,8 @@ labels.
 
 A natural reviewer question is whether a large general-purpose LLM
 obviates the whole pipeline. We evaluated DeepSeek-V4.1-Flash (a
-$\sim$763B-parameter API model) and DeepSeek-V4-Pro zero-shot on the
+$\sim$763B-parameter API model) and DeepSeek-V4-Pro ($\sim$1.6T
+parameters) zero-shot on the
 same adjudicated labels, with a compact JSON-only prompt and
 low reasoning effort.
 
@@ -918,7 +919,7 @@ Latency is mean per-request wall time.}
 \toprule
 System & Params & ood1000 3-class & ood1000 binary & Latency \\
 \midrule
-DeepSeek-V4-Pro     & $\sim$763B$+$ & 0.844 (n=950) & --- & $\sim$5.9s API \\
+DeepSeek-V4-Pro     & $\sim$1.6T     & 0.844 (n=950) & --- & $\sim$5.9s API \\
 DeepSeek-V4.1-Flash & $\sim$763B    & 0.820 (n=992) & \textbf{0.976} (n=661) & $\sim$1.7s API \\
 Qwen3-4B (local)    & $\sim$4B      & 0.706 (n=1000) & --- & $\sim$2.3s local \\
 Deployed v3         & $\sim$1.5B    & 0.650 & 0.850 & $\sim$0.1s local \\
@@ -927,11 +928,11 @@ SFT+mix (gold+al17k) & $\sim$0.1B    & \textbf{0.768} & \textbf{0.921} & $\sim$0
 \end{tabular}
 \end{table}
 
-On the full random OOD set the frontier model wins by $\sim$5pp ---
-unsurprising given the $\sim$500--7000$\times$ parameter gap vs.\ our
-local models and the corpus exposure our student lacks (on the 992
-jointly parseable rows, McNemar $p = 9.6\times10^{-4}$ in DeepSeek's
-favour). Three
+On the full random OOD set DeepSeek-V4.1-Flash leads by $\sim$5pp
+(V4-Pro by $\sim$8pp) --- unsurprising given the orders-of-magnitude
+parameter gap ($\sim$763B--1.6T vs.\ our 0.1--1.5B local models) and
+the corpus exposure our student lacks (on the 992
+jointly parseable rows vs.\ Flash, McNemar $p = 9.6\times10^{-4}$). Three
 qualifications keep the comparison
 honest. First, the neutral-class wall hits everyone: DeepSeek's own
 binary accuracy (97.6\%) exceeds its three-class accuracy (82.0\%) by
@@ -953,8 +954,8 @@ edge-deployable cost.''
 \subsection{Can LLM pseudo-labels replace human adjudication?}
 \label{sec:ds-teacher}
 
-The frontier-LLM result above suggests an obvious scaling path: if a
-763B model labels the AL set well, its labels may substitute for
+The frontier-LLM result above suggests an obvious scaling path: if the
+763B Flash model labels the AL set well, its labels may substitute for
 expensive human adjudication. We tested this directly --- a MacBERT
 student SFT'd on gold-600 + al1000 with \emph{DeepSeek-V4.1-Flash}
 labels (987 parseable rows) instead of human finals.
@@ -1206,8 +1207,9 @@ human--human agreement (71.5\%).
 Three transferable findings emerge: active learning requires a gold
 anchor, hard labels outperform soft distillation once the evaluation
 domain shifts, and star ratings become the strongest available signal
-precisely where review text is most ambiguous. Against a $\sim$763B
-frontier LLM the compact pipeline trails on raw OOD accuracy but
+precisely where review text is most ambiguous. Against frontier LLMs
+of $\sim$763B--1.6T parameters the compact pipeline trails on raw OOD
+accuracy but
 reaches parity on human-adjudicated hard items at orders-of-magnitude
 lower latency, cost, and privacy exposure.
 
