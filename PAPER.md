@@ -21,7 +21,7 @@ Finally, we build **lab2000** — a 2,000-row cross-movie benchmark with
 dual-LLM blind annotation and 479 human-adjudicated rows — and show the
 gold-trained system drops to 65.0% three-class on wild short reviews,
 but that adding only 1,000 actively-selected boundary examples lifts
-the SFT student by +8.8pp (62.6%→71.4%, McNemar p = 4.2e-8), and scaling the same protocol
+the SFT student by +8.8pp (62.6%→71.4%, McNemar p = 4.0e-8), and scaling the same protocol
 with frontier-LLM pseudo-labels (up to ~17K AL rows) pushes the
 ensemble mix to **76.8% three-class** (75.2--76.7% across three
 seeds, 76.8% seed-averaged, split-half validated), significantly above the 1K-human mix
@@ -223,7 +223,7 @@ insufficient supervision — measured, not assumed.
 
 The lab2000 study stress-tests this honestly: the gold-trained system
 drops to 65.0% on wild reviews; 1,000 adjudicated AL examples recover
-the gap to 72.4% (p = 4.2e-8) with human labels alone, and to **76.8%**
+the gap to 72.4% (p = 4.0e-8) with human labels alone, and to **76.8%**
 after LLM-scaled AL expansion — at or above human–human agreement
 (71.5%). AL needs a gold anchor, hard labels beat
 soft distillation under shift, and ratings dominate precisely where
@@ -273,7 +273,7 @@ blind-labelled by a second human for true IAA.
 | SFT student (distilled) | gold-600+al1000 | 0.710 / — | 0.825 / — |
 | **mix v3×0.3 + SFT×0.7** (binary: v3×0.7 + SFT×0.3) | gold-600+al1000 | **0.724 / 0.721** | **0.889 / 0.885** |
 
-Mix weights are tuned per task on ood1000. Gold+AL vs gold-only: +8.8pp, McNemar p = 4.2e-8 — a gain unresolvable
+Mix weights are tuned per task on ood1000. Gold+AL vs gold-only: +8.8pp, McNemar p = 4.0e-8 — a gain unresolvable
 at n=600 (v2→v3 was p=0.65). Split-half resampling: 0.7225±0.013 /
 0.8878±0.008.
 
@@ -453,7 +453,7 @@ terse ambiguous AL examples shifts the boundary away from the longer
 single-film gold distribution. OOD-hardening and in-domain accuracy
 are in tension; v3 stays deployed, the mix is an OOD specialist.
 A length-aware router (short→mix, long→v3) traces a Pareto frontier:
-at 20 chars it gives 87.3% gold / 70.5% OOD — between v3 (89.5%/65.0%)
+at 20 chars it gives 87.3% gold / 70.6% OOD — between v3 (89.5%/65.0%)
 and the pure mix (~82%/76.8%). Length is an imperfect domain signal
 (32% of gold <50 chars; 26% of ood1000 ≥50), so a learned domain
 router is left to future work.

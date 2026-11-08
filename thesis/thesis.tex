@@ -105,7 +105,7 @@ a 2{,}000-row cross-movie benchmark with dual-LLM blind annotation and
 generalises poorly to wild short reviews (65.0\% three-class) --- but
 that adding only 1{,}000 actively-selected boundary examples lifts the
 SFT student by $+8.8$pp (62.6\%$\to$71.4\%, McNemar
-$p = 4.2\times10^{-8}$).
+$p = 4.0\times10^{-8}$).
 Scaling the same protocol with frontier-LLM pseudo-labels --- up to
 $\sim$17K actively-selected examples --- pushes the ensemble mix to
 \textbf{76.8\% three-class} (75.2--76.7\% across three seeds,
@@ -177,8 +177,11 @@ quantify with a dedicated out-of-distribution study.
         1.3B-parameter judge, and a corpus-trained neutral specialist.
   \item A reproducible evaluation protocol (stratified 5-fold OOF,
         McNemar/bootstrap significance tests, temperature calibration)
-        plus a 500-sample fresh-corpus generalization study exposing the
-        domain gap.
+        plus a 2{,}000-row cross-movie benchmark (lab2000) under which
+        active-learning expansion adds +8.8pp over gold-only SFT
+        ($p \approx 4\times10^{-8}$) and scaling to 17K LLM labels
+        reaches 76.8\% three-class accuracy --- at or above measured
+        human--human agreement (71.5\%).
   \item A documented catalogue of more than twenty measured-but-rejected
         architectures, which we argue is itself a contribution: it maps
         the effective design space for this task.
@@ -839,7 +842,7 @@ two humans do.}
 
 Adding the 1{,}000 actively-selected human-adjudicated rows to the
 training set lifts three-class OOD accuracy by \textbf{+8.8pp}
-(62.6\%$\to$71.4\%, McNemar $p = 4.2\times10^{-8}$) --- a gain that was
+(62.6\%$\to$71.4\%, McNemar $p = 4.0\times10^{-8}$) --- a gain that was
 statistically unresolvable at $n{=}600$ ($p = 0.65$ for v3-vs-v2). The
 ensemble mix reaches \textbf{72.4\% / 0.721} three-class and
 \textbf{88.9\% / 0.885} binary; 20 random split-half resamples give
@@ -1136,7 +1139,7 @@ distribution. OOD-hardening and in-domain accuracy are therefore in
 tension here; we retain v3 as the deployed model and report the mix as
 an OOD-specialist candidate. A length-aware router (short reviews
 $\to$ mix, long $\to$ v3) traces a Pareto frontier rather than a free
-lunch: at threshold 20 chars it gives 87.3\% gold / 70.5\% OOD,
+lunch: at threshold 20 chars it gives 87.3\% gold / 70.6\% OOD,
 between v3 (89.5\% / 65.0\%) and the pure mix ($\sim$82\% / 76.8\%).
 Length is an imperfect domain signal (32\% of gold reviews are $<$50
 chars; 26\% of ood1000 are $\ge$50), so we leave a learned
@@ -1200,7 +1203,7 @@ The lab2000 study then stress-tests the result honestly. The
 gold-trained system drops to 65.0\% three-class on wild cross-movie
 reviews; 1{,}000 actively-selected, human-adjudicated boundary examples
 recover the gap to 72.4\% (the underlying SFT gain: $+8.8$pp,
-McNemar $p = 4.2\times10^{-8}$), and scaling the
+McNemar $p = 4.0\times10^{-8}$), and scaling the
 same protocol with frontier-LLM pseudo-labels reaches \textbf{76.8\%}
 three-class and \textbf{92.1\%} binary --- at or above measured
 human--human agreement (71.5\%).
