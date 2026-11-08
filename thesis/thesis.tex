@@ -276,12 +276,13 @@ report a negative result on LLM-generated synthetic augmentation.
 \subsection{Task definition}
 
 Given a Douban movie short review $x$, predict
-$y \in \{\text{positive}, \text{neutral}, \text{negative}\}$. Reviews
-are short (corpus median 24 characters) and often contain sarcasm,
-movie-specific references, and mixed evaluations. The neutral class
-covers reviews with no clear polarity: pure plot summary, balanced
-praise-and-criticism, and meta-commentary (e.g.\ ``seen it, no
-comment''). Table~\ref{tab:examples} shows representative cases,
+$y \in \{\text{positive}, \text{neutral}, \text{negative}\}$. These
+reviews tend to be brief --- the corpus median is only 24 characters
+--- and a single line often mixes sarcasm, allusions to a specific
+film, and conflicting evaluations. We count as neutral those reviews
+that carry no clear polarity: bare plot summaries, evenly balanced
+praise and criticism, and meta-commentary such as ``seen it, no
+comment''. Table~\ref{tab:examples} shows representative cases,
 including the mixed-polarity pattern that dominates the error
 analysis.
 
@@ -344,7 +345,7 @@ crosstab is:
 \label{tab:crosstab}
 \begin{tabular}{lccc}
 \toprule
-Rating & $\to$ Positive & $\to$ Neutral & $\to$ Negative \\
+Rating & Predicted positive & Predicted neutral & Predicted negative \\
 \midrule
 1$\star$ & 1.7\%  & 7.3\%  & \textbf{91.0\%} \\
 2$\star$ & 1.6\%  & 13.7\% & \textbf{84.7\%} \\
@@ -768,9 +769,9 @@ is truncated at 0.45 to show the pre-scaling miscalibration.}
 The raw ensemble is under-confident (ECE 0.251); temperature scaling
 with $T=0.37$ reduces ECE to $\approx$0.04 (Figure~\ref{fig:calib})
 without altering any predicted label or accuracy --- it only reshapes
-the confidence distribution. ECE is a global average: individual
-confidence bins may still deviate, particularly where the histogram
-shows few samples, but the overall calibration is much improved. This
+the confidence distribution. One caveat: ECE averages over all bins,
+so a handful of sparse bins can still deviate noticeably even though
+the aggregate calibration improves substantially. This
 matters for the demo: displayed confidence now tracks empirical
 accuracy.
 
@@ -789,20 +790,21 @@ set cannot resolve differences below $\sim$1pp.
 
 \subsection{Error analysis}
 
-The 63 remaining errors are dominated by neutral$\leftrightarrow$polar
-confusion (47/63) and are predominantly human-ambiguous mixed reviews:
-mean error confidence 0.51 vs.\ 0.66 for correct predictions. Reviews
-containing explicit scores (``7.6/10'', ``三星半''; $n=56$) are much
-easier: 5.4\% error vs.\ 11.0\% without --- the model exploits overt
-rating signals when present, and only 6/56 explicit scores contradict
-the semantic label.
+Of the 63 errors that remain, 47 involve neutral$\leftrightarrow$polar
+confusions, and most sit on reviews that even human annotators find
+ambiguous --- mean confidence on errors is 0.51 versus 0.66 on
+correct predictions. Reviews that state an explicit score
+(``7.6/10'', ``三星半''; $n=56$) behave quite differently: only 5.4\%
+of them are misclassified, compared with 11.0\% elsewhere. The model
+clearly exploits overt rating cues when they are present; just 6 of
+the 56 explicit scores even disagree with the semantic label.
 
 \subsection{Rejected architectures}
 
 More than twenty alternative designs were implemented, measured, and
-rejected; the deployed v3 is the measured optimum. Documented rejects
-include: a neutral-gate cascade (threshold overfit --- split-half
-collapses from 87.6\% to 86\%), corpus-trained MLP heads as judge
+rejected; the deployed v3 is the measured optimum. Among the documented
+rejects: a neutral-gate cascade (its threshold overfit --- split-half
+validation collapses from 87.6\% to 86\%), corpus-trained MLP heads as judge
 replacement, student-probability averaging, self-distillation round 2,
 stacked logistic meta-learner (0.837/0.794 --- channels too correlated
 for 600 samples), class-weighted and max-len-128 students, Erlangshen
