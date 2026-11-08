@@ -45,7 +45,7 @@ reviews: the model is scored only on reviews it never saw during training.
 |---|---|---|---|
 | TF-IDF + Logistic Regression | 3-class | 0.7233 | 0.6188 |
 | TF-IDF + Logistic Regression | binary | 0.8406 | 0.8232 |
-| Alibaba DAMO StructBERT (zero-shot) | binary | 0.8704 | 0.8538 |
+| Alibaba DAMO StructBERT (zero-shot) | binary | 0.8661 | 0.8459 |
 | Qwen3-4B (zero-shot, label logprob) | 3-class | 0.7833 | 0.7348 |
 | **Deployed system** | **binary** | **0.9587** | **0.9558** |
 | **Deployed system** | **3-class** | **0.8950** | **0.8594** |

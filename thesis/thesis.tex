@@ -1080,8 +1080,9 @@ Three observations. First, \textbf{scale beats provenance}: 5{,}906
 pure-LLM labels (72.5\%) already exceed the 1{,}000-row al1000 set's
 mixed-provenance labels (71.4\%). The teachers' biases differ usefully: DeepSeek
 under-calls \emph{positive} on ambiguous rows (only 65\% agreement
-with human positives, relabelling 156/464 as neutral) while agreeing
-with humans on neutral at 88\% --- human adjudication corrects exactly
+with human-adjudicated positives, relabelling 156/464 as neutral) while agreeing
+with the released al1000 labels on neutral at 88\% --- the
+human-adjudicated core corrects exactly
 this polarity bias, which is why the hybrid wins. Second, the \textbf{hybrid is best}: keeping the al1000 set's
 mixed-provenance labels on the hardest 1{,}000 rows and adding 4{,}906 LLM
 labels reaches 72.9\% standalone and \textbf{74.2\% / 0.743} three-class
