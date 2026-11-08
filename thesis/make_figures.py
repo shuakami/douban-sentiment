@@ -242,8 +242,8 @@ style_ax(axa); style_ax(axb)
 
 systems = ["v3\ngold-600", "SFT\ngold+al1k", "mix\ngold+al17k",
            "DS-V4.1-\nFlash", "DS-V4-\nPro"]
-acc3 = [0.650, 0.714, 0.766, 0.820, 0.844]
-bin_ = [0.850, 0.880, 0.918, 0.976, np.nan]
+acc3 = [0.650, 0.714, 0.771, 0.820, 0.844]
+bin_ = [0.850, 0.880, 0.923, 0.976, np.nan]
 cols_sys = [C["blue"], C["blue"], C["green"], C["purple"], C["purple"]]
 x = np.arange(len(systems))
 w_ = 0.36
