@@ -29,8 +29,8 @@ improved from 0.543 to 0.707. A 2,000-review out-of-distribution benchmark
 (`lab2000`: 1,000 random held-out + 1,000 actively-sampled reviews, dual-LLM
 blind annotation with human adjudication of all disagreements) exposes a
 65.0% three-class accuracy on wild short reviews; 1,000 adjudicated
-active-learning rows lift it to 72.4%, and scaling to ~11K LLM-verified AL
-rows reaches 75.2% three-class / 91.4% binary, with diminishing returns
+active-learning rows lift it to 72.4%, and scaling to ~14K LLM-verified AL
+rows reaches 76.1% three-class / 91.7% binary, with diminishing returns
 beyond ~6K confirming a noise ceiling near human agreement (71.5% IAA).
 
 ## Results
@@ -94,7 +94,7 @@ hand-labelled gold reviews, the 500-row fresh-corpus labelling study,
 the 1,000-row human-adjudicated AL set, and the derived weak labels.
 The full `lab2000` OOD/AL benchmark (2,000 reviews with dual-LLM blind
 labels and human adjudication of all 479 disagreements, plus DeepSeek
-pseudo-labels for ~11K scaled AL rows) lives outside the repo at
+pseudo-labels for ~14K scaled AL rows) lives outside the repo at
 `E:\GB77_data\lab2000\` and is documented in `HANDOFF.md`. Review texts
 remain Douban content; the 911K corpus is external and stays local.
 
