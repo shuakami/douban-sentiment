@@ -42,7 +42,8 @@ rows used only by aug-specific experiments).
 | Neutral detector v1 (115K, cap 60K/side) | `$DATA_ROOT/models/neu_pseudo_p60k_e2` | `scripts/train_bigdata.py --task neu` |
 | Scaling curve ~1K→160K | `$DATA_ROOT/models/stu3c_pc*_e2` | `scripts/train_bigdata.py --pseudo` |
 | Silver eval 0.837 binary agreement | `out/silver_*.json` | `scripts/silver_eval.py` |
-| Star-rating crosstab 47.8% | `out/corpus_rating_crosstab.json` | `scripts/corpus_rating_analysis.py` |
+| Star-rating crosstab + 81.2% binary agreement on confident pool | `out/corpus_rating_crosstab.json` | `scripts/corpus_rating_analysis.py` |
+| Corpus-wide 3-class pseudo-vs-rating agreement 47.8% (54.0% on confident pool) | `out/corpus_tri_agreement.json` | `scripts/corpus_tri_agreement.py` |
 
 ## 3. lab2000 OOD / active-learning study
 
