@@ -22,7 +22,7 @@ Moviedata-10M license); labels are our own annotation work.
 | `qwen3_4b_ood1000_probs.npy` / `qwen3_4b_al5000b_probs.npy` | Raw 3-class probability arrays for the Qwen runs. |
 | `friend_IAA_200.jsonl` / `friend_IAA_map.json` | The 200-row second-human IAA subset: texts given to the second annotator and the `n → (set, i)` mapping back to `lab2000_final.jsonl`. |
 | `friend_IAA_README.md` | The annotation instructions given to the second human annotator. |
-| `iaa_friend_user.json` | Aggregate IAA statistics: second-human vs released labels 71.5% / κ=0.568 (95% CI [0.47, 0.66]); passA-vs-passB 83.5% / κ=0.75. Per-row second-human labels were collected via the README protocol; aggregates are released here. |
+| `iaa_friend_user.json` | Aggregate IAA statistics: second-human vs released labels 71.5% / κ=0.568 (95% CI [0.47, 0.66]); passA-vs-passB 83.3% / κ=0.74. Per-row second-human labels were collected via the README protocol; aggregates are released here. |
 
 ## Annotation protocol detail
 
