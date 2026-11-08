@@ -32,7 +32,7 @@ adjudication of disagreements and spot
 checks — 479 rows total, mixed with LLM-consensus labels) exposes a
 65.0% three-class accuracy on wild short reviews; 1,000 actively-selected
 AL rows lift it to 72.0%, and scaling to ~17K LLM-verified AL
-rows reaches 76.9% three-class / 91.2% binary (fusion weights selected by
+rows reaches 76.9% three-class / 92.3% binary (fusion weights selected by
 5-fold cross-validation, no test-set tuning), with diminishing returns
 beyond ~6K approaching the measured 71.5% second-annotator agreement
 reference.

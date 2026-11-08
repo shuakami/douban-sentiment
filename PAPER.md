@@ -29,7 +29,7 @@ seeds, 76.9% seed-averaged by averaging the seeds' probability
 outputs before decoding, 5-fold cross-fit validated), significantly
 above the 1K-AL mix
 (McNemar p = 7.6e-4), and lifts
-binary OOD to **91.2%** — above the measured 71.5%
+binary OOD to **92.3%** — above the measured 71.5%
 second-annotator agreement reference. Three empirical observations
 emerge that n=600 could
 never resolve: active learning needs a gold anchor, hard labels may beat
@@ -347,7 +347,7 @@ JSON prompt:
 | DeepSeek-V4.1-Flash | ~763B | 0.820 (n=992) | **0.976** (n=661) | ~1.7s API |
 | Qwen3-4B (local) | ~4B | 0.706 (n=1000) | — | ~2.3s local |
 | Deployed v3 | ~1.5B | 0.650 | 0.850 | ~0.1s local |
-| SFT+mix (gold+al17k) | ~1.6B | **0.769** | 0.912 | ~0.1s local |
+| SFT+mix (gold+al17k) | ~1.6B | **0.769** | 0.923 | ~0.1s local |
 
 DeepSeek-V4.1-Flash leads by ~5pp on the full random OOD set
 (V4-Pro by ~8pp) — expected given the orders-of-magnitude parameter
@@ -397,7 +397,7 @@ see Limitations).
 | gold-600 + al11k (all DS, no AL core) | 0.727 / 0.732 | 0.900 / 0.898 |
 | gold-600 + al3k (disagreement-mined DS only) | 0.703 / 0.704 | 0.877 / 0.874 |
 | gold-600 + al14k (1K AL + 12.9K DS) | 0.744 / 0.747 | 0.914 / 0.911 |
-| gold-600 + al17k (1K AL + 15.9K DS) | 0.730--0.741 / 0.732--0.743 | 0.911--0.918 / 0.908--0.916 |
+| gold-600 + al17k (1K AL + 15.9K DS) | 0.730--0.741 / 0.732--0.743 | 0.915--0.924 / 0.912--0.922 |
 | + v3 mix (al6kh) | 0.742 / 0.743 | 0.909 / 0.907 |
 | + v3 mix (al11kds, s123) | 0.757 / 0.760 | — |
 | + v3 mix (al11kds binary e8) | — | 0.915 / 0.913 |
@@ -406,7 +406,7 @@ see Limitations).
 | + v3 mix (al14kds binary) | — | 0.909 / 0.907 |
 | + v3 mix (al17kds, 4 seeds) | 0.746--0.763 | — |
 | + v3 mix (al17kds 4-seed avg) | **0.769 / 0.772** | — |
-| + v3 mix (al17kds binary 3-seed avg) | — | 0.912 / 0.910 |
+| + v3 mix (al17kds binary e8 3-seed avg) | — | 0.923 / 0.920 |
 
 All "mix" rows use fusion weights selected by stratified 5-fold
 cross-validation on ood1000 (out-of-fold predictions — no row's label
@@ -418,7 +418,7 @@ labels (72.5%) exceed the al1000 released labels (71.4%); (ii) **hybrid is
 best** — the released al1000 labels on the hardest 1K + LLM-verified AL rows
 + v3 mix reaches \textbf{76.9\%} three-class (74.6--76.3\% across
 four seeds s42/s123/s456/s789, 76.9\% seed-averaged; 5-fold
-cross-fit validated) and \textbf{91.2\%} binary. The 17K mix is
+cross-fit validated) and \textbf{92.3\%} binary. The 17K mix is
 significantly better than the 1K-AL mix (McNemar $p = 7.6\times10^{-4}$,
 127 vs 78 discordant) and far above v3 alone ($p = 1.6\times10^{-13}$),
 still ~5pp below DeepSeek-Flash (~8pp below V4-Pro) but at ~0.1s
@@ -432,7 +432,7 @@ round adding 3K rows mined from the *student-disagreement* pool
 at n=1000 (McNemar $p = 0.91$ vs.\ the best 11K seed) though still
 significantly above the 1K-AL mix ($p \approx 0.01$); a fourth
 identical round (al17kds, +3K disagreement rows)
-reaches \textbf{76.9\%} three-class seed-averaged and \textbf{91.2\%}
+reaches \textbf{76.9\%} three-class seed-averaged and \textbf{92.3\%}
 binary — the best observed numbers, though +1.4pp over 14K remains
 within noise (McNemar $p = 0.14$), confirming saturation in the
 75--77\% band. The targeted 3K subset alone is strikingly label-efficient:
@@ -500,8 +500,11 @@ terse ambiguous AL examples shifts the boundary away from the longer
 single-film gold distribution. OOD-hardening and in-domain accuracy
 are in tension; v3 stays deployed, the mix is an OOD specialist.
 A length-aware router (short→mix, long→v3) traces a Pareto frontier:
-at 20 chars it gives 87.3% gold / 70.6% OOD — between v3 (89.5%/65.0%)
-and the pure mix (~82%/76.9%). Length is an imperfect domain signal
+at 20 chars it gives 87.3% gold / 70.7% OOD — between v3 (89.5%/65.0%)
+and the pure mix (~82%/76.9%). Full frontier under fixed
+w_SFT=0.6 fusion: T=50 → 86.5%/73.9%, T=100 → 84.5%/75.8%,
+T=∞ → 82.2%/77.2% (cross-fit OOF estimate 76.9%). Length is an
+imperfect domain signal
 (32% of gold <50 chars; 26% of ood1000 ≥50), so a learned domain
 router is left to future work.
 

@@ -53,11 +53,11 @@
 \contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{19}{paragraph*.33}%
 \contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{20}{paragraph*.34}%
 \contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{20}{subsection.8.6}%
-\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{20}{section.9}%
+\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{21}{section.9}%
 \contentsline {section}{\numberline {10}Conclusion and Future Work}{21}{section.10}%
-\contentsline {section}{Reproducibility}{21}{section.10}%
+\contentsline {section}{Reproducibility}{22}{section.10}%
 \contentsline {section}{\numberline {A}Training Details and Reproducibility}{22}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}Hyperparameters}{22}{subsection.A.1}%
 \contentsline {subsection}{\numberline {A.2}Artifacts}{22}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}Environment}{22}{subsection.A.3}%
+\contentsline {subsection}{\numberline {A.3}Environment}{23}{subsection.A.3}%
 \contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{23}{appendix.B}%
