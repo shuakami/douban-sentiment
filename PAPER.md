@@ -451,11 +451,11 @@ with Qwen over-calling positive (725 of DS's neutral rows) and
 under-calling negative (396 of its negative rows relabelled neutral);
 the student inherits the bias distributionally. A final ablation swaps the released
 al1000 labels for DeepSeek labels at the same 11K scale (al11k-allDS): the
-3-class mix is unchanged (75.2\%, McNemar $p = 0.81$ vs.\ the
-al1000-core mix) while binary drops ~2.4pp to 89.2\% (McNemar
-$p = 0.014$) —
-at this scale the al1000 core's marginal value sits on the polarity
-boundary, not the neutral one. Total API cost
+3-class mix is unchanged (75.2\%, McNemar $p = 0.80$ vs.\ the
+al1000-core mix) and binary stays within noise as well (90.3\% vs.\
+91.4\%, $p = 0.28$) ---
+at this scale the released human labels show no measurable marginal
+value over DeepSeek labels on either task. Total API cost
 for all 15,906 extra DeepSeek labels was a few hundred thousand tokens
 — orders of magnitude cheaper than human annotation. This validates
 the protocol lab2000 itself used: LLM-label at scale,
