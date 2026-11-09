@@ -93,16 +93,20 @@
 87.5\% 准确率、中性召回 84.8\%——这说明规模化的标签质量，而非模型
 容量，才是约束瓶颈。第三，本文部署的系统将蒸馏 MacBERT 学生、冻结的
 MegatronBERT-1.3B 特征判别器与语料训练的中性专家相结合，在 600 条
-金标的交叉验证评估上达到 \textbf{89.5\% 准确率 / 85.9 宏平均 F1}，
+金标的交叉验证评估上达到 \textbf{89.5\% 准确率 / 85.9 宏平均 F1}
+——第~\ref{sec:leakage}~节将表明该数字被二级教师泄漏所抬高
+（泄漏修正估计：三分类 83.3--84.0\%、二分类 92.9\%）——
 中性召回率由 54.3\% 提升至 70.7\%。第四，本文构建了
 \textbf{lab2000}——一个包含 2{,}000 条跨影片评论、经双遍 LLM 盲标
 （同一标注模型、不同 few-shot 视角）与
 479 条人工终审的基准——实测金标训练的系统在野外短评上仅达
-65.0\% 三分类准确率；但仅引入 1{,}000 条主动学习边界样本即可使
+65.0\% 三分类准确率（ood1000 \emph{开发集}上）；但仅引入
+1{,}000 条主动学习边界样本即可使
 SFT 学生提升 +8.8pp（62.6\%$\to$71.4\%，McNemar
 $p = 4.0\times10^{-8}$）；同一协议
 经前沿 LLM 伪标签规模扩展（至 $\sim$17K 条主动选取样本）可将集成混合
-推至 \textbf{三分类 77.1\%}（各种子 74.6--76.3\%，
+推至开发集上 \textbf{三分类 77.1\%}（best-of-$N$ 估计；
+各种子 74.6--76.3\%，
 五种子平均 77.1\%——对各种子的概率输出取平均后再解码；
 5 折交叉拟合验证；显著优于 1K AL 混合，
 McNemar $p = 3.9\times10^{-4}$），高于实测的 71.5\% 第二标注者一致率参照，
@@ -154,15 +158,19 @@ $n{=}600$ 下不可见的经验观察：主动学习样本必须以金标锚定�
   \item 一套伪标签飞轮，产出 271{,}905 条高置信池，并在训练集
         不含任何金标的条件下训练出单一紧凑学生模型（87.5\% 准确率 / 中性召回
         84.8\%）。
-  \item 一个已部署的混合集成系统（89.5\% 准确率 / 85.9 宏平均 F1，
-        中性召回 70.7\%），结合蒸馏学生、冻结的 13 亿参数判别器与
+  \item 一个已部署的混合集成系统（金标 OOF 89.5\% 准确率 /
+        85.9 宏平均 F1，被教师泄漏抬高——修正估计 83.3--84.0\% /
+        76.3--77.5；第~\ref{sec:leakage}~节），
+        中性召回 70.7\%，结合蒸馏学生、冻结的 13 亿参数判别器与
         语料训练的中性专家。
   \item 一套可复现的评估协议（分层 5 折交叉验证、交叉拟合融合权重
-        选择、McNemar/bootstrap 显著性检验、温度校准），以及一个
+        选择、McNemar/bootstrap 显著性检验、温度校准），以及对
+        金标 OOF 头条数字两条膨胀通道的泄漏审计；并附一个
         2{,}000 条跨影片基准
         （lab2000）：在其上主动学习扩展比纯金标 SFT 提升 +8.8pp
-        （$p \approx 4\times10^{-8}$），扩展至 17K LLM 标签后三分类
-        达 77.1\%，高于实测的 71.5\% 第二标注者一致率参照。
+        （$p \approx 4\times10^{-8}$，开发集估计），扩展至 17K LLM
+        标签后三分类达 77.1\%，高于实测的 71.5\%
+        人—参照标签一致率。
   \item 一份记录了二十余种实测后被否决架构的目录；我们认为这本身
         就是一种贡献：它勾勒出了该任务有效的设计空间。
 \end{itemize}
@@ -187,7 +195,8 @@ BERT \citep{devlin2019} 及其鲁棒性改进版 RoBERTa \citep{liu2019}
 确立了“先预训练、再微调”的范式。中文方向上，MacBERT
 \citep{cui2020} 用修正版目标替代 MLM 以适配字符级输入，ERNIE
 \citep{sun2019} 融合实体与短语知识，StructBERT \citep{wang2020}
-在预训练中注入短语与词级结构信息。Erlangshen-MegatronBERT
+在预训练中注入短语与词级结构信息，SKEP \citep{tian2020} 则直接
+以情感知识为目标做预训练。Erlangshen-MegatronBERT
 \citep{idea2023} 将该家族扩展至 13 亿参数并加入情感专项微调。
 本文三类模型均有使用并直接对比。
 
@@ -330,9 +339,14 @@ Moviedata-10M 语料 \citep{douban2024}（443 万条原始豆瓣评论）
 2{,}000 条语料评论，分为两个互不重叠、互为补充的子集。
 
 \begin{itemize}
-  \item \textbf{ood1000}（随机分布外测试集）：从 911K 语料中
+  \item \textbf{ood1000}（开发集）：从 911K 语料中
         均匀随机抽取 1{,}000 条评论（已去除金标重复、跨影片）。
-        这是留出评估集：本文任何模型都不在其上训练。
+        该集合是整个第二阶段研究的\emph{开发}/模型选择集：
+        AL 规模（1K$\to$17K）、教师选择（DeepSeek / 本地 Qwen /
+        混合）、epoch 数、种子子集以及 5 折交叉拟合融合权重均在
+        其上选定。因此它\emph{并非}未触碰过的测试集；唯一计划中的
+        零污染终测是一套新的 400 条盲标人工标注集（进行中，
+        第~\ref{sec:limits}~节）。
   \item \textbf{al1000}（主动学习扩展集）：按部署学生模型预测的
         边际/熵采样选出的 1{,}000 条评论——刻意选取最困难、
         最具歧义的样本（中性密集、低置信）。这是\emph{训练}集，
@@ -354,6 +368,12 @@ al1000 = 正面 473 / 中性 369 / 负面 158（即 ood1000 含 200 条
 另外从 ood1000 中随机
 抽取 200 行由第二名人类标注员盲标，用于测量真实人—人一致率
 （第~\ref{sec:iaa}~节）。
+
+需要说明一个锚定保留意见：全部 479 条人工终审行的标注界面中，
+每条样本旁均显示了部署学生模型的预测与置信度，因此终审者并非
+对模型输出盲标——这是人在环路标注中已被记录的锚定偏差来源
+\citep{schroeder2025}。人工终审标签应理解为“在可见模型辅助下
+经人工核验”，而非盲标真值。
 
 %=====================================================================
 \section{方法}
@@ -453,8 +473,9 @@ Erlangshen 变体上的冻结骨干 MLP 头，均在 600 条金标上训练并�
 负面 146.8K。这一池子是第~\ref{sec:corpus}~节所有语料规模模型的
 原材料。第二轮飞轮经过测试并被否决：用第二轮模型重新标注会产生
 退化的概率分布（平均置信度 0.986，即记忆化），因此只使用一轮。
-这一饱和现象与自训练和伪标注文献中记录的确认偏差动态一致
-\citep{arazo2020,xie2020,sohn2020}：一旦伪标签编码了教师自身的
+这一饱和现象与自训练、伪标注及一致性训练方法中记录的确认偏差
+动态一致 \citep{arazo2020,xie2020,xie2020uda,sohn2020}：一旦伪标签
+编码了教师自身的
 决策边界，额外的轮次只会放大自洽性而非增加信息。
 
 \subsection{中性专家}
@@ -547,7 +568,8 @@ bootstrap；稳健性通过 20 次随机二分半验证检查。
 \centering\small
 \caption{金标 600 条交叉验证结果。``部署''行是生产系统；StructBERT
 与 Qwen 行为零样本外部基线——StructBERT 仅二分类，在 508 条非中性
-基线行上评分。“---”= 本次未报告。}
+基线行上评分。部署 v3 的 OOF 数字被二级教师泄漏与在评估集上调参
+所抬高；泄漏修正估计见第~\ref{sec:leakage}~节。“---”= 本次未报告。}
 \label{tab:main}
 \begin{tabular}{llcc}
 \toprule
@@ -584,6 +606,43 @@ P/R/F1 = 0.909/0.943/0.926；中性 = 0.765/0.707/0.735；负面 =
 类别分布（316/92/192）一致。}
 \label{fig:confusion}
 \end{figure}
+
+\subsection{金标 OOF 数字的泄漏审计}
+\label{sec:leakage}
+
+对训练与评估链路的事后审计表明，表~\ref{tab:main} 中的
+89.5\%/85.9\%（三分类）与 95.87\%/95.58\%（二分类）数字\emph{并非}
+严格的全流程交叉验证估计。两条泄漏通道抬高了它们，且所有集成
+决策均在同一批 600 行上调优。我们报告这项审计，是因为读者应当
+引用的是诚实数字。
+
+\paragraph{泄漏 B：二级教师泄漏。} 蒸馏集成中所有非零权重的教师
+通道本身都在与学生评估折重叠的金标行上训练过，且 $\alpha=0.5$ 的
+软目标将教师的折特定偏差传递给学生——这是一种二级形式的目标
+泄漏 \citep{kapoor2023,sainz2023}。在完全相同的流水线下仅改用硬
+标签重跑（$\alpha=1.0$，相同折划分与超参数）得到：\textbf{三分类
+84.0\% 准确率 / 77.5 宏平均 F1}（保留语料通道）、\textbf{83.3\% /
+76.3}（移除语料通道），二分类为 \textbf{92.9\% / 92.4}。仅泄漏 B
+即贡献约 $+5.5$pp（三分类）与 $+3.0$pp（二分类）的虚增——
+远超单个学生通道约 1pp 的量级，因为该效应在集成中逐层叠加。
+
+\paragraph{泄漏 A：伪标签的传递性污染。} 部署的语料中性检测器
+训练所用伪标签最终源自一个在全部 600 条金标上拟合的教师，因此其
+标签把金标信息泄漏进了“语料”通道。在 $\alpha=1.0$ 下移除该通道
+再损失约 0.7pp（84.0$\to$83.3），即泄漏 A 的量化。同一通道的训练
+集还包含 ood1000 行的 13.0\% 与 fresh500 行的 13.2\%
+（第~\ref{sec:limits}~节），这正是这些基准数字需要行级
+重叠保留的原因。
+
+\paragraph{在评估集上调参。} 融合权重、集成选择与蒸馏超参数均在
+同一批 600 条金标上选出，因此即便修正后的数字也带有我们未能量化
+的 best-of-$N$ 乐观偏差。我们以 $\alpha{=}1.0$ 重跑作为诚实的
+headline：\textbf{三分类约 83.3--84.0\% 准确率 / 76.3--77.5 宏平均
+F1；二分类约 92.9\% / 92.4}。这些是单种子估计（$\alpha{=}1.0$
+未重新调参），且部署系统本身未变——本审计针对的是评估而非
+产物。促成本次审计的数据污染与泄漏分类法见
+\citet{sainz2023,kapoor2023,balloccu2024}；其底层机制是伪标签池
+中的标签噪声 \citep{northcutt2021}。
 
 \subsection{语料规模单模型}
 
@@ -683,7 +742,7 @@ v3 对 v2：对不一致对做 McNemar 检验 \citep{mcnemar1947}，
 $p = 0.65$（11 比 8）；对重采样评估行做配对 bootstrap
 \citep{efron1993}，$\Delta$F1 的 95\% 置信区间为
 $[-0.5, +3.9]$ 个百分点。按照比较分类器的标准做法
-\citep{dietterich1998,demsar2006}，我们将区间内的差异视为
+\citep{dietterich1998,demsar2006,dror2018}，我们将区间内的差异视为
 未解决。点估计（F1 $+1.6$pp、中性召回 $+7.7$pp）在每种检测器
 权重 $w \in [0.3,0.6]$ 下均跨 20 次随机二分半保持一致。如实
 报告：改进是真实的但幅度有限，在 $n=600$ 下金标集无法分辨
@@ -742,17 +801,23 @@ lab2000（第~\ref{sec:lab2000-data}~节）并开展了完整的
 \subsection{暴露分布外差距}
 \label{sec:ood-expose}
 
-表~\ref{tab:ood} 给出所有系统在留出 ood1000 集上的表现。仅在
+表~\ref{tab:ood} 给出所有系统在 ood1000 \emph{开发集}上的表现——
+该集合正是全部第二阶段选择决策的做出地
+（第~\ref{sec:lab2000-data}~节），因此这些是开发集估计而非
+未触碰测试集的结果。仅在
 金标 600 条上训练的部署 v3，从域内 89.5\% 跌至三分类
 \textbf{65.0\%}（二分类正负面：85.0\%）。差距恰好集中在
 lab500 先导研究预测的位置：中性边界。
 
 \begin{table}[H]
 \centering\small
-\caption{ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT；
+\caption{ood1000（开发集）结果。“SFT”= 在所列训练数据上微调的
+MacBERT；
 “mix”= v3 与 SFT 模型的概率平均，融合权重由 ood1000 上的分层
 5 折交叉验证选定——每条预测所用权重均在其余折上调优，不会使用
-该行自身的标签。二分类评测剔除中性样本。“---”= 本次未报告。
+该行自身的标签。由于该集合本身驱动了全部第二阶段选择决策，
+这些数字是带 best-of-$N$ 乐观偏差的开发集估计
+（第~\ref{sec:limits}~节）。二分类评测剔除中性样本。“---”= 本次未报告。
 lab2000 标签为混合来源：479 条人工终审（ood1000 200 + al1000 279）
 + 其余行双遍 LLM 共识（第~\ref{sec:lab2000-data}~节）。}
 \label{tab:ood}
@@ -790,7 +855,11 @@ SFT 学生（蒸馏）        & 金标-600+al1000 & 0.710 / ---   & 0.825 / --- 
 McNemar $p = 4.0\times10^{-8}$）——这一级增益在 $n{=}600$ 时
 统计上不可分辨（v3 对 v2 为 $p = 0.65$）。集成混合在交叉拟合权重选择下达到
 \textbf{72.0\% / 0.717} 三分类与 \textbf{87.8\% / 0.876}
-二分类——按构造即非测试集调参过拟合。
+二分类。交叉拟合使每行的权重对其自身标签保持诚实，但\emph{集合}
+本身驱动了第二阶段的全部选择决策——AL 规模、教师、轮数、种子
+子集以及这些权重本身——因此我们将所有 ood1000 数字报告为带约
+$+0.3$--$1.0$pp best-of-$N$ 乐观偏差的开发集估计
+（第~\ref{sec:limits}~节）。
 
 \subsection{三个在 $n{=}600$ 下不可见的经验观察}
 \label{sec:findings}
@@ -825,7 +894,15 @@ SFT 的 71.4\%——0.4pp 的差距在 $n{=}600$ 下属于噪声范围，
 vs.\ 发布标签”的混合参照，而非纯人—人一致率。分歧并不均匀：
 在第一位标注员标为中性的样本上，第二位仅 49\% 同意，其中 80 条
 里有 37 条被改标为正面。两个
-人类并不共享稳定的中性边界。模型误差恰好集中在这些歧义样本上：
+人类并不共享稳定的中性边界。该不稳定性在真正有争议的行上更为
+尖锐：在同一 200 行子集内，47 条人工终审行恰是两个 LLM pass 分歧
+最集中的样本——其上 passA 对 passB 的一致率仅 29.8\%
+（$\kappa = -0.18$），而 ood1000 整体为 86.7\%。LLM 自一致性恰好
+在人类分歧处崩塌 \citep{davani2022}。全文一致率均按标准 IAA 惯例
+报告 Cohen's $\kappa$ \citep{artstein2008}；NLP 标注元数据报告
+不足的既有记录也促使我们按行发布 \code{final\_source} 来源字段
+\citep{kunilovskaya2026,alkhalifa2026}。模型误差恰好集中在这些
+歧义样本上：
 最优 AL 混合（al17k）在标注者一致样本上达 79.5\%，在分歧样本上
 仅 61.7\%（v3 分别为 67.8\% 与 46.6\%）；AL 训练将分歧样本上的
 中性召回从 0.41 提升至 0.77（图~\ref{fig:lab2000}）。
@@ -879,8 +956,9 @@ $p = 1.7\times10^{-3}$，显著性有利于 DeepSeek）。有三
 DeepSeek 自身的二分类准确率（97.6\%）比三分类（82.0\%）高出
 15.6pp，与本文记录的极性—中性差距同构——内在歧义并非小模型
 特有。其二，在 ood1000 人工终审且 DeepSeek 可解析的 195 条困难子集上
-差距几乎抹平：ood 部分 DeepSeek 为 59.5\%，al1000 集成混合为
-59.0\%（差异在噪声范围内）；该子集恰好富集了细则遵循与世界知识
+差距几乎抹平：ood 部分 DeepSeek 为 59.5\%，al1000 代集成混合为
+58.5\%（差异在噪声范围内；最优 al17kds 混合在全部 200 条终审
+子集上为 56.0\%）；该子集恰好富集了细则遵循与世界知识
 出现分歧的样本，且标签全部为作者人工终审。
 其三，部署经济性相差数个数量级：本地系统在单张消费级 GPU 上
 离线运行，约 0.1 秒/条、零按 token 费用、数据不出本机；而 API
@@ -893,7 +971,8 @@ DeepSeek 自身的二分类准确率（97.6\%）比三分类（82.0\%）高出
 
 上文的前沿 LLM 结果提示了一条显而易见的规模化路径：如果
 7630 亿参数的 Flash 模型能把 AL 集标好，其标签或可替代昂贵的
-人工终审。我们直接验证
+人工终审——LLM 生成伪标签本身即是成熟的数据增强策略
+\citep{zenimoto2024,neveditsin2025}。我们直接验证
 了这一点——MacBERT 学生在金标-600 + al1000 上做 SFT，AL 标签
 分别使用 \emph{DeepSeek-V4.1-Flash} 预测（987 条可解析）与发布的
 al1000 标签（混合来源，见第~\ref{sec:lab2000-data}~节）。
@@ -1028,7 +1107,11 @@ Qwen 过判正面（把 DS 的 725 条中性行改判正面）、漏判负面
 al17k 的增益并非 LLM 共识标签的产物——在 800 条共识行上混合比
 v3 高 +12.7pp（69.6\%$\to$82.4\%），在 200 条人工终审行上同样
 高 +9.5pp（46.5\%$\to$56.0\%）。终审子集本质上更难（人工终审
-集中于两轮 LLM 分歧样本），增益在该子集依然复现。\emph{长度}：
+集中于两轮 LLM 分歧样本），增益在该子集依然复现。同一拆分也
+偏向 LLM 教师：DeepSeek-Flash 在 800 条共识行上达 87.5\%（混合
+为 82.4\%），但在终审行上仅 59.5\%（195 条可解析；混合在 200 条
+终审行上为 58.5\%）——共识标签部分编码了教师自身的标注约定，
+这正是终审子集更具信息量的原因。\emph{长度}：
 增益集中在短评——相对 v3 的 +121 个净 discordant 胜场中 58 个
 落在 $\le$20 字行——而 $>$100 字切片对所有系统仍是最弱
 （ood1000 上混合 72.4\% 对 v3 61.2\%；fresh500 上 66.7\%），
@@ -1038,14 +1121,18 @@ al14k 的 0.027。
 
 \textbf{全新样本稳健性检验。}由于 AL 行按语料不确定性采样、
 混合权重由 ood1000 上的交叉验证选定，我们额外抽样了
-\textbf{fresh500}——500 条与全部训练及评估文本不相交的均匀随机
-语料评论（已逐一验证与金标-600 及直至 al17k 的所有 AL 池零文本
-重叠）——由同一 DeepSeek 教师标注。混合权重固定为 ood1000 交叉拟合值
+\textbf{fresh500}——500 条与金标-600 及直至 al17k 的所有 AL 池
+零\emph{文本}重叠的均匀随机语料评论，但行级独立性仅部分成立：
+fresh500 中 70.2\% 的评论 ID 出现在至少一个语料派生训练池中，
+且部署的语料中性检测器在 fresh500 行的 13.2\% 上训练过
+（ood1000 行的 13.0\%；第~\ref{sec:leakage}~节）。因此 fresh500
+是在部分暴露分布上、以教师生成标签进行的复现检验，而非干净的
+留出集——由同一 DeepSeek 教师标注。混合权重固定为 ood1000 交叉拟合值
 （三分类取众数折权重 $w_{\mathrm{SFT}}{=}0.6$；二分类取折中位数
 $0.5$——e8 二分类折权重呈双峰，0.45--0.95）后，旗舰 al17kds 混合
 三分类得 \textbf{77.0\%} 对 v3 的 58.8\%（McNemar
 $p = 9.1\times10^{-15}$），二分类 \textbf{93.7\%} 对 86.3\%
-（$p = 1.9\times10^{-4}$）——AL 增益在未见数据上复现，
+（$p = 1.9\times10^{-4}$）——AL 增益在此部分暴露样本上复现，
 并非基准特异性调参的产物。（较早的 al14k 检查点在同一协议下为
 74.6\% / 92.6\%；独立的 al17k SFT 学生在 fresh500 上五种子平均
 三分类达 78.0\%——冻结的 ood1000 调权混合并不能完美迁移到
@@ -1117,25 +1204,54 @@ al1000 是训练集；其头条数字（如评分规则对比）刻画的是难�
         产生的分布外差距（三分类 65.0\%），并表明 1{,}000 条
         经主动学习选取的样本（混合标签来源：279 行人工终审 +
         721 行 LLM 共识）可恢复大部分差距
-        （72.0\%），但 ood1000 仍是唯一真正的跨影片留出测试。
+        （72.0\%）。但 ood1000 \emph{并非}留出测试——它是开发集
+        （下一条）——因此恢复后的 72.0\% 是开发集估计。
+  \item \textbf{ood1000 是开发集而非测试集。} 第二阶段的全部选择
+        决策——AL 规模（1K$\to$17K）、教师选择（DeepSeek /
+        本地 Qwen / 混合）、epoch 数（e4/e8）、种子子集、约 26 种
+        混合配置对应约 73 次 SFT 运行，以及 5 折交叉拟合融合
+        权重——均在 ood1000 上做出。报告的 ood1000 数字因此是带
+        约 $+0.3$--$1.0$pp best-of-$N$ 乐观偏差的开发集估计，
+        且在同一集合上计算的 McNemar $p$ 值偏于反保守。唯一计划
+        中的零污染终测是一套新的 400 条盲标人工标注集（进行中）。
+  \item \textbf{训练/评估集的行级重叠。} ood1000 的 68.7\%、
+        fresh500 的 70.2\% 与 lab500 的 74.8\% 的评论 ID 出现在
+        至少一个语料派生训练池中；部署的语料中性检测器在
+        ood1000 行的 13.0\% 与 fresh500 行的 13.2\% 上训练过。
+        AL/SFT 训练池与测试集之间的评论 ID 重叠为零，金标-600
+        除少量退化短文本外是干净的。lab500 还不能称为“从未被
+        训练”：早期交叉验证脚本曾把 lab500 行用作自身训练折。
   \item \textbf{lab2000 标签来源。} 预标注由 LLM 生成；
-        2{,}000 行中 479 行经人工终审，另有 200 行第二人类标注
-        IAA 抽样（$\kappa = 0.57$）。共识标签可靠但非绝对正确；
+        2{,}000 行中 479 行经人工终审——收集时界面中可见学生
+        模型预测（存在锚定风险，第~\ref{sec:lab2000-data}~节）——
+        另有 200 行第二人类标注
+        IAA 抽样（$\kappa = 0.57$，为人—参照标签的混合口径而非
+        纯人—人 IAA）。共识标签可靠但非绝对正确；
         数据按行发布了来源标记（\code{final\_source}）。
   \item \textbf{伪标签天花板。} 伪标签继承教师偏差；飞轮在一轮
         后饱和（第二轮平均置信度 0.986 = 记忆化）。lab2000 结果
         表明教师的狭窄领域先验是分布外伪标签的约束瓶颈。
-  \item \textbf{基于测试集的信息性离散选择。} 融合权重采用交叉
-        拟合，但有两处单一离散决策使用了 ood1000 反馈：规模化后的
-        e4 对 e8 轮数选择（第~\ref{sec:ds-teacher}~节）以及各任务
-        二分类混合权重。这些均已披露而非隐藏，但完全无标签的协议
-        本可避免它们。
   \item \textbf{统计功效。} 在 $n=600$ 下，低于约 1pp 的差异
         无法分辨；lab2000 分布外研究（$n=1{,}000$）为第二阶段
         头条结论恢复了统计功效，而金标集上的微小差异仍不可分辨。
   \item \textbf{工程约束。} ROCm/Windows GPU 栈在 13 亿参数特征
         提取期间需要驱动级重启；推理延迟数字为单卡测量值。
 \end{itemize}
+
+\subsection{伦理与数据可用性}
+\label{sec:ethics}
+
+本文使用的豆瓣语料来自其服务条款未授权大规模抓取或模型训练的平台；
+我们仅将其用于非商业研究，且不主张已获许可 \citep{bender2018}。
+仓库卫生通过重写 git 历史（2026-11-09）得以保证：所有发布记录中的
+评论者标识（昵称、IP 地址、时间戳、评论/用户/影片 ID、投票数）均已
+剔除，约 1.6 万行主动学习池的原始文本\emph{不再分发}。约 4{,}600 条
+基准与评估评论文本（金标-600、lab2000、fresh500、lab500 及合成行）
+在去除标识符后保持公开。未取得评论者同意——这些文本均为公开短评
+——并已将暴露面降至最低；数据集文档遵循 datasheet 惯例
+\citep{gebru2021}。两项外部处理披露：约 18{,}500 条去重评论文本被
+发送至 DeepSeek API 用于伪标注；全部 600 条金标文本在阿里云 PAI
+上处理，用于第~\ref{sec:analysis}~节的平台对比。
 
 %=====================================================================
 \section{结论与未来工作}
@@ -1172,7 +1288,7 @@ MacBERT-large 学生与完整的 271K 不平衡池；(iv) 采用领域对抗或
 
 \begin{sloppypar}
 全部脚本、交叉验证预测与实验记录位于项目仓库
-（\url{https://github.com/shuakami/douban-sentiment}）。911K 语料为外部数据（研究用途，不再分发）；训练好的检查点发布于
+（\url{https://github.com/shuakami/douban-sentiment}）。911K 语料为外部数据（研究用途；仅发布约 4.6K 条基准/评估文本且已剔除评论者标识符，主动学习池原始文本不再分发——第~\ref{sec:ethics}~节）；训练好的检查点发布于
 \url{https://huggingface.co/Shuakami/douban-sentiment-weights}。
 完整的预处理$\to$伪标注$\to$训练$\to$评估流水线均有脚本端到端
 覆盖。关键产物：\code{out/ens\_lite\_3class\_v3.json}（部署的
@@ -1274,7 +1390,9 @@ MacBERT 交叉验证 & 留出标签         & --- & 0.600 OOF \\
 
 两个 LLM 标注员之间的一致率仅 66.2\%，一个在 400 条域内标签上
 训练的 MacBERT 模型对留出标签的 OOF 复现率也只有 60\%——这
-直接推动了规模更大、经人工终审的 lab2000 基准的构建。教师认为
+直接推动了规模更大、经人工终审的 lab2000 基准的构建。（后续审计
+发现该交叉验证脚本曾把 lab500 行用作自身训练折，因此 lab500 不能
+称为“从未被训练”；第~\ref{sec:limits}~节。）教师认为
 容易的样本（置信度 $\ge 0.7$）上所有标注对都达到 0.757；难样本
 约 0.53。
 
@@ -1357,8 +1475,9 @@ D.-H.~Lee.
 \bibitem[Arazo et al.(2020)]{arazo2020}
 E.~Arazo, D.~Ortego, P.~Albert, N.~E.~O'Connor, K.~McGuinness.
 \newblock \emph{Pseudo-Labeling and Confirmation Bias in Deep Semi-Supervised Learning}.
-\newblock \emph{arXiv preprint arXiv:1908.02983}, 2020.
-\newblock \url{https://arxiv.org/abs/1908.02983}.
+\newblock In \emph{Proceedings of the International Joint Conference on
+Neural Networks (IJCNN)}, IEEE, 2020.
+\newblock \url{https://doi.org/10.1109/IJCNN48605.2020.9207304}.
 
 \bibitem[Ratner et al.(2017)]{ratner2017}
 A.~Ratner, S.~H.~Bach, H.~R.~Ehrenberg, J.~Fries, S.~Wu, C.~R\'e.
@@ -1366,11 +1485,17 @@ A.~Ratner, S.~H.~Bach, H.~R.~Ehrenberg, J.~Fries, S.~Wu, C.~R\'e.
 \newblock \emph{Proceedings of the VLDB Endowment}, 11(3):269--282, 2017.
 \newblock \url{https://arxiv.org/abs/1711.10160}.
 
-\bibitem[Xie et al.(2020)]{xie2020}
+\bibitem[Xie et al.(2020a)]{xie2020}
 Q.~Xie, M.-T.~Luong, E.~Hovy, Q.~V.~Le.
 \newblock \emph{Self-Training with Noisy Student Improves ImageNet Classification}.
 \newblock In \emph{Proceedings of CVPR}, 2020.
 \newblock \url{https://arxiv.org/abs/1911.04252}.
+
+\bibitem[Xie et al.(2020b)]{xie2020uda}
+Q.~Xie, Z.~Dai, E.~Hovy, M.-T.~Luong, Q.~V.~Le.
+\newblock \emph{Unsupervised Data Augmentation for Consistency Training}.
+\newblock In \emph{Advances in NeurIPS}, 2020.
+\newblock \url{https://arxiv.org/abs/1904.12848}.
 
 \bibitem[Sohn et al.(2020)]{sohn2020}
 K.~Sohn, D.~Berthelot, N.~Carlini, Z.~Zhang, H.~Zhang, C.~A.~Raffel,
@@ -1497,19 +1622,20 @@ J.~Zhang, Y.~Yu, Y.~Li, Y.~Wang, Y.~Yang, M.~Yang, A.~Ratner.
 (Datasets and Benchmarks)}, 2021.
 \newblock \url{https://arxiv.org/abs/2109.11377}.
 
-\bibitem[Zhang et al.(2023)]{zhang2023shiftkd}
+\bibitem[Zhang et al.(2025)]{zhang2023shiftkd}
 S.~Zhang, Y.~Luo, Z.~Lyu, X.~Chen.
 \newblock \emph{ShiftKD: Benchmarking Knowledge Distillation under
 Distribution Shift}.
-\newblock arXiv:2312.16242, 2023. Accepted to \emph{Neural Networks}, 2025.
-\newblock \url{https://arxiv.org/abs/2312.16242}.
+\newblock \emph{Neural Networks}, 192:107838, 2025.
+\newblock \url{https://doi.org/10.1016/j.neunet.2025.107838}.
 
 \bibitem[M\o{}ller et al.(2024)]{moller2024parrot}
-A.~G.~M\o{}ller, J.~A.~Dalsgaard, A.~Pera, L.~M.~Aiello.
+A.~G.~M\o{}ller, A.~Pera, J.~A.~Dalsgaard, L.~M.~Aiello.
 \newblock \emph{The Parrot Dilemma: Human-Labeled vs.\ LLM-Augmented Data
 in Classification Tasks}.
-\newblock In \emph{Proceedings of EACL 2024}, 2024.
-\newblock \url{https://arxiv.org/abs/2304.13861}.
+\newblock In \emph{Proceedings of EACL 2024 (Volume 2: Short Papers)},
+pp.~179--192, 2024.
+\newblock \url{https://doi.org/10.18653/v1/2024.eacl-short.17}.
 
 \bibitem[Schroeder et al.(2025)]{schroeder2025}
 H.~Schroeder, D.~Roy, J.~Kabbara.
@@ -1517,6 +1643,94 @@ H.~Schroeder, D.~Roy, J.~Kabbara.
 Annotation for Subjective Tasks}.
 \newblock In \emph{Findings of ACL 2025}, pages 25771--25795, 2025.
 \newblock \url{https://aclanthology.org/2025.findings-acl.1323/}.
+
+\bibitem[Tian et al.(2020)]{tian2020}
+H.~Tian, C.~Gao, X.~Xiao, H.~Liu, B.~He, H.~Wu, H.~Wang, F.~Wu.
+\newblock \emph{SKEP: Sentiment Knowledge Enhanced Pre-training for Sentiment Analysis}.
+\newblock In \emph{Proceedings of ACL}, pages 4067--4076, 2020.
+\newblock \url{https://aclanthology.org/2020.acl-main.374/}.
+
+\bibitem[Dror et al.(2018)]{dror2018}
+R.~Dror, G.~Baumer, S.~Shlomov, R.~Reichart.
+\newblock \emph{The Hitchhiker's Guide to Testing Statistical Significance in Natural Language Processing}.
+\newblock In \emph{Proceedings of ACL}, pages 1383--1392, 2018.
+\newblock \url{https://aclanthology.org/P18-1128/}.
+
+\bibitem[Artstein and Poesio(2008)]{artstein2008}
+R.~Artstein, M.~Poesio.
+\newblock \emph{Inter-Coder Agreement for Computational Linguistics}.
+\newblock \emph{Computational Linguistics}, 34(4):555--596, 2008.
+\newblock \url{https://doi.org/10.1162/coli.07-034-R2}.
+
+\bibitem[Davani et al.(2022)]{davani2022}
+A.~M.~Davani, M.~D\'iaz, V.~Prabhakaran.
+\newblock \emph{Dealing with Disagreements: Looking Beyond the Majority Vote in Subjective Annotations}.
+\newblock \emph{Transactions of the ACL}, 10:92--110, 2022.
+\newblock \url{https://doi.org/10.1162/tacl_a_00449}.
+
+\bibitem[Bender and Friedman(2018)]{bender2018}
+E.~M.~Bender, B.~Friedman.
+\newblock \emph{Data Statements for Natural Language Processing: Toward Mitigating System Bias and Enabling Better Science}.
+\newblock \emph{Transactions of the ACL}, 6:587--604, 2018.
+\newblock \url{https://doi.org/10.1162/tacl_a_00041}.
+
+\bibitem[Gebru et al.(2021)]{gebru2021}
+T.~Gebru, J.~Morgenstern, B.~Vecchione, J.~W.~Vaughan, H.~Wallach,
+H.~Daum\'e~III, K.~Crawford.
+\newblock \emph{Datasheets for Datasets}.
+\newblock \emph{Communications of the ACM}, 64(12):86--92, 2021.
+\newblock \url{https://doi.org/10.1145/3458723}.
+
+\bibitem[Northcutt et al.(2021)]{northcutt2021}
+C.~G.~Northcutt, L.~Jiang, I.~L.~Chuang.
+\newblock \emph{Confident Learning: Estimating Uncertainty in Dataset Labels}.
+\newblock \emph{Journal of Artificial Intelligence Research}, 70:1373--1411, 2021.
+\newblock \url{https://doi.org/10.1613/jair.1.12125}.
+
+\bibitem[Sainz et al.(2023)]{sainz2023}
+O.~Sainz, J.~Campos, I.~Garc\'ia-Ferrero, J.~Etxaniz,
+O.~L.~de~Lacalle, E.~Agirre.
+\newblock \emph{NLP Evaluation in Trouble: On the Need to Measure LLM Data Contamination for Each Benchmark}.
+\newblock In \emph{Findings of EMNLP}, pages 10776--10787, 2023.
+\newblock \url{https://aclanthology.org/2023.findings-emnlp.722/}.
+
+\bibitem[Kapoor and Narayanan(2023)]{kapoor2023}
+S.~Kapoor, A.~Narayanan.
+\newblock \emph{Leakage and the Reproducibility Crisis in Machine-Learning-Based Science}.
+\newblock \emph{Patterns}, 4(9):100804, 2023.
+\newblock \url{https://doi.org/10.1016/j.patter.2023.100804}.
+
+\bibitem[Balloccu et al.(2024)]{balloccu2024}
+S.~Balloccu, P.~Schmidtov\'a, M.~Lango, O.~Du\v{s}ek.
+\newblock \emph{Leak, Cheat, Repeat: Data Contamination and Evaluation Malpractices in Closed-Source LLMs}.
+\newblock In \emph{Proceedings of EACL 2024 (Volume 1: Long Papers)}, pages 67--93, 2024.
+\newblock \url{https://aclanthology.org/2024.eacl-long.5/}.
+
+\bibitem[Kunilovskaya et al.(2026)]{kunilovskaya2026}
+M.~Kunilovskaya, G.~Bhatia, L.~S.~Albertelli, Y.~Chen, C.~Greisinger,
+L.~Kiefer, C.~Leiter, S.~Roy, T.~A.~Bizuneh, M.~A.~Manzoor, S.~Pohl,
+Y.~Hou, S.~Eger.
+\newblock \emph{Who Annotates in NLP? A Large-scale Assessment of Human Annotation Reporting between 2018 and 2025}.
+\newblock In \emph{Proceedings of EMNLP}, pages 9085--9120, 2026.
+\newblock \url{https://aclanthology.org/2026.emnlp-main.396/}.
+
+\bibitem[Al-Khalifa(2026)]{alkhalifa2026}
+H.~Al-Khalifa.
+\newblock \emph{Twenty-Five Years of Inter-Annotator Agreement in NLP: A Systematic Survey of Trends, Metrics, and Reporting Practices}.
+\newblock In \emph{Proceedings of AACL-IJCNLP 2026 (Volume 1: Long Papers)}, pages 579--602, 2026.
+\newblock \url{https://aclanthology.org/2026.aacl-long.27/}.
+
+\bibitem[Neveditsin et al.(2025)]{neveditsin2025}
+N.~Neveditsin, P.~Lingras, V.~K.~Mago.
+\newblock \emph{From Annotation to Adaptation: Metrics, Synthetic Data, and Aspect Extraction for Aspect-Based Sentiment Analysis with Large Language Models}.
+\newblock In \emph{NAACL 2025 Student Research Workshop}, pages 142--161, 2025.
+\newblock \url{https://aclanthology.org/2025.naacl-srw.14/}.
+
+\bibitem[Zenimoto et al.(2024)]{zenimoto2024}
+Y.~Zenimoto, R.~Hasegawa, T.~Utsuro, M.~Yoshioka, N.~Kando.
+\newblock \emph{Coding Open-Ended Responses using Pseudo Response Generation by Large Language Models}.
+\newblock In \emph{NAACL 2024 Student Research Workshop}, pages 242--254, 2024.
+\newblock \url{https://aclanthology.org/2024.naacl-srw.26/}.
 
 \end{thebibliography}
 

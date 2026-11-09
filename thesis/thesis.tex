@@ -98,18 +98,23 @@ evidence that label quality at scale, not model capacity, is the binding
 constraint. Third, our deployed system couples a distilled MacBERT
 student, a frozen MegatronBERT-1.3B feature judge, and a
 corpus-trained neutral specialist, reaching \textbf{89.5\% accuracy /
-85.9 macro-F1} on 600-row out-of-fold evaluation, with neutral recall
+85.9 macro-F1} on 600-row out-of-fold evaluation --- figures we show in
+Section~\ref{sec:leakage} are inflated by second-order teacher leakage
+(leakage-corrected estimates: 83.3--84.0\% three-class accuracy,
+92.9\% binary) --- with neutral recall
 improved from 54.3\% to 70.7\%. Fourth, we construct \textbf{lab2000},
 a 2{,}000-row cross-movie benchmark with two-pass LLM blind
 annotation (same annotator model, different few-shot views) and
 479 human-adjudicated rows, and show that the gold-trained system
-generalises poorly to wild short reviews (65.0\% three-class) --- but
+generalises poorly to wild short reviews (65.0\% three-class on the
+ood1000 \emph{development} set) --- but
 that adding only 1{,}000 actively-selected boundary examples lifts the
 SFT student by $+8.8$pp (62.6\%$\to$71.4\%, McNemar
 $p = 4.0\times10^{-8}$).
 Scaling the same protocol with frontier-LLM pseudo-labels --- up to
 $\sim$17K actively-selected examples --- pushes the ensemble mix to
-\textbf{77.1\% three-class} (74.6--76.3\% across five seeds,
+\textbf{77.1\% three-class} on the development set (a best-of-$N$
+estimate; 74.6--76.3\% across five seeds,
 77.1\% seed-averaged by averaging the seeds' probability outputs
 before decoding; 5-fold cross-fit validated; significantly above
 the 1K-AL mix, McNemar $p = 3.9\times10^{-4}$), above the measured 71.5\%
@@ -175,17 +180,21 @@ quantify with a dedicated out-of-distribution study.
   \item A pseudo-label flywheel producing a 271{,}905-row confident pool
         and a single compact student (87.5\% acc / 84.8\% neutral recall)
         trained with no gold labels in its training set.
-  \item A deployed hybrid ensemble (89.5\% acc / 85.9 macro-F1,
-        neutral recall 70.7\%) combining a distilled student, a frozen
+  \item A deployed hybrid ensemble (89.5\% acc / 85.9 macro-F1 on
+        gold-OOF, inflated by teacher leakage --- corrected estimates
+        83.3--84.0\% / 76.3--77.5; Section~\ref{sec:leakage}),
+        neutral recall 70.7\%, combining a distilled student, a frozen
         1.3B-parameter judge, and a corpus-trained neutral specialist.
   \item A reproducible evaluation protocol (stratified 5-fold OOF,
         cross-fit fusion-weight selection, McNemar/bootstrap
-        significance tests, temperature calibration)
-        plus a 2{,}000-row cross-movie benchmark (lab2000) under which
-        active-learning expansion adds +8.8pp over gold-only SFT
-        ($p \approx 4\times10^{-8}$) and scaling to 17K LLM labels
-        reaches 77.1\% three-class accuracy --- above the measured
-        71.5\% second-annotator agreement reference.
+        significance tests, temperature calibration) plus a leakage
+        audit quantifying two inflation channels in the headline OOF
+        numbers, and a 2{,}000-row cross-movie benchmark (lab2000)
+        under which active-learning expansion adds +8.8pp over
+        gold-only SFT ($p \approx 4\times10^{-8}$, development-set
+        estimate) and scaling to 17K LLM labels reaches 77.1\%
+        three-class accuracy --- above the measured 71.5\%
+        human-vs-reference agreement.
   \item A documented catalogue of more than twenty measured-but-rejected
         architectures, which we argue is itself a contribution: it maps
         the effective design space for this task.
@@ -217,9 +226,11 @@ BERT \citep{devlin2019} and its robustly-optimised successor RoBERTa
 \citep{liu2019} established the pretrain-then-finetune paradigm. For
 Chinese, MacBERT \citep{cui2020} replaces the MLM objective with a
 corrected variant better suited to character-level inputs, ERNIE
-\citep{sun2019} integrates entity and phrase knowledge, while
-StructBERT \citep{wang2020} injects phrase- and word-level structural
-information into pre-training. Erlangshen-MegatronBERT
+\citep{sun2019} integrates entity and phrase knowledge, StructBERT
+\citep{wang2020} injects phrase- and word-level structural
+information into pre-training, and SKEP \citep{tian2020} targets our
+task directly by pre-training with sentiment knowledge.
+Erlangshen-MegatronBERT
 \citep{idea2023} scales this family to 1.3B parameters with additional
 sentiment fine-tuning. We use all three families and compare
 them directly.
@@ -389,10 +400,16 @@ constructed
 subsets.
 
 \begin{itemize}
-  \item \textbf{ood1000} (random OOD test): 1{,}000 reviews sampled
+  \item \textbf{ood1000} (development set): 1{,}000 reviews sampled
         uniformly at random from the 911K corpus (gold-deduplicated,
-        cross-movie). This is a held-out evaluation set: no model in
-        this paper trains on it.
+        cross-movie). This set served as the \emph{development} /
+        model-selection set for the entire Stage-2 study: the AL scale
+        (1K$\to$17K), teacher choice (DeepSeek / local Qwen / hybrid),
+        epoch count, seed subsets, and the 5-fold cross-fit fusion
+        weights were all selected on it. It is therefore \emph{not} an
+        untouched test set; the only planned zero-contamination test
+        is a new 400-item blind human-annotation set (in progress,
+        Section~\ref{sec:limits}).
   \item \textbf{al1000} (active-learning expansion): 1{,}000 reviews
         selected by margin/entropy sampling from the deployed student's
         predictions --- deliberately the hardest, most ambiguous rows
@@ -418,6 +435,14 @@ ood1000 = 398 positive / 327 neutral / 275 negative; al1000 = 473 /
 369 / 158. A separate 200-row random subset of ood1000 was
 blind-labelled by a second human annotator to measure agreement with
 the released reference labels (Section~\ref{sec:iaa}).
+
+One anchoring caveat applies to all 479 human-adjudicated rows: the
+adjudication interface displayed the deployed student model's
+prediction and confidence next to each item, so the adjudicator was
+not blind to model outputs --- a documented source of anchoring bias
+in human-in-the-loop annotation \citep{schroeder2025}. Adjudicated
+labels should be read as ``human-verified with model-visible
+assistance'', not as blind ground truth.
 
 %=====================================================================
 \section{Methodology}
@@ -527,8 +552,9 @@ corpus-scale model in Section~\ref{sec:corpus}. A second flywheel round
 was tested and rejected: re-labelling with round-2 models produces
 degenerate probabilities (mean confidence 0.986, memorisation), so
 exactly one round is used. This saturation is consistent with the
-confirmation-bias dynamics documented for self-training and pseudo-
-labelling \citep{arazo2020,xie2020,sohn2020}: once the pseudo-labels
+confirmation-bias dynamics documented for self-training,
+pseudo-labelling, and consistency-training methods
+\citep{arazo2020,xie2020,xie2020uda,sohn2020}: once the pseudo-labels
 encode the teacher's own decision boundary, additional rounds amplify
 self-consistency rather than add information.
 
@@ -632,7 +658,10 @@ with 20 random half-splits.
 \caption{Gold-600 results. ``Deployed'' rows are the production system
 (5-fold out-of-fold); StructBERT and Qwen rows are zero-shot external
 baselines --- StructBERT is binary-only and scored on the 508
-non-neutral base rows. ``---'' = metric not reported.}
+non-neutral base rows. The deployed-v3 OOF figures are inflated by
+second-order teacher leakage and by tuning on the evaluation set;
+leakage-corrected estimates are reported in
+Section~\ref{sec:leakage}. ``---'' = metric not reported.}
 \label{tab:main}
 \begin{tabular}{llcc}
 \toprule
@@ -672,6 +701,54 @@ errors concentrate in neutral$\leftrightarrow$polar confusions
 (316/92/192).}
 \label{fig:confusion}
 \end{figure}
+
+\subsection{Leakage audit of the gold-OOF numbers}
+\label{sec:leakage}
+
+A post-hoc audit of the training and evaluation chain shows that the
+89.5\%/85.9\% (three-class) and 95.87\%/95.58\% (binary) figures in
+Table~\ref{tab:main} are \emph{not} strict full-pipeline
+out-of-fold estimates. Two leakage channels inflate them, and every
+ensemble decision was tuned on the same 600 rows. We report the audit
+because the honest numbers are the ones a reader should quote.
+
+\paragraph{Leak B: second-order teacher leakage.} Every non-zero-weight
+teacher channel in the distillation ensemble was itself trained on
+gold rows overlapping the student's evaluation folds, and the
+$\alpha=0.5$ soft targets transmit the teachers' fold-specific biases
+into the student --- a second-order form of target leakage
+\citep{kapoor2023,sainz2023}. Re-running the identical pipeline with
+hard labels only ($\alpha=1.0$, same folds and hyperparameters) gives
+\textbf{84.0\% accuracy / 77.5 macro-F1} (three-class, corpus channel
+kept) and \textbf{83.3\% / 76.3} (three-class, corpus channel
+removed), versus \textbf{92.9\% / 92.4} (binary). Leak B alone
+therefore accounts for roughly $+5.5$pp three-class and $+3.0$pp
+binary --- far above the $\sim$1pp a single student channel would
+contribute, because the effect compounds across the ensemble.
+
+\paragraph{Leak A: transitive pseudo-label contamination.} The
+deployed corpus neutral detector was trained on pseudo-labels that
+ultimately descend from a teacher fitted on all 600 gold rows, so its
+labels leak gold information into the ``corpus'' channel. Removing
+that channel under $\alpha=1.0$ costs a further $\approx$0.7pp
+(84.0$\to$83.3), quantifying Leak A. The same channel was trained on
+13.0\% of the ood1000 rows and 13.2\% of the fresh500 rows
+(Section~\ref{sec:limits}), which is why those benchmark numbers
+carry a row-level overlap caveat as well.
+
+\paragraph{Tuning on the evaluation set.} Fusion weights, ensemble
+selection, and distillation hyperparameters were all chosen on the
+same 600 gold rows, so even the corrected numbers carry a
+best-of-$N$ optimism we do not quantify. We therefore quote the
+$\alpha{=}1.0$ rerun as the honest headline: \textbf{three-class
+$\approx$83.3--84.0\% accuracy / 76.3--77.5 macro-F1; binary
+$\approx$92.9\% / 92.4}. These are single-seed estimates
+($\alpha{=}1.0$ was not re-tuned), and the deployed system itself is
+unchanged --- this audit concerns the evaluation, not the artifact.
+Data-contamination and leakage taxonomies motivating this audit
+follow \citet{sainz2023,kapoor2023,balloccu2024}; the underlying
+mechanism is label noise in the pseudo-label pool
+\citep{northcutt2021}.
 
 \subsection{Corpus-scale single models}
 
@@ -781,7 +858,8 @@ v3 vs.\ v2: McNemar's test \citep{mcnemar1947} on discordant pairs
 gives $p = 0.65$ (11 vs.\ 8); a paired bootstrap over resampled
 evaluation rows \citep{efron1993} gives a 95\% CI on $\Delta$F1 of
 $[-0.5, +3.9]$pp. Following standard practice for comparing
-classifiers \citep{dietterich1998,demsar2006}, we treat differences
+classifiers \citep{dietterich1998,demsar2006,dror2018}, we treat
+differences
 inside the CI as unresolved. The point estimate
 ($+1.6$pp F1, $+7.7$pp neutral recall) is consistent across 20 random
 half-splits for every detector weight $w \in [0.3,0.6]$. We report this
@@ -850,19 +928,26 @@ retained in Appendix~\ref{app:lab500} for completeness.)
 \subsection{Exposing the OOD gap}
 \label{sec:ood-expose}
 
-Table~\ref{tab:ood} reports every system on the held-out ood1000 set.
-The deployed v3 --- trained exclusively on gold-600 --- drops from
+Table~\ref{tab:ood} reports every system on the ood1000
+\emph{development} set --- the same set on which all Stage-2 selection
+decisions were made (Section~\ref{sec:lab2000-data}), so these are
+development estimates, not untouched-test results. The deployed v3 ---
+trained exclusively on gold-600 --- drops from
 89.5\% in-domain to \textbf{65.0\%} three-class accuracy (binary
 pos/neg: 85.0\%). The gap is concentrated exactly where the lab500
 pilot predicted: the neutral boundary.
 
 \begin{table}[H]
 \centering\small
-\caption{ood1000 results. ``SFT'' = MacBERT fine-tuned on the listed
+\caption{ood1000 (development set) results. ``SFT'' = MacBERT
+fine-tuned on the listed
 training data; ``mix'' = probability average of v3 and the SFT model,
 with the fusion weight selected by stratified 5-fold cross-validation
 on ood1000 --- each prediction uses weights tuned on the other folds,
-so no reported row's label influences its own mix weight. Binary
+so no reported row's label influences its own mix weight. Because the
+set itself drove all Stage-2 selection decisions, these are
+development estimates subject to best-of-$N$ optimism
+(Section~\ref{sec:limits}). Binary
 evaluation excludes neutral examples. ``---'' = metric not reported
 for this run. lab2000 labels are mixed-provenance: 479
 human-adjudicated rows (200 ood + 279 al) plus two-pass LLM consensus
@@ -905,8 +990,13 @@ training set lifts three-class OOD accuracy by \textbf{+8.8pp}
 (62.6\%$\to$71.4\%, McNemar $p = 4.0\times10^{-8}$) --- a gain that was
 statistically unresolvable at $n{=}600$ ($p = 0.65$ for v3-vs-v2). The
 ensemble mix reaches \textbf{72.0\% / 0.717} three-class and
-\textbf{87.8\% / 0.876} binary under cross-fit weight selection ---
-the improvement is not test-set overfitting by construction.
+\textbf{87.8\% / 0.876} binary under cross-fit weight selection.
+Cross-fitting keeps each row's weight honest with respect to its own
+label, but the \emph{set} itself drove every Stage-2 selection
+decision --- AL scale, teacher, epochs, seed subsets, and these very
+weights --- so we report all ood1000 numbers as development
+estimates carrying an estimated $+0.3$--$1.0$pp best-of-$N$ optimism
+(Section~\ref{sec:limits}).
 
 \subsection{Three empirical observations invisible at $n{=}600$}
 \label{sec:findings}
@@ -949,8 +1039,18 @@ pure human--human figure: on this subset the reference labels are 47
 human-adjudicated and 153 two-pass LLM-consensus rows. The
 disagreement is not uniform: on items the first annotator labelled
 neutral, the second agrees only 49\% of the time, relabelling 37 of 80
-as positive. Two humans do not share a stable neutral boundary.
-Model errors concentrate on exactly these ambiguous rows: the best AL
+as positive. Two humans do not share a stable neutral boundary. The
+instability is even sharper on the genuinely contested rows: within
+the same 200-row subset, the 47 human-adjudicated rows are exactly
+those where the two LLM passes disagreed most --- passA-vs-passB
+agreement there is only 29.8\% ($\kappa = -0.18$), versus 86.7\%
+overall on ood1000. LLM self-consistency collapses precisely where
+humans disagree \citep{davani2022}. We report Cohen's $\kappa$
+throughout following standard IAA practice \citep{artstein2008}; the
+documented under-reporting of annotation metadata in NLP motivates
+our per-row \code{final\_source} provenance field
+\citep{kunilovskaya2026,alkhalifa2026}. Model errors concentrate on
+exactly these ambiguous rows: the best AL
 mix (al17k) scores 79.5\% on annotator-agreement items vs.\ 61.7\% on
 disagreement items (v3: 67.8\% vs.\ 46.6\%), and AL training lifts
 neutral recall on disagreement rows from 0.41 to 0.77
@@ -1014,9 +1114,11 @@ binary accuracy (97.6\%) exceeds its three-class accuracy (82.0\%) by
 ambiguity is not a small-model artefact. Second, on the human-adjudicated
 hard subset (195 ood rows jointly parseable by DeepSeek) the gap
 nearly closes: DeepSeek reaches
-59.5\% on the ood portion vs.\ 59.0\% for our al1000
+59.5\% on the ood portion vs.\ 58.5\% for our al1000-era
 ensemble mix
-(parity within noise); the subset is enriched for exactly the cases
+(parity within noise; the best al17kds mix scores 56.0\% on the full
+200-row adjudicated subset); the subset is enriched for exactly the
+cases
 where rubric-following and world knowledge diverge. Third, the
 deployment economics differ by orders of magnitude: the local system
 runs offline on a single consumer GPU at $\sim$0.1s/review with zero
@@ -1032,7 +1134,10 @@ edge-deployable cost.''
 
 The frontier-LLM result above suggests an obvious scaling path: if the
 763B Flash model labels the AL set well, its labels may substitute for
-expensive human adjudication. We tested this directly --- a MacBERT
+expensive human adjudication --- LLM-generated pseudo-labels are an
+established augmentation strategy in their own right
+\citep{zenimoto2024,neveditsin2025}. We tested this directly --- a
+MacBERT
 student SFT'd on gold-600 + al1000 with \emph{DeepSeek-V4.1-Flash}
 labels (987 parseable rows) instead of the released al1000 labels.
 
@@ -1198,7 +1303,13 @@ over v3 by +12.7pp (69.6\%$\to$82.4\%) and on the 200
 human-adjudicated rows by +9.5pp (46.5\%$\to$56.0\%). The
 adjudicated subset is intrinsically harder (author adjudication
 concentrated on inter-pass disagreements), yet the gain replicates
-there. \emph{Length}: gains concentrate on terse reviews --- of the
+there. The same split also favors the LLM teacher: DeepSeek-Flash
+scores 87.5\% on the 800 consensus rows versus 82.4\% for the mix,
+but only 59.5\% (on its 195 parseable adjudicated rows) versus
+58.5\% for the mix on the 200 adjudicated rows --- the
+consensus labels partially encode the teacher's own annotation
+conventions, which is why the adjudicated subset is the more
+informative cut. \emph{Length}: gains concentrate on terse reviews --- of the
 +121 net discordant wins over v3, 58 fall on $\le$20-character rows
 --- while the $>$100-character slice remains weakest for every system
 (mix 72.4\% vs.\ v3 61.2\% on ood1000; 66.7\% on fresh500), consistent
@@ -1209,16 +1320,23 @@ to 0.063 (al17k) and 0.027 (al14k).
 \textbf{Fresh-sample robustness check.} Because AL rows were sampled
 on corpus uncertainty and mix weights by cross-validation on ood1000,
 we additionally sampled
-\textbf{fresh500} --- 500 uniformly-random corpus reviews disjoint
-from all training and eval texts (zero text overlap verified against
-gold-600 and every AL pool through al17k) --- labelled by the same
+\textbf{fresh500} --- 500 uniformly-random corpus reviews with zero
+\emph{text} overlap against gold-600 and every AL pool through al17k,
+but only \emph{partial} row-level independence: 70.2\% of fresh500
+comment IDs appear in at least one corpus-derived training pool, and
+the deployed corpus neutral detector was trained on 13.2\% of fresh500
+rows (13.0\% of ood1000 rows; Section~\ref{sec:leakage}). fresh500 is
+therefore a replication check on a partially-exposed distribution
+with teacher-generated labels, not a clean holdout --- labelled by the
+same
 DeepSeek teacher. With weights frozen at the ood1000 cross-fit values
 ($w_{\mathrm{SFT}}{=}0.6$ three-class, the modal fold weight; $0.5$
 binary, the fold median --- the e8 binary fold weights are bimodal,
 0.45--0.95), the headline al17kds mix scores \textbf{77.0\%}
 three-class vs.\ v3's 58.8\% (McNemar $p = 9.1\times10^{-15}$) and
 \textbf{93.7\%} binary vs.\ 86.3\% ($p = 1.9\times10^{-4}$) --- the AL
-gain replicates on unseen data and is not an artifact of
+gain replicates on this partially-exposed sample and is not an
+artifact of
 benchmark-specific tuning. (The earlier al14k checkpoint scored
 74.6\% / 92.6\% under the same protocol; the standalone al17k SFT
 student reaches 78.0\% five-seed-averaged three-class on fresh500
@@ -1300,24 +1418,44 @@ sample; the released data marks per-row provenance
         gold set is 600 reviews from a \emph{single film page}; the
         lab2000 study quantifies the resulting OOD gap (65.0\%
         three-class) and shows 1{,}000 actively-selected rows
-        (mixed-provenance labels) recover most of it (72.0\%), but ood1000 remains the only
-        true held-out cross-movie test.
+        (mixed-provenance labels) recover most of it (72.0\%).
+        ood1000 is \emph{not} a held-out test, however --- it is the
+        development set (next item) --- so the recovered 72.0\% is a
+        development estimate.
+  \item \textbf{ood1000 is a development set, not a test.} Every
+        Stage-2 selection decision --- AL scale (1K$\to$17K), teacher
+        choice (DeepSeek / local Qwen / hybrid), epoch count (e4/e8),
+        seed subsets, $\sim$26 mix configurations over $\sim$73 SFT
+        runs, and the 5-fold cross-fit fusion weights ---
+        was made on ood1000 itself. Reported ood1000 numbers are
+        therefore development estimates with an estimated
+        $+0.3$--$1.0$pp best-of-$N$ optimism, and McNemar $p$-values
+        computed on the same set are anti-conservative. The only
+        planned zero-contamination test is a new 400-item blind
+        human-annotation set (in progress).
+  \item \textbf{Row-level train/eval overlap.} 68.7\% of ood1000,
+        70.2\% of fresh500, and 74.8\% of lab500 comment IDs appear in
+        at least one corpus-derived training pool; the deployed corpus
+        neutral detector was trained on 13.0\% of ood1000 rows and
+        13.2\% of fresh500 rows. The AL/SFT training pools themselves
+        have zero comment-ID overlap with the test sets, and gold-600
+        is clean apart from a handful of degenerate short texts.
+        lab500 additionally cannot be called ``never trained'': an
+        earlier cross-validation script used lab500 rows as its own
+        training folds.
   \item \textbf{lab2000 label provenance.} Pre-annotations are
-        LLM-generated; 479/2{,}000 rows carry human adjudication and a
-        200-row second-human IAA sample ($\kappa = 0.57$). Consensus
-        labels are reliable but not infallible; per-row
+        LLM-generated; 479/2{,}000 rows carry human adjudication ---
+        collected with the student model's predictions visible in the
+        interface (anchoring risk, Section~\ref{sec:lab2000-data}) ---
+        and a 200-row second-human IAA sample ($\kappa = 0.57$, a
+        blended human-vs-reference figure, not pure human IAA).
+        Consensus labels are reliable but not infallible; per-row
         \code{final\_source} is released.
   \item \textbf{Pseudo-label ceiling.} Pseudo labels inherit teacher
         biases; the flywheel saturates after one round (round-2 mean
         confidence 0.986 = memorisation). The lab2000 results suggest
         the teacher's narrow-domain prior is the binding constraint on
         OOD pseudo-labels.
-  \item \textbf{Test-set-informed discrete choices.} Fusion weights
-        are cross-fit, but two single discrete decisions were made
-        using ood1000 feedback: the e4-vs-e8 epoch choice at scale
-        (Section~\ref{sec:ds-teacher}) and per-task binary mix weights.
-        These are disclosed rather than hidden, but a fully
-        label-free protocol would avoid them.
   \item \textbf{Statistical power.} At $n=600$, differences below
         $\sim$1pp are unresolvable; the lab2000 OOD study ($n=1{,}000$)
         restores power for the headline Stage-2 claims, while
@@ -1326,6 +1464,27 @@ sample; the released data marks per-row provenance
         required a driver-level reboot during 1.3B feature extraction;
         inference latency figures are single-GPU measurements.
 \end{itemize}
+
+\subsection{Ethics and Data Availability}
+\label{sec:ethics}
+
+The Douban corpus derives from a platform whose terms of service do
+not authorise large-scale collection or model training; we used it
+for non-commercial research only and claim no permission
+\citep{bender2018}. Repository hygiene was enforced by rewriting the
+git history (2026-11-09): reviewer identifiers (nick, IP address,
+timestamps, comment/user/movie IDs, vote counts) are stripped from
+all released records, and the $\sim$16K-row active-learning pool's
+raw text is \emph{not} redistributed. Approximately 4{,}600
+benchmark and evaluation review texts (gold-600, lab2000, fresh500,
+lab500, and synthetic rows) remain public with identifiers removed.
+No reviewer consent was obtained --- the texts are short public
+reviews --- and exposure was minimised accordingly; dataset
+documentation follows datasheet practice \citep{gebru2021}. Two
+external-processing disclosures: roughly 18{,}500 unique review texts
+were sent to the DeepSeek API for pseudo-labelling, and all 600 gold
+texts were processed on Alibaba Cloud PAI for the platform
+comparison in Section~\ref{sec:analysis}.
 
 %=====================================================================
 \section{Conclusion and Future Work}
@@ -1373,7 +1532,10 @@ gold$\to$corpus gap without per-domain annotation.
 All scripts, out-of-fold predictions, experiment records, and the
 lab2000 benchmark data are in the
 project repository (\url{https://github.com/shuakami/douban-sentiment}).
-The 911K corpus is external (research use only, not redistributed);
+The 911K corpus is external (research use only; only the
+$\sim$4.6K benchmark/evaluation texts are released, with reviewer
+identifiers stripped, and the active-learning pool's raw text is not
+redistributed --- Section~\ref{sec:ethics});
 trained checkpoints are published at
 \url{https://huggingface.co/Shuakami/douban-sentiment-weights}. The
 full preprocessing $\to$ pseudo-label $\to$ train $\to$ evaluate
@@ -1479,6 +1641,9 @@ MacBERT CV       & held-out labels    & --- & 0.600 OOF \\
 Inter-annotator agreement between the two LLMs was only 66.2\%, and a
 model trained on 400 in-domain labels reproduced held-out labels at
 just 60\% OOF --- motivating the larger adjudicated lab2000 benchmark.
+(A later audit found that this CV script consumed lab500 rows as its
+own training folds, so lab500 cannot be described as never-trained;
+Section~\ref{sec:limits}.)
 Rows the teacher found easy (confidence $\ge 0.7$) scored 0.757 for
 every annotator pair; hard rows scored $\approx$0.53.
 
@@ -1561,8 +1726,9 @@ D.-H.~Lee.
 \bibitem[Arazo et al.(2020)]{arazo2020}
 E.~Arazo, D.~Ortego, P.~Albert, N.~E.~O'Connor, K.~McGuinness.
 \newblock \emph{Pseudo-Labeling and Confirmation Bias in Deep Semi-Supervised Learning}.
-\newblock \emph{arXiv preprint arXiv:1908.02983}, 2020.
-\newblock \url{https://arxiv.org/abs/1908.02983}.
+\newblock In \emph{Proceedings of the International Joint Conference on
+Neural Networks (IJCNN)}, IEEE, 2020.
+\newblock \url{https://doi.org/10.1109/IJCNN48605.2020.9207304}.
 
 \bibitem[Ratner et al.(2017)]{ratner2017}
 A.~Ratner, S.~H.~Bach, H.~R.~Ehrenberg, J.~Fries, S.~Wu, C.~R\'e.
@@ -1570,11 +1736,17 @@ A.~Ratner, S.~H.~Bach, H.~R.~Ehrenberg, J.~Fries, S.~Wu, C.~R\'e.
 \newblock \emph{Proceedings of the VLDB Endowment}, 11(3):269--282, 2017.
 \newblock \url{https://arxiv.org/abs/1711.10160}.
 
-\bibitem[Xie et al.(2020)]{xie2020}
+\bibitem[Xie et al.(2020a)]{xie2020}
 Q.~Xie, M.-T.~Luong, E.~Hovy, Q.~V.~Le.
 \newblock \emph{Self-Training with Noisy Student Improves ImageNet Classification}.
 \newblock In \emph{Proceedings of CVPR}, 2020.
 \newblock \url{https://arxiv.org/abs/1911.04252}.
+
+\bibitem[Xie et al.(2020b)]{xie2020uda}
+Q.~Xie, Z.~Dai, E.~Hovy, M.-T.~Luong, Q.~V.~Le.
+\newblock \emph{Unsupervised Data Augmentation for Consistency Training}.
+\newblock In \emph{Advances in NeurIPS}, 2020.
+\newblock \url{https://arxiv.org/abs/1904.12848}.
 
 \bibitem[Sohn et al.(2020)]{sohn2020}
 K.~Sohn, D.~Berthelot, N.~Carlini, Z.~Zhang, H.~Zhang, C.~A.~Raffel,
@@ -1700,24 +1872,115 @@ and Alexander Ratner. 2021.
 \newblock In \emph{Advances in Neural Information Processing Systems
 (Datasets and Benchmarks)}.
 
-\bibitem[Zhang et al.(2023)]{zhang2023shiftkd}
+\bibitem[Zhang et al.(2025)]{zhang2023shiftkd}
 Zhang, Songming, Yuxiao Luo, Ziyu Lyu, and Xiaofeng Chen. 2023.
 \newblock ShiftKD: Benchmarking knowledge distillation under
 distribution shift.
-\newblock arXiv:2312.16242. Accepted to \emph{Neural Networks}, 2025.
+\newblock \emph{Neural Networks}, 192:107838, 2025.
+\newblock \url{https://doi.org/10.1016/j.neunet.2025.107838}.
 
 \bibitem[M\o{}ller et al.(2024)]{moller2024parrot}
-M\o{}ller, Anders Giovanni, Jacob Aarup Dalsgaard, Arianna Pera, and
+M\o{}ller, Anders Giovanni, Arianna Pera, Jacob Aarup Dalsgaard, and
 Luca Maria Aiello. 2024.
 \newblock The Parrot Dilemma: Human-labeled vs.\ LLM-augmented data in
 classification tasks.
-\newblock In \emph{Proceedings of EACL 2024}.
+\newblock In \emph{Proceedings of EACL 2024 (Volume 2: Short Papers)},
+pp.~179--192.
+\newblock \url{https://doi.org/10.18653/v1/2024.eacl-short.17}.
 
 \bibitem[Schroeder et al.(2025)]{schroeder2025}
 Schroeder, Hope, Deb Roy, and Jad Kabbara. 2025.
 \newblock Just put a human in the loop? Investigating LLM-assisted
 annotation for subjective tasks.
 \newblock In \emph{Findings of ACL 2025}, pp.~25771--25795.
+
+\bibitem[Tian et al.(2020)]{tian2020}
+H.~Tian, C.~Gao, X.~Xiao, H.~Liu, B.~He, H.~Wu, H.~Wang, F.~Wu.
+\newblock \emph{SKEP: Sentiment Knowledge Enhanced Pre-training for Sentiment Analysis}.
+\newblock In \emph{Proceedings of ACL}, pages 4067--4076, 2020.
+\newblock \url{https://aclanthology.org/2020.acl-main.374/}.
+
+\bibitem[Dror et al.(2018)]{dror2018}
+R.~Dror, G.~Baumer, S.~Shlomov, R.~Reichart.
+\newblock \emph{The Hitchhiker's Guide to Testing Statistical Significance in Natural Language Processing}.
+\newblock In \emph{Proceedings of ACL}, pages 1383--1392, 2018.
+\newblock \url{https://aclanthology.org/P18-1128/}.
+
+\bibitem[Artstein and Poesio(2008)]{artstein2008}
+R.~Artstein, M.~Poesio.
+\newblock \emph{Inter-Coder Agreement for Computational Linguistics}.
+\newblock \emph{Computational Linguistics}, 34(4):555--596, 2008.
+\newblock \url{https://doi.org/10.1162/coli.07-034-R2}.
+
+\bibitem[Davani et al.(2022)]{davani2022}
+A.~M.~Davani, M.~D\'iaz, V.~Prabhakaran.
+\newblock \emph{Dealing with Disagreements: Looking Beyond the Majority Vote in Subjective Annotations}.
+\newblock \emph{Transactions of the ACL}, 10:92--110, 2022.
+\newblock \url{https://doi.org/10.1162/tacl_a_00449}.
+
+\bibitem[Bender and Friedman(2018)]{bender2018}
+E.~M.~Bender, B.~Friedman.
+\newblock \emph{Data Statements for Natural Language Processing: Toward Mitigating System Bias and Enabling Better Science}.
+\newblock \emph{Transactions of the ACL}, 6:587--604, 2018.
+\newblock \url{https://doi.org/10.1162/tacl_a_00041}.
+
+\bibitem[Gebru et al.(2021)]{gebru2021}
+T.~Gebru, J.~Morgenstern, B.~Vecchione, J.~W.~Vaughan, H.~Wallach,
+H.~Daum\'e~III, K.~Crawford.
+\newblock \emph{Datasheets for Datasets}.
+\newblock \emph{Communications of the ACM}, 64(12):86--92, 2021.
+\newblock \url{https://doi.org/10.1145/3458723}.
+
+\bibitem[Northcutt et al.(2021)]{northcutt2021}
+C.~G.~Northcutt, L.~Jiang, I.~L.~Chuang.
+\newblock \emph{Confident Learning: Estimating Uncertainty in Dataset Labels}.
+\newblock \emph{Journal of Artificial Intelligence Research}, 70:1373--1411, 2021.
+\newblock \url{https://doi.org/10.1613/jair.1.12125}.
+
+\bibitem[Sainz et al.(2023)]{sainz2023}
+O.~Sainz, J.~Campos, I.~Garc\'ia-Ferrero, J.~Etxaniz,
+O.~L.~de~Lacalle, E.~Agirre.
+\newblock \emph{NLP Evaluation in Trouble: On the Need to Measure LLM Data Contamination for Each Benchmark}.
+\newblock In \emph{Findings of EMNLP}, pages 10776--10787, 2023.
+\newblock \url{https://aclanthology.org/2023.findings-emnlp.722/}.
+
+\bibitem[Kapoor and Narayanan(2023)]{kapoor2023}
+S.~Kapoor, A.~Narayanan.
+\newblock \emph{Leakage and the Reproducibility Crisis in Machine-Learning-Based Science}.
+\newblock \emph{Patterns}, 4(9):100804, 2023.
+\newblock \url{https://doi.org/10.1016/j.patter.2023.100804}.
+
+\bibitem[Balloccu et al.(2024)]{balloccu2024}
+S.~Balloccu, P.~Schmidtov\'a, M.~Lango, O.~Du\v{s}ek.
+\newblock \emph{Leak, Cheat, Repeat: Data Contamination and Evaluation Malpractices in Closed-Source LLMs}.
+\newblock In \emph{Proceedings of EACL 2024 (Volume 1: Long Papers)}, pages 67--93, 2024.
+\newblock \url{https://aclanthology.org/2024.eacl-long.5/}.
+
+\bibitem[Kunilovskaya et al.(2026)]{kunilovskaya2026}
+M.~Kunilovskaya, G.~Bhatia, L.~S.~Albertelli, Y.~Chen, C.~Greisinger,
+L.~Kiefer, C.~Leiter, S.~Roy, T.~A.~Bizuneh, M.~A.~Manzoor, S.~Pohl,
+Y.~Hou, S.~Eger.
+\newblock \emph{Who Annotates in NLP? A Large-scale Assessment of Human Annotation Reporting between 2018 and 2025}.
+\newblock In \emph{Proceedings of EMNLP}, pages 9085--9120, 2026.
+\newblock \url{https://aclanthology.org/2026.emnlp-main.396/}.
+
+\bibitem[Al-Khalifa(2026)]{alkhalifa2026}
+H.~Al-Khalifa.
+\newblock \emph{Twenty-Five Years of Inter-Annotator Agreement in NLP: A Systematic Survey of Trends, Metrics, and Reporting Practices}.
+\newblock In \emph{Proceedings of AACL-IJCNLP 2026 (Volume 1: Long Papers)}, pages 579--602, 2026.
+\newblock \url{https://aclanthology.org/2026.aacl-long.27/}.
+
+\bibitem[Neveditsin et al.(2025)]{neveditsin2025}
+N.~Neveditsin, P.~Lingras, V.~K.~Mago.
+\newblock \emph{From Annotation to Adaptation: Metrics, Synthetic Data, and Aspect Extraction for Aspect-Based Sentiment Analysis with Large Language Models}.
+\newblock In \emph{NAACL 2025 Student Research Workshop}, pages 142--161, 2025.
+\newblock \url{https://aclanthology.org/2025.naacl-srw.14/}.
+
+\bibitem[Zenimoto et al.(2024)]{zenimoto2024}
+Y.~Zenimoto, R.~Hasegawa, T.~Utsuro, M.~Yoshioka, N.~Kando.
+\newblock \emph{Coding Open-Ended Responses using Pseudo Response Generation by Large Language Models}.
+\newblock In \emph{NAACL 2024 Student Research Workshop}, pages 242--254, 2024.
+\newblock \url{https://aclanthology.org/2024.naacl-srw.26/}.
 
 \end{thebibliography}
 

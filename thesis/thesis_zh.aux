@@ -13,13 +13,8 @@
 \citation{cui2020}
 \citation{sun2019}
 \citation{wang2020}
+\citation{tian2020}
 \citation{idea2023}
-\citation{yarowsky1995,lee2013}
-\citation{ratner2017}
-\citation{zhang2021wrench}
-\citation{pang2005seeing}
-\citation{abaiyan2026stars}
-\citation{settles2009}
 \@writefile{toc}{\contentsline {section}{\numberline {1}引言}{4}{section.1}\protected@file@percent }
 \newlabel{sec:intro}{{1}{4}{引言}{section.1}{}}
 \@writefile{toc}{\contentsline {paragraph}{贡献。}{4}{paragraph*.1}\protected@file@percent }
@@ -27,6 +22,12 @@
 \newlabel{sec:related}{{2}{4}{相关工作}{section.2}{}}
 \@writefile{toc}{\contentsline {paragraph}{中文文本情感分析。}{4}{paragraph*.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{预训练语言模型。}{4}{paragraph*.3}\protected@file@percent }
+\citation{yarowsky1995,lee2013}
+\citation{ratner2017}
+\citation{zhang2021wrench}
+\citation{pang2005seeing}
+\citation{abaiyan2026stars}
+\citation{settles2009}
 \citation{hinton2015}
 \citation{gou2021}
 \citation{zhang2023shiftkd}
@@ -44,128 +45,143 @@
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces 代表性金标评论（中文原文附中文释义）。``混合$\to $负面'' 指先扬后抑、最终极性为负面的评论。}}{5}{table.caption.8}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{tab:examples}{{1}{5}{代表性金标评论（中文原文附中文释义）。``混合$\to $负面'' 指先扬后抑、最终极性为负面的评论。}{table.caption.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}金标集（600 条评论）}{5}{subsection.3.2}\protected@file@percent }
 \citation{douban2024}
 \citation{pang2005seeing,abaiyan2026stars}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}金标集（600 条评论）}{6}{subsection.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}弱标注语料（910{,}998 条评论）}{6}{subsection.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}星级评分不是情感标签}{6}{subsection.3.4}\protected@file@percent }
 \newlabel{sec:ratings}{{3.4}{6}{星级评分不是情感标签}{subsection.3.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces 星级评分与模型预测情感的对照（行归一化，271{,}905 条高置信 伪标注）。}}{6}{table.caption.9}\protected@file@percent }
 \newlabel{tab:crosstab}{{2}{6}{星级评分与模型预测情感的对照（行归一化，271{,}905 条高置信 伪标注）。}{table.caption.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces 272K 高置信伪标签池上星级评分与预测情感的对照。对角线 占优并不明显：评分与语义情感存在显著分歧。}}{6}{figure.caption.10}\protected@file@percent }
-\newlabel{fig:crosstab}{{1}{6}{272K 高置信伪标签池上星级评分与预测情感的对照。对角线 占优并不明显：评分与语义情感存在显著分歧。}{figure.caption.10}{}}
+\citation{schroeder2025}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces 272K 高置信伪标签池上星级评分与预测情感的对照。对角线 占优并不明显：评分与语义情感存在显著分歧。}}{7}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:crosstab}{{1}{7}{272K 高置信伪标签池上星级评分与预测情感的对照。对角线 占优并不明显：评分与语义情感存在显著分歧。}{figure.caption.10}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}第二阶段基准：lab2000}{7}{subsection.3.5}\protected@file@percent }
 \newlabel{sec:lab2000-data}{{3.5}{7}{第二阶段基准：lab2000}{subsection.3.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{标注协议。}{7}{paragraph*.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}方法}{7}{section.4}\protected@file@percent }
-\newlabel{sec:method}{{4}{7}{方法}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}概述}{7}{subsection.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces 部署的 v3 架构。$p_s,p_j,\mathrm  {dep},\mathrm  {spec}, \mathrm  {final}\in \Delta ^{3}$ 为三分类概率向量，$p_n^{(1)}, p_n^{(2)},p_n\in [0,1]$ 为中性标量概率；$w_s,w_j$ 为融合权重而非 模型参数。$r_\pm $ 为 $\mathrm  {dep}$ 中正/负分量归一化（和为 1） 后的份额。两个基于 MegatronBERT 的头共享同一次冻结骨干特征计算； 中性专家将判别器特征 MLP 与语料训练的 MacBERT 检测器相混合。}}{7}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:arch}{{2}{7}{部署的 v3 架构。$p_s,p_j,\mathrm {dep},\mathrm {spec}, \mathrm {final}\in \Delta ^{3}$ 为三分类概率向量，$p_n^{(1)}, p_n^{(2)},p_n\in [0,1]$ 为中性标量概率；$w_s,w_j$ 为融合权重而非 模型参数。$r_\pm $ 为 $\mathrm {dep}$ 中正/负分量归一化（和为 1） 后的份额。两个基于 MegatronBERT 的头共享同一次冻结骨干特征计算； 中性专家将判别器特征 MLP 与语料训练的 MacBERT 检测器相混合。}{figure.caption.12}{}}
-\citation{arazo2020,xie2020,sohn2020}
+\citation{arazo2020,xie2020,xie2020uda,sohn2020}
+\@writefile{toc}{\contentsline {section}{\numberline {4}方法}{8}{section.4}\protected@file@percent }
+\newlabel{sec:method}{{4}{8}{方法}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}概述}{8}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces 部署的 v3 架构。$p_s,p_j,\mathrm  {dep},\mathrm  {spec}, \mathrm  {final}\in \Delta ^{3}$ 为三分类概率向量，$p_n^{(1)}, p_n^{(2)},p_n\in [0,1]$ 为中性标量概率；$w_s,w_j$ 为融合权重而非 模型参数。$r_\pm $ 为 $\mathrm  {dep}$ 中正/负分量归一化（和为 1） 后的份额。两个基于 MegatronBERT 的头共享同一次冻结骨干特征计算； 中性专家将判别器特征 MLP 与语料训练的 MacBERT 检测器相混合。}}{8}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:arch}{{2}{8}{部署的 v3 架构。$p_s,p_j,\mathrm {dep},\mathrm {spec}, \mathrm {final}\in \Delta ^{3}$ 为三分类概率向量，$p_n^{(1)}, p_n^{(2)},p_n\in [0,1]$ 为中性标量概率；$w_s,w_j$ 为融合权重而非 模型参数。$r_\pm $ 为 $\mathrm {dep}$ 中正/负分量归一化（和为 1） 后的份额。两个基于 MegatronBERT 的头共享同一次冻结骨干特征计算； 中性专家将判别器特征 MLP 与语料训练的 MacBERT 检测器相混合。}{figure.caption.12}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}教师集成与蒸馏}{8}{subsection.4.2}\protected@file@percent }
 \newlabel{sec:distill}{{4.2}{8}{教师集成与蒸馏}{subsection.4.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}冻结判别器}{8}{subsection.4.3}\protected@file@percent }
 \newlabel{sec:judge}{{4.3}{8}{冻结判别器}{subsection.4.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}伪标签飞轮}{8}{subsection.4.4}\protected@file@percent }
-\newlabel{sec:flywheel}{{4.4}{8}{伪标签飞轮}{subsection.4.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}中性专家}{8}{subsection.4.5}\protected@file@percent }
-\newlabel{sec:neu}{{4.5}{8}{中性专家}{subsection.4.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{语料训练检测器。}{8}{paragraph*.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{专家混合。}{8}{paragraph*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}伪标签飞轮}{9}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:flywheel}{{4.4}{9}{伪标签飞轮}{subsection.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}中性专家}{9}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:neu}{{4.5}{9}{中性专家}{subsection.4.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{语料训练检测器。}{9}{paragraph*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{专家混合。}{9}{paragraph*.14}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.6}语料规模学生模型}{9}{subsection.4.6}\protected@file@percent }
 \newlabel{sec:corpus}{{4.6}{9}{语料规模学生模型}{subsection.4.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.7}模型校准}{9}{subsection.4.7}\protected@file@percent }
 \newlabel{sec:calib}{{4.7}{9}{模型校准}{subsection.4.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.8}部署}{9}{subsection.4.8}\protected@file@percent }
 \newlabel{sec:deploy}{{4.8}{9}{部署}{subsection.4.8}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}实验设置}{9}{section.5}\protected@file@percent }
-\newlabel{sec:setup}{{5}{9}{实验设置}{section.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{评估协议。}{9}{paragraph*.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{指标。}{9}{paragraph*.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{基线。}{9}{paragraph*.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}实验设置}{10}{section.5}\protected@file@percent }
+\newlabel{sec:setup}{{5}{10}{实验设置}{section.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{评估协议。}{10}{paragraph*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{指标。}{10}{paragraph*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{基线。}{10}{paragraph*.17}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}结果}{10}{section.6}\protected@file@percent }
 \newlabel{sec:results}{{6}{10}{结果}{section.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.1}主要结果}{10}{subsection.6.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces 金标 600 条交叉验证结果。``部署''行是生产系统；StructBERT 与 Qwen 行为零样本外部基线——StructBERT 仅二分类，在 508 条非中性 基线行上评分。“---”= 本次未报告。}}{10}{table.caption.18}\protected@file@percent }
-\newlabel{tab:main}{{3}{10}{金标 600 条交叉验证结果。``部署''行是生产系统；StructBERT 与 Qwen 行为零样本外部基线——StructBERT 仅二分类，在 508 条非中性 基线行上评分。“---”= 本次未报告。}{table.caption.18}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces 部署 v3 在金标 600 条上的混淆矩阵（交叉验证）。行合计与 类别分布（316/92/192）一致。}}{10}{figure.caption.19}\protected@file@percent }
-\newlabel{fig:confusion}{{3}{10}{部署 v3 在金标 600 条上的混淆矩阵（交叉验证）。行合计与 类别分布（316/92/192）一致。}{figure.caption.19}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}语料规模单模型}{11}{subsection.6.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces 语料训练模型在金标 600 条上的评估（除注明外训练集均不含金标）。 “---”= 本次未报告。}}{11}{table.caption.20}\protected@file@percent }
-\newlabel{tab:corpus}{{4}{11}{语料训练模型在金标 600 条上的评估（除注明外训练集均不含金标）。 “---”= 本次未报告。}{table.caption.20}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}伪标签规模效应}{11}{subsection.6.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces 语料训练的伪标签学生在金标 600 条上的准确率与宏平均 F1 随训练集规模（对数坐标）的变化。\emph  {训练集不含金标}：金标 600 条 仅作为留出评估集，从不参与训练。虚线参考为部署集成 （准确率 0.895，宏平均 F1 0.859）。纵轴自 0.70 起始以突出性能 差异。性能单调上升，在 160K 行处仍未饱和。}}{11}{figure.caption.21}\protected@file@percent }
-\newlabel{fig:scaling}{{4}{11}{语料训练的伪标签学生在金标 600 条上的准确率与宏平均 F1 随训练集规模（对数坐标）的变化。\emph {训练集不含金标}：金标 600 条 仅作为留出评估集，从不参与训练。虚线参考为部署集成 （准确率 0.895，宏平均 F1 0.859）。纵轴自 0.70 起始以突出性能 差异。性能单调上升，在 160K 行处仍未饱和。}{figure.caption.21}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces 金标 600 条交叉验证结果。``部署''行是生产系统；StructBERT 与 Qwen 行为零样本外部基线——StructBERT 仅二分类，在 508 条非中性 基线行上评分。部署 v3 的 OOF 数字被二级教师泄漏与在评估集上调参 所抬高；泄漏修正估计见第~\ref {sec:leakage}~节。“---”= 本次未报告。}}{10}{table.caption.18}\protected@file@percent }
+\newlabel{tab:main}{{3}{10}{金标 600 条交叉验证结果。``部署''行是生产系统；StructBERT 与 Qwen 行为零样本外部基线——StructBERT 仅二分类，在 508 条非中性 基线行上评分。部署 v3 的 OOF 数字被二级教师泄漏与在评估集上调参 所抬高；泄漏修正估计见第~\ref {sec:leakage}~节。“---”= 本次未报告。}{table.caption.18}{}}
+\citation{kapoor2023,sainz2023}
+\citation{sainz2023,kapoor2023,balloccu2024}
+\citation{northcutt2021}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces 部署 v3 在金标 600 条上的混淆矩阵（交叉验证）。行合计与 类别分布（316/92/192）一致。}}{11}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:confusion}{{3}{11}{部署 v3 在金标 600 条上的混淆矩阵（交叉验证）。行合计与 类别分布（316/92/192）一致。}{figure.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}金标 OOF 数字的泄漏审计}{11}{subsection.6.2}\protected@file@percent }
+\newlabel{sec:leakage}{{6.2}{11}{金标 OOF 数字的泄漏审计}{subsection.6.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{泄漏 B：二级教师泄漏。}{11}{paragraph*.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{泄漏 A：伪标签的传递性污染。}{11}{paragraph*.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{在评估集上调参。}{11}{paragraph*.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}语料规模单模型}{12}{subsection.6.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces 语料训练模型在金标 600 条上的评估（除注明外训练集均不含金标）。 “---”= 本次未报告。}}{12}{table.caption.23}\protected@file@percent }
+\newlabel{tab:corpus}{{4}{12}{语料训练模型在金标 600 条上的评估（除注明外训练集均不含金标）。 “---”= 本次未报告。}{table.caption.23}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}伪标签规模效应}{12}{subsection.6.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces 语料训练的伪标签学生在金标 600 条上的准确率与宏平均 F1 随训练集规模（对数坐标）的变化。\emph  {训练集不含金标}：金标 600 条 仅作为留出评估集，从不参与训练。虚线参考为部署集成 （准确率 0.895，宏平均 F1 0.859）。纵轴自 0.70 起始以突出性能 差异。性能单调上升，在 160K 行处仍未饱和。}}{12}{figure.caption.24}\protected@file@percent }
+\newlabel{fig:scaling}{{4}{12}{语料训练的伪标签学生在金标 600 条上的准确率与宏平均 F1 随训练集规模（对数坐标）的变化。\emph {训练集不含金标}：金标 600 条 仅作为留出评估集，从不参与训练。虚线参考为部署集成 （准确率 0.895，宏平均 F1 0.859）。纵轴自 0.70 起始以突出性能 差异。性能单调上升，在 160K 行处仍未饱和。}{figure.caption.24}{}}
 \citation{mcnemar1947}
 \citation{efron1993}
-\citation{dietterich1998,demsar2006}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces 伪标签规模效应（金标 600 条评估，训练集不含金标）。 “---”= 本次未报告。}}{12}{table.caption.22}\protected@file@percent }
-\newlabel{tab:scaling}{{5}{12}{伪标签规模效应（金标 600 条评估，训练集不含金标）。 “---”= 本次未报告。}{table.caption.22}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}跨域银标评估}{12}{subsection.6.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}分析}{12}{section.7}\protected@file@percent }
-\newlabel{sec:analysis}{{7}{12}{分析}{section.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}模型校准}{12}{subsection.7.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces 温度缩放（$T=0.37$，在金标 600 条 OOF 预测上以 NLL 拟合； 所有指标均在同一批 600 条交叉验证样本上计算）前后的可靠性图。 下方面板给出各等宽置信分箱的样本数；高置信区间样本稀疏，故局部 波动在所难免，但全局 ECE 显著改善。准确率纵轴自 0.45 起截断，以 呈现缩放前的失校。}}{12}{figure.caption.23}\protected@file@percent }
-\newlabel{fig:calib}{{5}{12}{温度缩放（$T=0.37$，在金标 600 条 OOF 预测上以 NLL 拟合； 所有指标均在同一批 600 条交叉验证样本上计算）前后的可靠性图。 下方面板给出各等宽置信分箱的样本数；高置信区间样本稀疏，故局部 波动在所难免，但全局 ECE 显著改善。准确率纵轴自 0.45 起截断，以 呈现缩放前的失校。}{figure.caption.23}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}统计显著性}{13}{subsection.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}错误分析}{13}{subsection.7.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}被否决的架构}{13}{subsection.7.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}与商业训练平台的对比}{13}{subsection.7.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}第二阶段：lab2000 分布外与主动学习研究}{13}{section.8}\protected@file@percent }
-\newlabel{sec:lab2000}{{8}{13}{第二阶段：lab2000 分布外与主动学习研究}{section.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}暴露分布外差距}{13}{subsection.8.1}\protected@file@percent }
-\newlabel{sec:ood-expose}{{8.1}{13}{暴露分布外差距}{subsection.8.1}{}}
+\citation{dietterich1998,demsar2006,dror2018}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces 伪标签规模效应（金标 600 条评估，训练集不含金标）。 “---”= 本次未报告。}}{13}{table.caption.25}\protected@file@percent }
+\newlabel{tab:scaling}{{5}{13}{伪标签规模效应（金标 600 条评估，训练集不含金标）。 “---”= 本次未报告。}{table.caption.25}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}跨域银标评估}{13}{subsection.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}分析}{13}{section.7}\protected@file@percent }
+\newlabel{sec:analysis}{{7}{13}{分析}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}模型校准}{13}{subsection.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces 温度缩放（$T=0.37$，在金标 600 条 OOF 预测上以 NLL 拟合； 所有指标均在同一批 600 条交叉验证样本上计算）前后的可靠性图。 下方面板给出各等宽置信分箱的样本数；高置信区间样本稀疏，故局部 波动在所难免，但全局 ECE 显著改善。准确率纵轴自 0.45 起截断，以 呈现缩放前的失校。}}{13}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:calib}{{5}{13}{温度缩放（$T=0.37$，在金标 600 条 OOF 预测上以 NLL 拟合； 所有指标均在同一批 600 条交叉验证样本上计算）前后的可靠性图。 下方面板给出各等宽置信分箱的样本数；高置信区间样本稀疏，故局部 波动在所难免，但全局 ECE 显著改善。准确率纵轴自 0.45 起截断，以 呈现缩放前的失校。}{figure.caption.26}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}统计显著性}{14}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}错误分析}{14}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}被否决的架构}{14}{subsection.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}与商业训练平台的对比}{14}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}第二阶段：lab2000 分布外与主动学习研究}{14}{section.8}\protected@file@percent }
+\newlabel{sec:lab2000}{{8}{14}{第二阶段：lab2000 分布外与主动学习研究}{section.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}暴露分布外差距}{14}{subsection.8.1}\protected@file@percent }
+\newlabel{sec:ood-expose}{{8.1}{14}{暴露分布外差距}{subsection.8.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000（开发集）结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= v3 与 SFT 模型的概率平均，融合权重由 ood1000 上的分层 5 折交叉验证选定——每条预测所用权重均在其余折上调优，不会使用 该行自身的标签。由于该集合本身驱动了全部第二阶段选择决策， 这些数字是带 best-of-$N$ 乐观偏差的开发集估计 （第~\ref {sec:limits}~节）。二分类评测剔除中性样本。“---”= 本次未报告。 lab2000 标签为混合来源：479 条人工终审（ood1000 200 + al1000 279） + 其余行双遍 LLM 共识（第~\ref {sec:lab2000-data}~节）。}}{15}{table.caption.27}\protected@file@percent }
+\newlabel{tab:ood}{{6}{15}{ood1000（开发集）结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= v3 与 SFT 模型的概率平均，融合权重由 ood1000 上的分层 5 折交叉验证选定——每条预测所用权重均在其余折上调优，不会使用 该行自身的标签。由于该集合本身驱动了全部第二阶段选择决策， 这些数字是带 best-of-$N$ 乐观偏差的开发集估计 （第~\ref {sec:limits}~节）。二分类评测剔除中性样本。“---”= 本次未报告。 lab2000 标签为混合来源：479 条人工终审（ood1000 200 + al1000 279） + 其余行双遍 LLM 共识（第~\ref {sec:lab2000-data}~节）。}{table.caption.27}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces (a) 各系统在 ood1000 上的准确率；前三组为本文 MacBERT 级模型，后两组为开箱即用的 DeepSeek LLM（本地 Qwen3-4B 基线因版面 省略，见表~\ref {tab:llm}）；虚线为实测的 71.5\% 第二标注者与发布 标签的一致率。(b) 同一 200 行子集上的原始两两一致率：同一 LLM 标注模型的两个独立推理 pass vs.\ 第二名人类标注员与发布 （混合来源）标签的一致率。此处报告原始一致率而 非 Cohen's $\kappa $；LLM 自一致率更高源于同源模型的共享归纳偏置 与更字面地执行标注细则，而非标注质量更高。}}{15}{figure.caption.28}\protected@file@percent }
+\newlabel{fig:lab2000}{{6}{15}{(a) 各系统在 ood1000 上的准确率；前三组为本文 MacBERT 级模型，后两组为开箱即用的 DeepSeek LLM（本地 Qwen3-4B 基线因版面 省略，见表~\ref {tab:llm}）；虚线为实测的 71.5\% 第二标注者与发布 标签的一致率。(b) 同一 200 行子集上的原始两两一致率：同一 LLM 标注模型的两个独立推理 pass vs.\ 第二名人类标注员与发布 （混合来源）标签的一致率。此处报告原始一致率而 非 Cohen's $\kappa $；LLM 自一致率更高源于同源模型的共享归纳偏置 与更字面地执行标注细则，而非标注质量更高。}{figure.caption.28}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的经验观察}{15}{subsection.8.2}\protected@file@percent }
+\newlabel{sec:findings}{{8.2}{15}{三个在 $n{=}600$ 下不可见的经验观察}{subsection.8.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{观察一：主动学习需要锚点。}{15}{paragraph*.29}\protected@file@percent }
 \citation{zhang2023shiftkd}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= v3 与 SFT 模型的概率平均，融合权重由 ood1000 上的分层 5 折交叉验证选定——每条预测所用权重均在其余折上调优，不会使用 该行自身的标签。二分类评测剔除中性样本。“---”= 本次未报告。 lab2000 标签为混合来源：479 条人工终审（ood1000 200 + al1000 279） + 其余行双遍 LLM 共识（第~\ref {sec:lab2000-data}~节）。}}{14}{table.caption.24}\protected@file@percent }
-\newlabel{tab:ood}{{6}{14}{ood1000 结果。“SFT”= 在所列训练数据上微调的 MacBERT； “mix”= v3 与 SFT 模型的概率平均，融合权重由 ood1000 上的分层 5 折交叉验证选定——每条预测所用权重均在其余折上调优，不会使用 该行自身的标签。二分类评测剔除中性样本。“---”= 本次未报告。 lab2000 标签为混合来源：479 条人工终审（ood1000 200 + al1000 279） + 其余行双遍 LLM 共识（第~\ref {sec:lab2000-data}~节）。}{table.caption.24}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces (a) 各系统在 ood1000 上的准确率；前三组为本文 MacBERT 级模型，后两组为开箱即用的 DeepSeek LLM（本地 Qwen3-4B 基线因版面 省略，见表~\ref {tab:llm}）；虚线为实测的 71.5\% 第二标注者与发布 标签的一致率。(b) 同一 200 行子集上的原始两两一致率：同一 LLM 标注模型的两个独立推理 pass vs.\ 第二名人类标注员与发布 （混合来源）标签的一致率。此处报告原始一致率而 非 Cohen's $\kappa $；LLM 自一致率更高源于同源模型的共享归纳偏置 与更字面地执行标注细则，而非标注质量更高。}}{14}{figure.caption.25}\protected@file@percent }
-\newlabel{fig:lab2000}{{6}{14}{(a) 各系统在 ood1000 上的准确率；前三组为本文 MacBERT 级模型，后两组为开箱即用的 DeepSeek LLM（本地 Qwen3-4B 基线因版面 省略，见表~\ref {tab:llm}）；虚线为实测的 71.5\% 第二标注者与发布 标签的一致率。(b) 同一 200 行子集上的原始两两一致率：同一 LLM 标注模型的两个独立推理 pass vs.\ 第二名人类标注员与发布 （混合来源）标签的一致率。此处报告原始一致率而 非 Cohen's $\kappa $；LLM 自一致率更高源于同源模型的共享归纳偏置 与更字面地执行标注细则，而非标注质量更高。}{figure.caption.25}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的经验观察}{14}{subsection.8.2}\protected@file@percent }
-\newlabel{sec:findings}{{8.2}{14}{三个在 $n{=}600$ 下不可见的经验观察}{subsection.8.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{观察一：主动学习需要锚点。}{14}{paragraph*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{观察二：领域偏移下，硬标签可能优于软蒸馏。}{14}{paragraph*.27}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{观察三：评分恰恰在文本失效处胜出。}{15}{paragraph*.28}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}人类一致率：标注者一致性参照}{15}{subsection.8.3}\protected@file@percent }
-\newlabel{sec:iaa}{{8.3}{15}{人类一致率：标注者一致性参照}{subsection.8.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}与前沿大模型的对比}{15}{subsection.8.4}\protected@file@percent }
-\newlabel{sec:llm}{{8.4}{15}{与前沿大模型的对比}{subsection.8.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces 前沿 LLM 与本地管线在 lab2000 上的对比（API 快照评测于 2026 年 11 月）。解析失败的样本 不计入准确率分母并单独报告。延迟为单请求平均墙钟时间。 “---”= 本次未报告。}}{15}{table.caption.29}\protected@file@percent }
-\newlabel{tab:llm}{{7}{15}{前沿 LLM 与本地管线在 lab2000 上的对比（API 快照评测于 2026 年 11 月）。解析失败的样本 不计入准确率分母并单独报告。延迟为单请求平均墙钟时间。 “---”= 本次未报告。}{table.caption.29}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}LLM 伪标签能否替代人工终审？}{16}{subsection.8.5}\protected@file@percent }
-\newlabel{sec:ds-teacher}{{8.5}{16}{LLM 伪标签能否替代人工终审？}{subsection.8.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces 发布的 al1000 标签 vs.\ DeepSeek 伪标签用于 AL 扩展 （ood1000，混合来源参照：200 条人工终审 + 800 条 LLM 共识）。}}{16}{table.caption.30}\protected@file@percent }
-\newlabel{tab:ds-teacher}{{8}{16}{发布的 al1000 标签 vs.\ DeepSeek 伪标签用于 AL 扩展 （ood1000，混合来源参照：200 条人工终审 + 800 条 LLM 共识）。}{table.caption.30}{}}
-\@writefile{toc}{\contentsline {paragraph}{规模化：1K AL $\to $ 5.9K 混合。}{16}{paragraph*.31}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL 规模扩展在 ood1000 上的结果（标签构成：479 条人工终审 + 双遍 LLM 共识；各集合拆分见第~\ref {sec:lab2000-data}~节）。所有行均为 金标-600 + 所列 AL 数据的 MacBERT SFT。“mix”行为 v3 与 SFT 模型 的概率平均；融合权重由分层 5 折交叉验证选定（样本外预测，不会 使用该行自身标签调权）。范围为随机种子间波动（三分类五种子、 二分类四种子）。二分类评测剔除中性 样本；“---”= 未报告。}}{17}{table.caption.32}\protected@file@percent }
-\newlabel{tab:al-scaling}{{9}{17}{AL 规模扩展在 ood1000 上的结果（标签构成：479 条人工终审 + 双遍 LLM 共识；各集合拆分见第~\ref {sec:lab2000-data}~节）。所有行均为 金标-600 + 所列 AL 数据的 MacBERT SFT。“mix”行为 v3 与 SFT 模型 的概率平均；融合权重由分层 5 折交叉验证选定（样本外预测，不会 使用该行自身标签调权）。范围为随机种子间波动（三分类五种子、 二分类四种子）。二分类评测剔除中性 样本；“---”= 未报告。}{table.caption.32}{}}
-\@writefile{toc}{\contentsline {paragraph}{部署权衡（实测而非假设）。}{18}{paragraph*.33}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces 长度路由前沿：$\le T$ 字的评论路由至 AL 混合模型， 更长者路由至 v3（固定 $w_{\mathrm  {SFT}}{=}0.6$ 融合）。 金标-600 与 ood1000 三分类准确率；纯混合端点的交叉拟合 样本外估计为 0.771（表~\ref {tab:al-scaling}）。}}{19}{table.caption.34}\protected@file@percent }
-\newlabel{tab:router}{{10}{19}{长度路由前沿：$\le T$ 字的评论路由至 AL 混合模型， 更长者路由至 v3（固定 $w_{\mathrm {SFT}}{=}0.6$ 融合）。 金标-600 与 ood1000 三分类准确率；纯混合端点的交叉拟合 样本外估计为 0.771（表~\ref {tab:al-scaling}）。}{table.caption.34}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{19}{subsection.8.6}\protected@file@percent }
-\newlabel{sec:lab2000-caveats}{{8.6}{19}{lab2000 不宣称什么}{subsection.8.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9}局限性与效度威胁}{19}{section.9}\protected@file@percent }
-\newlabel{sec:limits}{{9}{19}{局限性与效度威胁}{section.9}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {10}结论与未来工作}{19}{section.10}\protected@file@percent }
-\newlabel{sec:conclusion}{{10}{19}{结论与未来工作}{section.10}{}}
-\@writefile{toc}{\contentsline {section}{可复现性}{20}{section.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}训练细节与可复现性}{20}{appendix.A}\protected@file@percent }
-\newlabel{app:repro}{{A}{20}{训练细节与可复现性}{appendix.A}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}超参数}{20}{subsection.A.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces 部署流水线的关键超参数。}}{20}{table.caption.35}\protected@file@percent }
-\newlabel{tab:hparams}{{11}{20}{部署流水线的关键超参数。}{table.caption.35}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}产物清单}{20}{subsection.A.2}\protected@file@percent }
+\citation{davani2022}
+\citation{artstein2008}
+\citation{kunilovskaya2026,alkhalifa2026}
+\@writefile{toc}{\contentsline {paragraph}{观察二：领域偏移下，硬标签可能优于软蒸馏。}{16}{paragraph*.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{观察三：评分恰恰在文本失效处胜出。}{16}{paragraph*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}人类一致率：标注者一致性参照}{16}{subsection.8.3}\protected@file@percent }
+\newlabel{sec:iaa}{{8.3}{16}{人类一致率：标注者一致性参照}{subsection.8.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}与前沿大模型的对比}{16}{subsection.8.4}\protected@file@percent }
+\newlabel{sec:llm}{{8.4}{16}{与前沿大模型的对比}{subsection.8.4}{}}
+\citation{zenimoto2024,neveditsin2025}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces 前沿 LLM 与本地管线在 lab2000 上的对比（API 快照评测于 2026 年 11 月）。解析失败的样本 不计入准确率分母并单独报告。延迟为单请求平均墙钟时间。 “---”= 本次未报告。}}{17}{table.caption.32}\protected@file@percent }
+\newlabel{tab:llm}{{7}{17}{前沿 LLM 与本地管线在 lab2000 上的对比（API 快照评测于 2026 年 11 月）。解析失败的样本 不计入准确率分母并单独报告。延迟为单请求平均墙钟时间。 “---”= 本次未报告。}{table.caption.32}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}LLM 伪标签能否替代人工终审？}{17}{subsection.8.5}\protected@file@percent }
+\newlabel{sec:ds-teacher}{{8.5}{17}{LLM 伪标签能否替代人工终审？}{subsection.8.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces 发布的 al1000 标签 vs.\ DeepSeek 伪标签用于 AL 扩展 （ood1000，混合来源参照：200 条人工终审 + 800 条 LLM 共识）。}}{17}{table.caption.33}\protected@file@percent }
+\newlabel{tab:ds-teacher}{{8}{17}{发布的 al1000 标签 vs.\ DeepSeek 伪标签用于 AL 扩展 （ood1000，混合来源参照：200 条人工终审 + 800 条 LLM 共识）。}{table.caption.33}{}}
+\@writefile{toc}{\contentsline {paragraph}{规模化：1K AL $\to $ 5.9K 混合。}{17}{paragraph*.34}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL 规模扩展在 ood1000 上的结果（标签构成：479 条人工终审 + 双遍 LLM 共识；各集合拆分见第~\ref {sec:lab2000-data}~节）。所有行均为 金标-600 + 所列 AL 数据的 MacBERT SFT。“mix”行为 v3 与 SFT 模型 的概率平均；融合权重由分层 5 折交叉验证选定（样本外预测，不会 使用该行自身标签调权）。范围为随机种子间波动（三分类五种子、 二分类四种子）。二分类评测剔除中性 样本；“---”= 未报告。}}{18}{table.caption.35}\protected@file@percent }
+\newlabel{tab:al-scaling}{{9}{18}{AL 规模扩展在 ood1000 上的结果（标签构成：479 条人工终审 + 双遍 LLM 共识；各集合拆分见第~\ref {sec:lab2000-data}~节）。所有行均为 金标-600 + 所列 AL 数据的 MacBERT SFT。“mix”行为 v3 与 SFT 模型 的概率平均；融合权重由分层 5 折交叉验证选定（样本外预测，不会 使用该行自身标签调权）。范围为随机种子间波动（三分类五种子、 二分类四种子）。二分类评测剔除中性 样本；“---”= 未报告。}{table.caption.35}{}}
+\@writefile{toc}{\contentsline {paragraph}{部署权衡（实测而非假设）。}{19}{paragraph*.36}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces 长度路由前沿：$\le T$ 字的评论路由至 AL 混合模型， 更长者路由至 v3（固定 $w_{\mathrm  {SFT}}{=}0.6$ 融合）。 金标-600 与 ood1000 三分类准确率；纯混合端点的交叉拟合 样本外估计为 0.771（表~\ref {tab:al-scaling}）。}}{20}{table.caption.37}\protected@file@percent }
+\newlabel{tab:router}{{10}{20}{长度路由前沿：$\le T$ 字的评论路由至 AL 混合模型， 更长者路由至 v3（固定 $w_{\mathrm {SFT}}{=}0.6$ 融合）。 金标-600 与 ood1000 三分类准确率；纯混合端点的交叉拟合 样本外估计为 0.771（表~\ref {tab:al-scaling}）。}{table.caption.37}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{20}{subsection.8.6}\protected@file@percent }
+\newlabel{sec:lab2000-caveats}{{8.6}{20}{lab2000 不宣称什么}{subsection.8.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}局限性与效度威胁}{20}{section.9}\protected@file@percent }
+\newlabel{sec:limits}{{9}{20}{局限性与效度威胁}{section.9}{}}
+\citation{bender2018}
+\citation{gebru2021}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}伦理与数据可用性}{21}{subsection.9.1}\protected@file@percent }
+\newlabel{sec:ethics}{{9.1}{21}{伦理与数据可用性}{subsection.9.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}结论与未来工作}{21}{section.10}\protected@file@percent }
+\newlabel{sec:conclusion}{{10}{21}{结论与未来工作}{section.10}{}}
+\@writefile{toc}{\contentsline {section}{可复现性}{21}{section.10}\protected@file@percent }
 \citation{qwen2025}
+\@writefile{toc}{\contentsline {section}{\numberline {A}训练细节与可复现性}{22}{appendix.A}\protected@file@percent }
+\newlabel{app:repro}{{A}{22}{训练细节与可复现性}{appendix.A}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}超参数}{22}{subsection.A.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces 部署流水线的关键超参数。}}{22}{table.caption.38}\protected@file@percent }
+\newlabel{tab:hparams}{{11}{22}{部署流水线的关键超参数。}{table.caption.38}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}产物清单}{22}{subsection.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}环境}{22}{subsection.A.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B}附录：lab500 先导研究}{22}{appendix.B}\protected@file@percent }
+\newlabel{app:lab500}{{B}{22}{附录：lab500 先导研究}{appendix.B}{}}
 \bibcite{devlin2019}{{1}{2019}{{Devlin et al.}}{{}}}
 \bibcite{liu2019}{{2}{2019}{{Liu et al.}}{{}}}
 \bibcite{cui2020}{{3}{2020}{{Cui et al.}}{{}}}
 \bibcite{wang2020}{{4}{2020}{{Wang et al.}}{{}}}
 \bibcite{sun2019}{{5}{2019}{{Sun et al.}}{{}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}环境}{21}{subsection.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B}附录：lab500 先导研究}{21}{appendix.B}\protected@file@percent }
-\newlabel{app:lab500}{{B}{21}{附录：lab500 先导研究}{appendix.B}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces lab500 先导研究结果（已被 lab2000 取代）。 “---”= 本次未报告。}}{21}{table.caption.36}\protected@file@percent }
-\newlabel{tab:lab500-app}{{12}{21}{lab500 先导研究结果（已被 lab2000 取代）。 “---”= 本次未报告。}{table.caption.36}{}}
 \bibcite{idea2023}{{6}{2023}{{IDEA-CCNL}}{{}}}
 \bibcite{kim2014}{{7}{2014}{{Kim}}{{}}}
 \bibcite{socher2013}{{8}{2013}{{Socher et al.}}{{}}}
@@ -173,30 +189,47 @@
 \bibcite{tan2008}{{10}{2008}{{Tan and Zhang}}{{}}}
 \bibcite{yarowsky1995}{{11}{1995}{{Yarowsky}}{{}}}
 \bibcite{lee2013}{{12}{2013}{{Lee}}{{}}}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces lab500 先导研究结果（已被 lab2000 取代）。 “---”= 本次未报告。}}{23}{table.caption.39}\protected@file@percent }
+\newlabel{tab:lab500-app}{{12}{23}{lab500 先导研究结果（已被 lab2000 取代）。 “---”= 本次未报告。}{table.caption.39}{}}
 \bibcite{arazo2020}{{13}{2020}{{Arazo et al.}}{{}}}
 \bibcite{ratner2017}{{14}{2017}{{Ratner et al.}}{{}}}
-\bibcite{xie2020}{{15}{2020}{{Xie et al.}}{{}}}
-\bibcite{sohn2020}{{16}{2020}{{Sohn et al.}}{{}}}
-\bibcite{hinton2015}{{17}{2015}{{Hinton et al.}}{{}}}
-\bibcite{gou2021}{{18}{2021}{{Gou et al.}}{{}}}
-\bibcite{joulin2017}{{19}{2017}{{Joulin et al.}}{{}}}
-\bibcite{reimers2019}{{20}{2019}{{Reimers and Gurevych}}{{}}}
-\bibcite{guo2017}{{21}{2017}{{Guo et al.}}{{}}}
-\bibcite{qwen2025}{{22}{2025}{{Qwen Team}}{{}}}
-\bibcite{settles2009}{{23}{2009}{{Settles}}{{}}}
-\bibcite{gilardi2023}{{24}{2023}{{Gilardi et al.}}{{}}}
-\bibcite{tornberg2023}{{25}{2023}{{T\"ornberg}}{{}}}
-\bibcite{dietterich1998}{{26}{1998}{{Dietterich}}{{}}}
-\bibcite{demsar2006}{{27}{2006}{{Dem\v {s}ar}}{{}}}
-\bibcite{efron1993}{{28}{1993}{{Efron and Tibshirani}}{{}}}
-\bibcite{mcnemar1947}{{29}{1947}{{McNemar}}{{}}}
-\bibcite{douban2024}{{30}{2019}{{csuldw}}{{}}}
-\bibcite{pang2005seeing}{{31}{2005}{{Pang and Lee}}{{}}}
-\bibcite{abaiyan2026stars}{{32}{2026}{{Abaiyan et al.}}{{}}}
-\bibcite{fan2018}{{33}{2018}{{Fan et al.}}{{}}}
-\bibcite{martins2021}{{34}{2021}{{Martins et al.}}{{}}}
-\bibcite{zhang2021wrench}{{35}{2021}{{Zhang et al.}}{{}}}
-\bibcite{zhang2023shiftkd}{{36}{2023}{{Zhang et al.}}{{}}}
-\bibcite{moller2024parrot}{{37}{2024}{{M\o {}ller et al.}}{{}}}
-\bibcite{schroeder2025}{{38}{2025}{{Schroeder et al.}}{{}}}
-\gdef \@abspage@last{24}
+\bibcite{xie2020}{{15}{2020a}{{Xie et al.}}{{}}}
+\bibcite{xie2020uda}{{16}{2020b}{{Xie et al.}}{{}}}
+\bibcite{sohn2020}{{17}{2020}{{Sohn et al.}}{{}}}
+\bibcite{hinton2015}{{18}{2015}{{Hinton et al.}}{{}}}
+\bibcite{gou2021}{{19}{2021}{{Gou et al.}}{{}}}
+\bibcite{joulin2017}{{20}{2017}{{Joulin et al.}}{{}}}
+\bibcite{reimers2019}{{21}{2019}{{Reimers and Gurevych}}{{}}}
+\bibcite{guo2017}{{22}{2017}{{Guo et al.}}{{}}}
+\bibcite{qwen2025}{{23}{2025}{{Qwen Team}}{{}}}
+\bibcite{settles2009}{{24}{2009}{{Settles}}{{}}}
+\bibcite{gilardi2023}{{25}{2023}{{Gilardi et al.}}{{}}}
+\bibcite{tornberg2023}{{26}{2023}{{T\"ornberg}}{{}}}
+\bibcite{dietterich1998}{{27}{1998}{{Dietterich}}{{}}}
+\bibcite{demsar2006}{{28}{2006}{{Dem\v {s}ar}}{{}}}
+\bibcite{efron1993}{{29}{1993}{{Efron and Tibshirani}}{{}}}
+\bibcite{mcnemar1947}{{30}{1947}{{McNemar}}{{}}}
+\bibcite{douban2024}{{31}{2019}{{csuldw}}{{}}}
+\bibcite{pang2005seeing}{{32}{2005}{{Pang and Lee}}{{}}}
+\bibcite{abaiyan2026stars}{{33}{2026}{{Abaiyan et al.}}{{}}}
+\bibcite{fan2018}{{34}{2018}{{Fan et al.}}{{}}}
+\bibcite{martins2021}{{35}{2021}{{Martins et al.}}{{}}}
+\bibcite{zhang2021wrench}{{36}{2021}{{Zhang et al.}}{{}}}
+\bibcite{zhang2023shiftkd}{{37}{2025}{{Zhang et al.}}{{}}}
+\bibcite{moller2024parrot}{{38}{2024}{{M\o {}ller et al.}}{{}}}
+\bibcite{schroeder2025}{{39}{2025}{{Schroeder et al.}}{{}}}
+\bibcite{tian2020}{{40}{2020}{{Tian et al.}}{{}}}
+\bibcite{dror2018}{{41}{2018}{{Dror et al.}}{{}}}
+\bibcite{artstein2008}{{42}{2008}{{Artstein and Poesio}}{{}}}
+\bibcite{davani2022}{{43}{2022}{{Davani et al.}}{{}}}
+\bibcite{bender2018}{{44}{2018}{{Bender and Friedman}}{{}}}
+\bibcite{gebru2021}{{45}{2021}{{Gebru et al.}}{{}}}
+\bibcite{northcutt2021}{{46}{2021}{{Northcutt et al.}}{{}}}
+\bibcite{sainz2023}{{47}{2023}{{Sainz et al.}}{{}}}
+\bibcite{kapoor2023}{{48}{2023}{{Kapoor and Narayanan}}{{}}}
+\bibcite{balloccu2024}{{49}{2024}{{Balloccu et al.}}{{}}}
+\bibcite{kunilovskaya2026}{{50}{2026}{{Kunilovskaya et al.}}{{}}}
+\bibcite{alkhalifa2026}{{51}{2026}{{Al-Khalifa}}{{}}}
+\bibcite{neveditsin2025}{{52}{2025}{{Neveditsin et al.}}{{}}}
+\bibcite{zenimoto2024}{{53}{2024}{{Zenimoto et al.}}{{}}}
+\gdef \@abspage@last{27}
