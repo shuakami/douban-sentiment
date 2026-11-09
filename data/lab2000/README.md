@@ -39,7 +39,11 @@ the remaining 1,521 rows use two-pass consensus.
 
 - `final` in `lab2000_final.jsonl` is the authoritative label;
   `label_a`/`label_b` are pre-annotations, not ground truth.
-- `ood1000` is a held-out test set: no model in the paper trains on it.
+- `ood1000` is a development/validation benchmark, not a pristine
+  held-out test: it is disjoint from all stage-2 AL/SFT training
+  pools (0 cid overlap), but ~69% of its rows appear in earlier
+  corpus-derived pseudo-label/rating/TF-IDF training sets, and it was
+  used to select AL scale/teacher/epochs/weights during the study.
   `al1000` and the `al*` files are training data.
 - The 479 human-adjudicated rows (`final_source == "user"`) are
   disagreement-enriched; do not treat them as a representative test

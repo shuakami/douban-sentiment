@@ -87,7 +87,9 @@ Working dir: `$DOUBAN_DATA_ROOT/lab2000/` (released subset in
 
 ## 6. What is NOT reproducible from the repo alone
 
-- Raw Moviedata-10M corpus (license: research use, not redistributed)
+- Raw Moviedata-10M corpus (research use only, not redistributed;
+  ~4.6K annotated subset reviews ARE released under `data/` with
+  identifiers stripped)
 - SFT experiment checkpoints on ood1000/al* (GPU-trained; prob
   outputs are released in `sft_results/` + `mix_oof_probs.npz`)
 - DeepSeek API labels (released as jsonl; regenerating costs API tokens)

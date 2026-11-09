@@ -256,7 +256,13 @@ end-to-end.
 ### Benchmark construction
 
 `ood1000`: 1,000 reviews sampled uniformly at random from the 911K
-corpus — a held-out cross-movie test set that no model trains on.
+corpus — a cross-movie test set disjoint from every stage-2 AL/SFT
+training pool (0 cid overlap, verified). It is *not* untouched by
+earlier corpus-derived training: ~69% of its rows appear in the
+pseudo-label/rating/TF-IDF/feature-head train sets built before the
+benchmark existed (row-level audit in § Leakage). It also served as
+the model-selection set for the AL study — treat it as a development
+benchmark, with fresh500 + human-adjudicated subsets as cleaner checks.
 `al1000`: 1,000 reviews selected by margin/entropy sampling from the
 deployed student's predictions — deliberately the hardest, most
 ambiguous rows (a training set, not a test set).
@@ -474,8 +480,10 @@ for every system (mix 72.4% vs v3 61.2% on ood1000; 66.7% on fresh500).
 on corpus uncertainty and mix weights by cross-validation on ood1000,
 we additionally sampled
 \textbf{fresh500} — 500 uniformly-random corpus reviews disjoint from
-all training and eval texts (zero text overlap verified against
-gold-600 and every AL pool through al17k) — labelled by the same
+gold-600 and every AL/SFT pool through al17k (zero text overlap
+verified against those sets; ~70% of rows do appear in earlier
+corpus-derived pseudo-label/rating train sets, same caveat as
+ood1000) — labelled by the same
 DeepSeek teacher. With weights frozen at the ood1000 cross-fit values
 ($w_{\mathrm{SFT}}{=}0.6$ three-class, the modal fold weight; $0.5$
 binary, the fold median — the e8 binary fold weights are bimodal,

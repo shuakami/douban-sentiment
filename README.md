@@ -106,7 +106,12 @@ all 335 disagreements plus 144 spot-checked agreements (479 rows;
 `final_source` provenance per row), DeepSeek and
 Qwen teacher labels for the ~17K scaled AL rows, fresh500, and a
 per-file README. Review texts remain Douban content; the 910K corpus
-is external and stays local.
+is external and stays local. Annotated subsets released under `data/`
+total ~4.6K reviews (gold-600, lab2000, fresh500, lab500, synth aug)
+with user identifiers (nick/ip/uid/cid/timestamps) stripped; the
+~16K active-learning pool texts are not redistributed. These are
+research-use excerpts of Douban reviews; the platform's terms were
+not licensed for this use — see the paper's Ethics section.
 
 ### Large weakly-labelled corpus
 
