@@ -1,0 +1,109 @@
+\documentclass[11pt]{article}
+
+\usepackage[review]{acl}
+
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds}
+\usepackage{enumitem}
+\usepackage{url}
+
+\title{Auditing Weak Supervision at Scale:\\
+Leakage, Label Provenance, and Honest Evaluation in\\
+Chinese Review Sentiment Classification}
+
+\author{Anonymous SRW Submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Weakly supervised sentiment classifiers are typically reported with a
+single in-domain accuracy and little scrutiny of what the evaluation
+measures. We present a case study that calls this practice into
+question. Building a Chinese review-sentiment system on 600
+human-verified labels and a 910{,}998-row weakly labelled Douban
+corpus, we \emph{audit our own pipeline} before reporting results.
+The audit uncovers three systematic problems: (i) star ratings are a
+poor proxy for semantic sentiment---71.3\% agreement, with 3-star
+reviews more often negative than neutral; (ii) our headline
+out-of-fold score was inflated by \emph{second-order teacher leakage}
+through distillation soft targets, worth $\approx$5.5 points on the
+three-class task; and (iii) our OOD benchmark was simultaneously
+row-level contaminated (13.0--13.2\% of evaluation rows appear in a
+deployed channel's training set) and repurposed as a model-selection
+set across dozens of configurations. Corrected numbers are lower but
+defensible: 83--84\% three-class and 92.9\% binary strict OOF, with
+OOD gains that replicate on a cleaner sample yet shrink by half on a
+human-adjudicated subset where an LLM teacher matches our best local
+model. We release the audit scripts, provenance fields, and all
+negative results, and argue that leakage-aware evaluation should be a
+prerequisite for weakly supervised NLP claims.
+\end{abstract}
+
+\input{draft_1_3}
+\input{draft_4_6}
+
+\section{Limitations and Ethical Considerations}
+\label{sec:limitations}
+
+\paragraph{Data provenance and terms of use.}
+All review texts are Douban user comments used without platform
+authorization. The gold-600 set was scraped from a single film page;
+the corpus derives from the Moviedata-10M release. We release only
+$\approx$4.6K evaluation reviews with user identifiers stripped, for
+research purposes. Roughly 18.5K unique texts were transmitted to the
+DeepSeek API for teacher labeling, and all 600 gold texts were
+processed on Alibaba Cloud PAI; only review text and star ratings were
+sent. Users were not contacted; we judge privacy risk low because only
+public short reviews are involved, but acknowledge this limitation.
+
+\paragraph{Annotation quality.}
+The 479 ``human-adjudicated'' rows were labeled by the authors with
+model predictions visible, which likely anchors labels toward student
+outputs; ood1000 consensus labels come from two passes of the
+\emph{same} LLM annotator. Per-row second-human labels were not
+preserved (\texttt{friend\_labels.txt} absent), so our
+human--reference agreement ($\kappa{=}0.57$) blends human and LLM
+references and is not a pure human ceiling. The 400-item blind
+human-annotation set addresses these issues but was in progress at
+submission; results will appear in the camera-ready version.
+
+\paragraph{Evaluation caveats that remain.}
+The $\alpha{=}1.0$ rerun uses a single configuration; deployed fusion
+weights were tuned on the same gold-600 rows and not re-tuned on
+clean channels. The gold set covers a single film, so absolute numbers
+are not cross-domain estimates. Headline OOD numbers remain
+selection-conditioned maxima over dozens of configurations; the full
+pool is in Appendix~\ref{app:configs}.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We set out to build a weakly supervised Chinese review-sentiment
+classifier and ended up auditing the evaluation itself. Three findings
+survived verification: star ratings are a weak semantic proxy (71.3\%
+agreement), distillation soft targets inflated our OOF headline by
+$\approx$5.5 points, and our OOD benchmark was both row-level
+contaminated and repurposed as a selection set. The corrected system
+remains practical---92.9\% binary and $\approx$84\% three-class strict
+OOF at edge-deployable size---but the honest numbers, not the
+inflated ones, are what we stand behind. We release all audit
+artifacts, provenance fields, and negative results so others can
+reuse the methodology on their own pipelines.
+
+\bibliography{refs}
+
+\input{appendix}
+
+\end{document}

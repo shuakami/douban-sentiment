@@ -1,0 +1,283 @@
+% Sections 1--3 of the NAACL 2027 SRW submission.
+% Fragment only: no preamble, no \begin{document}.
+% Requires: acl-style class, booktabs, and the bibliography keys cited below.
+
+\section{Introduction}
+\label{sec:intro}
+
+Short reviews on Douban are terse, ironic, and frequently mix praise with
+criticism (``great effects, but the plot is a disaster''); the neutral
+class---bare descriptions, evenly balanced evaluations, stance-free
+reflections---is both the most frequent source of ambiguity and the
+hardest to learn from few examples. Practical sentiment tooling for this
+genre therefore faces two coupled constraints: semantic labels are
+expensive, and the resulting models must be compact enough for edge
+deployment. Weak supervision---pseudo-labelling a large rating-bearing
+corpus with a small set of human-verified labels---is the natural
+recipe, and it is what we set out to build.
+
+We constructed such a system for three-class (positive / neutral /
+negative) sentiment on Chinese Douban movie reviews. Starting from 600
+human-verified semantic labels and a 910{,}998-row corpus carrying star
+ratings only, we trained a teacher ensemble, distilled a compact student,
+added corpus-trained neutral specialists, and scaled active learning with
+LLM-generated labels to roughly 17K additional training rows. The
+resulting pipeline is a system we would plausibly deploy.
+
+Before reporting its numbers, however, we audited our own evaluation.
+This audit---the contribution of this paper---uncovered systematic
+problems that are invisible in a typical weakly-supervised pipeline
+report. Star ratings are much weaker semantic labels than commonly
+assumed: they agree with human semantic labels on only 71.3\% of gold
+reviews, collapsing to 30.6\% on three-star reviews. Our headline
+out-of-fold accuracy was inflated by a second-order teacher-leakage
+channel that we measure at up to $+5.5$ percentage points. Our
+``held-out'' OOD benchmark had in fact been used repeatedly for model
+selection, and a row-level audit shows that about 69\% of its texts
+already appeared in earlier corpus-derived training sets. Finally, our
+LLM-consensus labels overstate measured accuracy by roughly 26 points
+relative to the human-adjudicated subset of the same benchmark
+(82.4\% vs.\ 56.0\%). Corrected, the numbers are lower---but they are
+defensible, and the audit itself is reusable.
+
+We make four contributions:
+\begin{itemize}
+  \item A corpus-scale quantification of the rating--sentiment gap:
+        star ratings agree with human semantic labels on only 71.3\% of
+        gold reviews, and three-star reviews are majority negative
+        (51.3\%), not neutral.
+  \item A leakage decomposition for distilled weakly-supervised
+        pipelines (transitive corpus exposure vs.\ second-order teacher
+        leakage) and corrected strict out-of-fold numbers.
+  \item A row-level identifier-overlap audit protocol for OOD evaluation
+        sets, plus a quantification of model-selection bias from
+        best-of-$N$ configuration search.
+  \item A label-provenance-split evaluation showing that LLM-consensus
+        labels inflate measured accuracy, together with the datasets,
+        annotation records, and audit artifacts needed to reproduce all
+        corrected numbers.
+\end{itemize}
+Section~\ref{sec:related} reviews related work; Section~\ref{sec:data}
+describes the datasets and annotation protocols in full, including the
+weaknesses we are aware of before seeing any results; Sections
+\ref{sec:method}--\ref{sec:results} present the methodology, setup,
+and honest results; Section~\ref{sec:limitations} states limitations.
+
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Weak supervision and pseudo-labelling.}
+Learning from noisy or programmatic labels is a mature paradigm:
+Snorkel \citep{ratner2017snorkel} formalised weak supervision through
+labelling functions, and self-training \citep{lee2013pseudo} and its
+noisy-student descendant \citep{xie2020selftraining} showed that a
+model's own confident predictions can bootstrap larger training sets.
+For noisy labels specifically, confident learning \citep{arazo2021pseudo}
+characterises which examples are likely mislabeled, and the ``Parrot
+Dilemma'' \citep{moller2024parrot} warns that LLM-generated pseudo-labels
+can degrade downstream models when teacher and student share inductive
+biases. Most of this literature reports in-distribution gains; our
+setting differs in that we audit the \emph{evaluation} itself---label
+provenance, train/test overlap, and selection bias---rather than only
+the training recipe.
+
+\paragraph{LLM-assisted annotation.}
+Using LLMs as annotators or label proposers is now common, but two
+findings motivate our caution. First, LLM suggestions anchor human
+annotators: when adjudicators see a model's prediction, their labels
+converge toward it \citep{schroeder2025humanloop}. Our adjudication
+interface displayed the student model's prediction and confidence, so
+our 479 human-adjudicated rows are explicitly exposed to this effect
+(Section~\ref{sec:data}). Second, agreement between two passes of the
+\emph{same} LLM reflects shared inductive bias rather than independent
+annotation; we therefore treat LLM two-pass consensus as a pseudo-label
+source, never as ground truth.
+
+\paragraph{Evaluation integrity, contamination, and OOD benchmarks.}
+Data contamination in evaluation is increasingly documented for LLM
+benchmarks, with taxonomies distinguishing incidental exposure from
+targeted contamination \citep{sainz2023contamination}; our row-level
+content-ID audit is the text-classification analogue of those checks.
+For OOD evaluation, classical benchmarks such as \citeauthor{baran2023ood}
+(\citeyear{baran2023ood}) establish protocols we adapt, and
+\citeauthor{dror2018hitchhiker} (\citeyear{dror2018hitchhiker}) provide
+the statistical-testing discipline---McNemar tests, bootstrap intervals,
+Holm correction---that we apply to every comparison, including the
+comparisons made \emph{on} our contaminated development set. Unlike
+prior audits of released benchmarks, we audit a pipeline we built
+ourselves before publication.
+
+\paragraph{Chinese sentiment analysis.}
+Pre-trained encoders dominate Chinese sentiment work: MacBERT
+\citep{cui2020macbert} via whole-word masking and SKEP \citep{tian2020skep}
+via sentiment knowledge enhancement are our backbone choices. Review
+sentiment specifically inherits the long-documented gap between star
+ratings and semantic polarity \citep{pang2005seeing}; we quantify this
+gap at corpus scale and, more importantly, trace its consequences
+through every downstream label we release.
+
+\section{Dataset and Annotation}
+\label{sec:data}
+
+\subsection{Overview}
+
+The task is three-class sentiment classification
+$y \in \{\text{positive}, \text{neutral}, \text{negative}\}$ of Douban
+movie short reviews. Corpus reviews are short (median 24 characters)
+and frequently contain sarcasm, film-specific allusions, or mixed
+polarity, so the neutral class is both frequent and ambiguous.
+Table~\ref{tab:datasets} summarises every dataset used in this paper,
+its annotation source, and its role. Two properties of this table are
+unusual and deliberate: several ``test'' sets carry LLM-generated
+labels, and one of them (ood1000) is a \emph{development} set, not a
+held-out test.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\caption{Datasets and annotation sources. ``Consensus'' = agreement of
+two blind LLM passes; ``adjudicated'' = human resolution of pass
+disagreements plus spot-checked agreements. Roles reflect the audited,
+corrected evaluation protocol, not the original study design.}
+\label{tab:datasets}
+\begin{tabular}{@{}p{1.7cm}r p{3.3cm} p{1.9cm}@{}}
+\toprule
+Dataset & Rows & Annotation source & Role \\
+\midrule
+gold-600 & 600 & Human semantic labels; star-rule weak labels & Train anchor; OOF eval \\
+pseudo pools & 910{,}998 & Star-rating rule; student pseudo-labels & Weak supervision \\
+ood1000 & 1{,}000 & LLM consensus + 200 human-adjudicated & Dev (model selection) \\
+al1000 & 1{,}000 & LLM consensus + 279 human-adjudicated & AL training \\
+AL expansions (al5000--al17k) & $\sim$17{,}000 & Frontier-LLM teacher labels & AL training \\
+fresh500 & 500 & DeepSeek teacher labels & Dev replication check \\
+lab500 & 500 & Two LLM annotators; 331 consensus rows & Superseded pilot \\
+human-400 & 400 & Blind human annotation (in progress) & Final held-out test \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Gold-600: human labels and the star-rating gap}
+
+The gold set was scraped from the first 30 pages of a single Douban
+movie page, yielding 600 rows covering 592 unique reviews
+(class distribution 316 positive / 92 neutral / 192 negative). Each
+row carries two labels: \texttt{label\_rule}, a star-derived three-class
+weak label, and \texttt{label\_semantic}, a human-verified semantic
+label. Reviews here are longer than corpus reviews on average
+($\sim$111 vs.\ 40 characters), and the neutral class rests on only 92
+examples. All 600 texts were sent to a commercial training platform
+(Alibaba PAI) for a baseline comparison; we disclose this egress in
+Section~\ref{sec:limitations}.
+
+The dual labels let us measure, rather than assume, the quality of star
+ratings as sentiment supervision. On the 586 gold rows carrying both
+labels, per-star agreement between the rating-implied class and the
+human semantic label is 94.3\% (1$\star$), 85.9\% (2$\star$),
+\textbf{30.6\%} (3$\star$), 78.7\% (4$\star$), and 96.9\% (5$\star$);
+overall agreement is \textbf{71.3\%}. The failure is concentrated exactly
+where it matters: 51.3\% of three-star reviews are semantically
+\emph{negative}, not neutral. Star ratings are informative at the
+extremes and unreliable in the middle band---consistent with the
+long-documented rating--sentiment gap \citep{pang2005seeing}---so we
+use ratings only as weak pretraining signal, never as gold labels.
+
+\subsection{Weakly-labelled corpus}
+
+The weak corpus derives from Moviedata-10M \citep{moviedata10m}: 4.43M
+raw Douban comments cleaned and deduplicated to \textbf{910{,}998}
+reviews spanning 20{,}966 films and 249{,}105 users, with star rating
+(1--5), timestamp, and vote counts but no semantic labels. It is the
+source of all pseudo-label pools: a student ensemble labels the full
+corpus, a confidence-filtered subset (271{,}905 rows at $p \ge 0.7$)
+trains corpus-scale specialists, and margin/entropy sampling on student
+predictions selects the active-learning pools described next.
+
+\subsection{LLM-assisted benchmarks: lab2000 and successors}
+
+\paragraph{lab2000.} To measure---and then narrow---the gold-to-corpus
+generalisation gap, we built \textbf{lab2000}: 2{,}000 corpus reviews in
+two disjoint subsets. \textbf{ood1000} samples 1{,}000 reviews uniformly
+at random from the corpus (gold-deduplicated, cross-movie); it served
+as the development benchmark for model selection. \textbf{al1000}
+samples 1{,}000 reviews by margin/entropy sampling from the deployed
+student's predictions---deliberately the hardest rows---and is a
+training set, not a test set. Active-learning expansion continued this
+protocol through al5000, al5000b, and disagreement-mined al3k rounds,
+producing pools up to $\sim$17K rows labelled by frontier-LLM teachers
+(DeepSeek-V4.1-Flash and, for one ablation, Qwen3-4B); all AL pools are
+verified text-disjoint from every evaluation set.
+
+\paragraph{Annotation protocol.} Each lab2000 row was labelled twice by
+two independent inference passes of the \emph{same} LLM annotator model
+with different few-shot example sets, blind to star ratings and to each
+other's output---single-model self-consistency, not two independent
+annotators. Inter-pass agreement was 86.7\% ($\kappa=0.80$) on ood1000
+and 79.8\% ($\kappa=0.67$) on al1000; the lower agreement on the
+margin-selected set is itself evidence that AL mining selects
+intrinsically ambiguous rows. All 335 inter-pass disagreements plus 144
+spot-checked agreements were adjudicated by the author, yielding
+\textbf{479 human-adjudicated rows} (200 in ood1000, 279 in al1000);
+the remaining rows take two-pass consensus. Final provenance: ood1000 =
+800 consensus + 200 human-adjudicated; al1000 = 721 consensus +
+279 human-adjudicated.
+
+\paragraph{fresh500.} A second OOD check: 500 uniformly sampled corpus
+reviews labelled by DeepSeek-V4.1-Flash. Our row-level audit
+(Section~\ref{sec:method}) finds that 70.2\% of its rows share a corpus
+identifier with at least one earlier corpus-derived training set, so
+fresh500 is a replication check on a partially exposed distribution,
+not a clean test.
+
+\paragraph{lab500 (superseded pilot).} 500 corpus reviews labelled
+independently by two LLM annotators (a general-purpose assistant and
+Qwen3-4B zero-shot), with 331 rows reaching consensus. Superseded by
+lab2000; additionally, a pilot cross-validation script used lab500
+itself as a training set, so it cannot be treated as unseen data.
+
+\paragraph{human-400 (in progress).} The only planned zero-contamination
+test: 400 corpus reviews sampled with length stratification after
+excluding every previously used text pool, to be blind-annotated by
+humans under written guidelines. Annotation is ongoing; results will
+appear in the appendix.
+
+\subsection{Annotation quality: what the agreement numbers do and do not show}
+
+\paragraph{Human--reference agreement is blended, not pure.}
+A 200-row random subset of ood1000 was blind-labelled by a second human
+annotator following written guidelines. Because the released labels on
+that subset mix 47 human-adjudicated and 153 LLM-consensus rows, the
+measured agreement---71.5\% raw, $\kappa=0.568$ (95\% CI
+$[0.47,0.66]$)---is a human-vs-\emph{reference} figure, not a pure
+human--human IAA. We disclose that the per-row second-human label file
+(\texttt{friend\_labels.txt}) was never returned; only aggregate
+statistics are available, which limits any finer-grained analysis.
+
+\paragraph{LLM passes disagree precisely where it matters.}
+On the 47 adjudicated rows where both LLM passes and the human label are
+available, passA and passB agree on only \textbf{29.8\%} of rows
+($\kappa=-0.18$), versus 86.7\% overall on ood1000. Consensus labels are
+therefore least reliable on exactly the hard, ambiguous rows that
+decide benchmark rankings.
+
+\paragraph{Anchoring in adjudication.}
+The adjudication interface displayed the deployed student's prediction
+and confidence alongside each disputed row. This is the anchoring
+setting documented by \citeauthor{schroeder2025humanloop}
+(\citeyear{schroeder2025humanloop}): our 479 ``human'' labels may be
+biased toward stu3c-family outputs, which matters because the same
+student family later produces the pseudo-labels being evaluated. We
+flag this as a known label-provenance weakness rather than claiming the
+adjudicated subset is unbiased.
+
+\paragraph{Summary of known weaknesses.}
+Before any model result is reported, the audit-relevant weaknesses of
+this data are: (i) gold-600 covers a single film page, so in-domain
+numbers have limited external validity; (ii) ood1000 is a development
+set---used for AL scale, teacher, epoch, and weight selection---with
+$\sim$69\% of its rows exposed to earlier corpus-derived training, and
+its adjudicated subset is anchoring-exposed; (iii) most benchmark labels
+are LLM consensus, whose inflation over adjudicated labels we quantify
+in Section~\ref{sec:results}; and (iv) the only planned clean test,
+human-400, is small and still in progress. Sections
+\ref{sec:method}--\ref{sec:results} quantify each of these.
