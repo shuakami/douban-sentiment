@@ -1,6 +1,7 @@
 # Weakly-Supervised Chinese Review Sentiment Classification at Scale
 
 [![Paper](https://img.shields.io/badge/Paper-PDF-blue)](thesis/thesis.pdf)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24072275-blue)](https://doi.org/10.5281/zenodo.24072275)
 [![Demo](https://img.shields.io/badge/Demo-HuggingFace%20Space-orange)](https://huggingface.co/spaces/Shuakami/douban-sentiment)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue)](requirements.txt)
 [![License](https://img.shields.io/badge/License-Research%20Only-lightgrey)](#license--data-note)
@@ -12,6 +13,8 @@ on a single GPU; includes a React/Vite web UI.
 
 📄 **[Paper (PDF, 26 pages)](thesis/thesis.pdf)** — method, experiments,
 statistical tests, out-of-distribution study.
+Archived on Zenodo: **[DOI 10.5281/zenodo.24072275](https://doi.org/10.5281/zenodo.24072275)**
+(EN + ZH PDFs and LaTeX source).
 **[Live demo](https://huggingface.co/spaces/Shuakami/douban-sentiment)** on Hugging Face Spaces.
 
 ## Abstract
@@ -243,11 +246,14 @@ If you use this work, please cite the paper:
 
 ```bibtex
 @misc{shuakami2026douban,
-  author = {Shuakami},
-  title  = {Weakly-Supervised Chinese Review Sentiment Classification at Scale:
-            Pseudo-Labeling and Specialist Decomposition},
-  year   = {2026},
-  note   = {Preprint. \url{https://github.com/shuakami/douban-sentiment/blob/main/thesis/thesis.pdf}},
+  author       = {Shuakami},
+  title        = {Weakly-Supervised Chinese Review Sentiment Classification at Scale:
+                  Pseudo-Labeling, Specialist Decomposition, and Honest
+                  Out-of-Distribution Evaluation},
+  year         = {2026},
+  doi          = {10.5281/zenodo.24072275},
+  url          = {https://doi.org/10.5281/zenodo.24072275},
+  note         = {Technical report. Code: \url{https://github.com/shuakami/douban-sentiment}},
 }
 ```
 
