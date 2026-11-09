@@ -40,6 +40,19 @@ ultra-short slang-only inputs, a rule-based lexicon guard overrides the
 ensemble (it never fires on gold-600). The binary task uses the same
 dep-blend without the specialist and a fixed 0.5 decision threshold.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig1_pipeline.pdf}
+\caption{Deployed three-class pipeline and its training-signal chain.
+Leak~A: the corpus neutral detector's labels descend from stu3c, a
+student fit on all 600 gold rows, so its gold predictions carry
+whole-set information. Leak~B: distillation soft targets
+($\alpha{=}0.5$) are produced by teacher channels whose folds overlap
+the student's validation fold. The $\alpha{=}1.0$ ablation removes the
+teacher term; the corpus-channel toggle bounds Leak~A.}
+\label{fig:pipeline}
+\end{figure}
+
 \subsection{Training signal chain}
 \label{sec:method:chain}
 
@@ -262,6 +275,16 @@ fresh500 labels are DeepSeek-Flash pseudo-labels.}
 \label{tab:ood-results}
 \end{table}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig2_provenance.pdf}
+\caption{Annotation-source composition of each evaluation split.
+Only gold-600 is fully human-labelled; ood1000's ``human'' share is
+20\% and anchoring-exposed; fresh500 and lab500 carry LLM-teacher
+labels throughout.}
+\label{fig:provenance}
+\end{figure}
+
 \subsection{Ablations and diagnostics}
 \label{sec:res-ablations}
 
@@ -333,26 +356,3 @@ would tighten the Leak~A bound ($\le$0.7pp at $\alpha{=}1.0$). Third,
 re-tuning fusion weights on clean channels could recover part of the
 5.5pp Leak~B inflation; until then, 83--84\% three-class and 92.9\%
 binary strict OOF are the numbers we stand behind.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{fig1_pipeline.pdf}
-\caption{Deployed three-class pipeline and its training-signal chain.
-Leak~A: the corpus neutral detector's labels descend from stu3c, a
-student fit on all 600 gold rows, so its gold predictions carry
-whole-set information. Leak~B: distillation soft targets
-($\alpha{=}0.5$) are produced by teacher channels whose folds overlap
-the student's validation fold. The $\alpha{=}1.0$ ablation removes the
-teacher term; the corpus-channel toggle bounds Leak~A.}
-\label{fig:pipeline}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{fig2_provenance.pdf}
-\caption{Annotation-source composition of each evaluation split.
-Only gold-600 is fully human-labelled; ood1000's ``human'' share is
-20\% and anchoring-exposed; fresh500 and lab500 carry LLM-teacher
-labels throughout.}
-\label{fig:provenance}
-\end{figure}
