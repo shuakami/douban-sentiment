@@ -71,15 +71,17 @@ Learning from noisy or programmatic labels is a mature paradigm:
 Snorkel \citep{ratner2017snorkel} formalised weak supervision through
 labelling functions, and self-training \citep{lee2013pseudo} and its
 noisy-student descendant \citep{xie2020selftraining} showed that a
-model's own confident predictions can bootstrap larger training sets.
-For noisy labels specifically, confident learning \citep{arazo2021pseudo}
-characterises which examples are likely mislabeled, and the ``Parrot
-Dilemma'' \citep{moller2024parrot} warns that LLM-generated pseudo-labels
-can degrade downstream models when teacher and student share inductive
-biases. Most of this literature reports in-distribution gains; our
-setting differs in that we audit the \emph{evaluation} itself---label
-provenance, train/test overlap, and selection bias---rather than only
-the training recipe.
+model's own confident predictions can bootstrap larger training sets;
+consistency-training variants such as UDA \citep{xie2020uda} extend the
+same principle. For noisy labels specifically, loss-correction
+\citep{arazo2021pseudo} and confident learning
+\citep{northcutt2021} characterise which examples are likely mislabeled,
+and the ``Parrot Dilemma'' \citep{moller2024parrot} warns that
+LLM-generated pseudo-labels can degrade downstream models when teacher
+and student share inductive biases. Most of this literature reports
+in-distribution gains; our setting differs in that we audit the
+\emph{evaluation} itself---label provenance, train/test overlap, and
+selection bias---rather than only the training recipe.
 
 \paragraph{LLM-assisted annotation.}
 Using LLMs as annotators or label proposers is now common, but two
@@ -91,21 +93,29 @@ our 479 human-adjudicated rows are explicitly exposed to this effect
 (Section~\ref{sec:data}). Second, agreement between two passes of the
 \emph{same} LLM reflects shared inductive bias rather than independent
 annotation; we therefore treat LLM two-pass consensus as a pseudo-label
-source, never as ground truth.
+source, never as ground truth. This caution is consistent with work on
+subjective annotation, where disagreement is informative rather than
+noise \citep{davani2022}, and with recent studies using LLM-generated
+responses as annotation substitutes \citep{zenimoto2024} or auditing
+LLM-assisted annotation pipelines \citep{neveditsin2025}.
 
 \paragraph{Evaluation integrity, contamination, and OOD benchmarks.}
 Data contamination in evaluation is increasingly documented for LLM
 benchmarks, with taxonomies distinguishing incidental exposure from
-targeted contamination \citep{sainz2023contamination}; our row-level
-content-ID audit is the text-classification analogue of those checks.
-For OOD evaluation, classical benchmarks such as \citeauthor{baran2023ood}
-(\citeyear{baran2023ood}) establish protocols we adapt, and
-\citeauthor{dror2018hitchhiker} (\citeyear{dror2018hitchhiker}) provide
-the statistical-testing discipline---McNemar tests, bootstrap intervals,
-Holm correction---that we apply to every comparison, including the
-comparisons made \emph{on} our contaminated development set. Unlike
-prior audits of released benchmarks, we audit a pipeline we built
-ourselves before publication.
+targeted contamination \citep{sainz2023contamination,balloccu2024}, and
+leakage more broadly is a recognised reproducibility hazard
+\citep{kapoor2023}; our row-level content-ID audit is the
+text-classification analogue of those checks. For OOD evaluation,
+classical detection baselines \citep{hendrycks2017} and benchmarks such
+as \citeauthor{baran2023ood} (\citeyear{baran2023ood}) establish
+protocols we adapt, and \citeauthor{dror2018hitchhiker}
+(\citeyear{dror2018hitchhiker}) provide the statistical-testing
+discipline---McNemar tests, bootstrap intervals, Holm correction---that
+we apply to every comparison, including the comparisons made \emph{on}
+our contaminated development set. Student-workshop precedents for
+audit-driven papers include reproducibility studies of released
+resources \citep{toossi2024}; unlike prior audits of released
+benchmarks, we audit a pipeline we built ourselves before publication.
 
 \paragraph{Chinese sentiment analysis.}
 Pre-trained encoders dominate Chinese sentiment work: MacBERT
@@ -242,6 +252,13 @@ humans under written guidelines. Annotation is ongoing; results will
 appear in the appendix.
 
 \subsection{Annotation quality: what the agreement numbers do and do not show}
+
+We report agreement following standard IAA practice
+\citep{artstein2008} and the reporting norms surveyed by
+\citeauthor{kunilovskaya2026} (\citeyear{kunilovskaya2026}) and
+\citeauthor{alkhalifa2026} (\citeyear{alkhalifa2026}); dataset
+documentation follows data-statement and datasheet conventions
+\citep{bender2018,gebru2021} (Appendix~\ref{app:ethics}).
 
 \paragraph{Human--reference agreement is blended, not pure.}
 A 200-row random subset of ood1000 was blind-labelled by a second human
