@@ -1586,17 +1586,24 @@ for non-commercial research only and claim no permission
 \citep{bender2018}. Repository hygiene was enforced by rewriting the
 git history (2026-11-09): reviewer identifiers (nick, IP address,
 timestamps, comment/user/movie IDs, vote counts) are stripped from
-all released records, and the $\sim$16K-row active-learning pool's
-raw text is \emph{not} redistributed. Approximately 4{,}600
-benchmark and evaluation review texts (gold-600, lab2000, fresh500,
-lab500, and synthetic rows) remain public with identifiers removed.
-No reviewer consent was obtained --- the texts are short public
-reviews --- and exposure was minimised accordingly; dataset
-documentation follows datasheet practice \citep{gebru2021}. Two
-external-processing disclosures: roughly 18{,}500 unique review texts
-were sent to the DeepSeek API for pseudo-labelling, and all 600 gold
+all released records. Following the upstream Moviedata-10M terms,
+which prohibit redistribution, the $\sim$4{,}600 benchmark and
+evaluation rows (gold-600, lab2000, fresh500, lab500) are released
+as labels, identifiers and SHA-256 text hashes rather than raw
+text; users may re-join source texts under the upstream license
+(synthetic augmentation rows remain in full). No reviewer consent
+was obtained --- the texts are short public reviews --- and exposure
+was minimised accordingly; dataset documentation follows datasheet
+practice \citep{gebru2021}. Two external-processing disclosures:
+roughly 18{,}500 unique review texts were sent to the DeepSeek API
+for pseudo-labelling --- DeepSeek's published privacy policy permits
+the provider to use de-identified inputs and outputs for service
+improvement, no zero-retention agreement was in place, and API data
+is stored in the People's Republic of China --- and all 600 gold
 texts were processed on Alibaba Cloud PAI for the platform
-comparison in Section~\ref{sec:analysis}.
+comparison in Section~\ref{sec:analysis}. Annotation was performed
+by the authors and one additional annotator on publicly posted,
+non-sensitive film reviews; users were not contacted.
 
 %=====================================================================
 \section{Conclusion and Future Work}
