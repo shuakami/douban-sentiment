@@ -84,10 +84,10 @@ for xi, (h, l) in enumerate(zip(human, llm)):
 ax.set_xticks(x); ax.set_xticklabels(sets, fontsize=6.8)
 ax.set_ylabel("label provenance (%)", fontsize=7.5)
 ax.set_ylim(0, 112)
-ax.legend(fontsize=6.5, loc="upper right", frameon=False)
-ax.set_title("Annotation-source composition of each split", fontsize=8)
+ax.legend(fontsize=5.8, loc="lower center", bbox_to_anchor=(0.5, 1.0),
+          ncol=2, frameon=False, handlelength=1.3, columnspacing=0.8)
 ax.spines[["top", "right"]].set_visible(False)
-fig.tight_layout()
+fig.subplots_adjust(top=0.78, bottom=0.16)
 fig.savefig(f"{OUT}/fig2_provenance.pdf")
 plt.close(fig)
 print("figures written")
