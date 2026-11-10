@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="24.04.0">
+<page number="8" position="absolute" top="0" left="0" height="1262" width="892">
+	<fontspec id="0" size="16" family="ZVBCSJ+NimbusRomNo9L-Medi" color="#000000"/>
+	<fontspec id="1" size="12" family="ALVSVR+NimbusSanL" color="#bfbfbf"/>
+	<fontspec id="2" size="16" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+	<fontspec id="3" size="16" family="BGLUUG+NimbusRomNo9L-ReguItal" color="#000000"/>
+	<fontspec id="4" size="16" family="GLIOIQ+NimbusRomNo9L-Regu" color="#00007f"/>
+	<fontspec id="5" size="16" family="DXHIMK+CMSY10" color="#000000"/>
+	<fontspec id="6" size="16" family="DUFNCW+CMR10" color="#000000"/>
+	<fontspec id="7" size="16" family="RLTXZD+CMMI10" color="#000000"/>
+	<fontspec id="8" size="12" family="TMCDBM+CMSY8" color="#000000"/>
+	<fontspec id="9" size="12" family="NMPDOC+CMR8" color="#000000"/>
+	<fontspec id="10" size="12" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+	<fontspec id="11" size="18" family="ZVBCSJ+NimbusRomNo9L-Medi" color="#000000"/>
+<text top="111" left="106" width="20" height="15" font="0">6.3</text>
+<text top="111" left="143" width="234" height="15" font="0">The clean human test: human400</text>
+<text top="114" left="18" width="20" height="11" font="1"><b>584</b></text>
+<text top="145" left="106" width="328" height="15" font="2">human400 is the only evaluation set in this paper</text>
+<text top="147" left="18" width="20" height="11" font="1"><b>585</b></text>
+<text top="165" left="106" width="30" height="15" font="2">with</text>
+<text top="165" left="141" width="28" height="14" font="3">zero</text>
+<text top="165" left="174" width="262" height="15" font="2">known training exposure and fully hu-</text>
+<text top="167" left="18" width="20" height="11" font="1"><b>586</b></text>
+<text top="185" left="106" width="327" height="15" font="2">man labels: 400 corpus reviews, length-stratified</text>
+<text top="188" left="18" width="20" height="11" font="1"><b>587</b></text>
+<text top="206" left="106" width="328" height="15" font="2">(160/120/80/40), sampled from the 911K pool with</text>
+<text top="208" left="18" width="20" height="11" font="1"><b>588</b></text>
+<text top="226" left="106" width="327" height="15" font="2">every known training and evaluation pool excluded</text>
+<text top="228" left="18" width="20" height="11" font="1"><b>589</b></text>
+<text top="246" left="106" width="328" height="15" font="2">by identifier, and blind-labelled by a single author</text>
+<text top="249" left="18" width="20" height="11" font="1"><b>590</b></text>
+<text top="267" left="106" width="245" height="15" font="2">under written guidelines (Appendix</text>
+<text top="267" left="358" width="12" height="15" font="4"><a href="pg8.html#11">D</a></text>
+<text top="267" left="370" width="66" height="15" font="2"><a href="pg8.html#11">). </a>Labels:</text>
+<text top="269" left="18" width="20" height="11" font="1"><b>591</b></text>
+<text top="287" left="105" width="330" height="15" font="2">156 positive / 179 neutral / 65 negative, with 31</text>
+<text top="289" left="18" width="20" height="11" font="1"><b>592</b></text>
+<text top="307" left="106" width="330" height="15" font="2">mixed, 29 off-topic, and 2 spoiler flags; single-</text>
+<text top="310" left="18" width="20" height="11" font="1"><b>593</b></text>
+<text top="328" left="106" width="320" height="15" font="2">annotator, so no human–human IAA is available.</text>
+<text top="330" left="18" width="20" height="11" font="1"><b>594</b></text>
+<text top="371" left="106" width="235" height="15" font="0">Deployed v3 on human labels.</text>
+<text top="371" left="357" width="76" height="15" font="2">v3 reaches</text>
+<text top="373" left="18" width="20" height="11" font="1"><b>595</b></text>
+<text top="391" left="106" width="327" height="15" font="2">55.8% three-class accuracy (macro-F1 55.4) and</text>
+<text top="394" left="18" width="20" height="11" font="1"><b>596</b></text>
+<text top="411" left="106" width="328" height="15" font="2">76.5% binary accuracy on the 221 non-neutral</text>
+<text top="414" left="18" width="20" height="11" font="1"><b>597</b></text>
+<text top="432" left="106" width="328" height="15" font="2">rows—far below its dev-set estimates and below</text>
+<text top="434" left="18" width="20" height="11" font="1"><b>598</b></text>
+<text top="452" left="106" width="327" height="15" font="2">its 58.8% on fresh500’s teacher labels. Per-class</text>
+<text top="455" left="18" width="20" height="11" font="1"><b>599</b></text>
+<text top="472" left="106" width="330" height="15" font="2">recall is balanced but low (positive 51.3%, neu-</text>
+<text top="475" left="18" width="20" height="11" font="1"><b>600</b></text>
+<text top="493" left="106" width="327" height="15" font="2">tral 50.3%, negative 81.5%); dominant errors are</text>
+<text top="495" left="18" width="20" height="11" font="1"><b>601</b></text>
+<text top="513" left="106" width="46" height="15" font="2">neutral</text>
+<text top="512" left="152" width="16" height="15" font="5">→</text>
+<text top="513" left="169" width="170" height="15" font="2">negative (66) and positive</text>
+<text top="512" left="339" width="16" height="15" font="5">→</text>
+<text top="513" left="355" width="82" height="15" font="2">neutral (45).</text>
+<text top="515" left="18" width="20" height="11" font="1"><b>602</b></text>
+<text top="533" left="106" width="329" height="15" font="2">Accuracy is flat across length strata (53.7–56.7%)</text>
+<text top="536" left="18" width="20" height="11" font="1"><b>603</b></text>
+<text top="554" left="106" width="327" height="15" font="2">but rises with model confidence (43.9% below 0.5</text>
+<text top="556" left="18" width="20" height="11" font="1"><b>604</b></text>
+<text top="574" left="106" width="75" height="15" font="2">to 67.9% at</text>
+<text top="573" left="185" width="13" height="15" font="5">≥</text>
+<text top="574" left="198" width="30" height="15" font="2">0.9).</text>
+<text top="576" left="18" width="20" height="11" font="1"><b>605</b></text>
+<text top="617" left="106" width="278" height="15" font="0">A star-rating lookup ties the ensemble.</text>
+<text top="617" left="400" width="36" height="15" font="2">Map-</text>
+<text top="620" left="18" width="20" height="11" font="1"><b>606</b></text>
+<text top="638" left="106" width="257" height="15" font="2">ping Douban star ratings to labels (4–5</text>
+<text top="636" left="363" width="16" height="15" font="5">→</text>
+<text top="638" left="380" width="56" height="15" font="2">positive,</text>
+<text top="640" left="18" width="20" height="11" font="1"><b>607</b></text>
+<text top="658" left="106" width="8" height="15" font="2">3</text>
+<text top="657" left="115" width="16" height="15" font="5">→</text>
+<text top="658" left="131" width="51" height="15" font="2">neutral,</text>
+<text top="658" left="199" width="25" height="15" font="2">1–2</text>
+<text top="657" left="224" width="16" height="15" font="5">→</text>
+<text top="658" left="240" width="132" height="15" font="2">negative) achieves</text>
+<text top="658" left="387" width="47" height="14" font="3">exactly</text>
+<text top="660" left="18" width="20" height="11" font="1"><b>608</b></text>
+<text top="678" left="106" width="327" height="15" font="2">55.75%—the same 223/400 correct as v3—while</text>
+<text top="681" left="18" width="20" height="11" font="1"><b>609</b></text>
+<text top="698" left="106" width="330" height="15" font="2">the systems agree on only 44.3% of rows. A triv-</text>
+<text top="701" left="18" width="20" height="11" font="1"><b>610</b></text>
+<text top="719" left="106" width="166" height="15" font="2">ial binary rating rule (1–2</text>
+<text top="718" left="272" width="16" height="15" font="5">→</text>
+<text top="719" left="288" width="146" height="15" font="2">negative, else positive)</text>
+<text top="721" left="18" width="20" height="11" font="1"><b>611</b></text>
+<text top="739" left="106" width="329" height="15" font="2">reaches 83.7%, exceeding v3’s 76.5%. Per-rating,</text>
+<text top="742" left="18" width="20" height="11" font="1"><b>612</b></text>
+<text top="759" left="106" width="327" height="15" font="2">only 62.7% of 5-star and 50.7% of 4-star reviews</text>
+<text top="762" left="18" width="20" height="11" font="1"><b>613</b></text>
+<text top="780" left="106" width="327" height="15" font="2">are human-positive; stars encode recommendation</text>
+<text top="782" left="18" width="20" height="11" font="1"><b>614</b></text>
+<text top="800" left="106" width="327" height="15" font="2">intent, not semantic stance. On gold-600 the same</text>
+<text top="803" left="18" width="20" height="11" font="1"><b>615</b></text>
+<text top="820" left="106" width="327" height="15" font="2">rule scored 71.3%; on this noisier corpus sample it</text>
+<text top="823" left="18" width="20" height="11" font="1"><b>616</b></text>
+<text top="841" left="106" width="95" height="15" font="2">falls to 55.8%.</text>
+<text top="843" left="18" width="20" height="11" font="1"><b>617</b></text>
+<text top="884" left="106" width="330" height="15" font="0">The AL mixture generalizes to human labels.</text>
+<text top="886" left="18" width="20" height="11" font="1"><b>618</b></text>
+<text top="904" left="106" width="328" height="15" font="2">The decisive comparison is the frozen-weight al17k</text>
+<text top="907" left="18" width="20" height="11" font="1"><b>619</b></text>
+<text top="925" left="106" width="69" height="15" font="2">mixture <a href="pg8.html#6">(§</a></text>
+<text top="925" left="175" width="8" height="15" font="4"><a href="pg8.html#6">5</a></text>
+<text top="925" left="183" width="10" height="15" font="2"><a href="pg8.html#6">):</a></text>
+<text top="924" left="199" width="45" height="15" font="0">66.3%</text>
+<text top="925" left="248" width="189" height="15" font="2">three-class accuracy (macro-</text>
+<text top="927" left="18" width="20" height="11" font="1"><b>620</b></text>
+<text top="945" left="106" width="58" height="15" font="2">F1 65.0),</text>
+<text top="945" left="168" width="29" height="15" font="6">+10</text>
+<text top="945" left="197" width="5" height="15" font="7">.</text>
+<text top="945" left="201" width="8" height="15" font="6">5</text>
+<text top="945" left="210" width="141" height="15" font="2">pp over v3 (McNemar</text>
+<text top="945" left="354" width="8" height="15" font="7">p</text>
+<text top="945" left="362" width="21" height="15" font="6">=2</text>
+<text top="944" left="383" width="13" height="15" font="5">×</text>
+<text top="945" left="396" width="16" height="15" font="6">10</text>
+<text top="941" left="412" width="10" height="11" font="8">−</text>
+<text top="942" left="422" width="6" height="11" font="9">4</text>
+<text top="945" left="429" width="5" height="15" font="2">)</text>
+<text top="947" left="18" width="20" height="11" font="1"><b>621</b></text>
+<text top="965" left="106" width="150" height="15" font="2">and the star lookup (</text>
+<text top="965" left="256" width="8" height="15" font="7">p</text>
+<text top="965" left="264" width="21" height="15" font="6">=1</text>
+<text top="965" left="285" width="5" height="15" font="7">.</text>
+<text top="965" left="290" width="8" height="15" font="6">6</text>
+<text top="964" left="298" width="13" height="15" font="5">×</text>
+<text top="965" left="311" width="16" height="15" font="6">10</text>
+<text top="961" left="327" width="10" height="11" font="8">−</text>
+<text top="962" left="337" width="6" height="11" font="9">3</text>
+<text top="965" left="344" width="90" height="15" font="2">); the frozen</text>
+<text top="968" left="18" width="20" height="11" font="1"><b>622</b></text>
+<text top="985" left="106" width="12" height="15" font="7">w</text>
+<text top="991" left="118" width="12" height="11" font="10">sft</text>
+<text top="985" left="131" width="21" height="15" font="6">=0</text>
+<text top="985" left="152" width="5" height="15" font="7">.</text>
+<text top="985" left="156" width="8" height="15" font="6">6</text>
+<text top="986" left="169" width="265" height="15" font="2">is also optimal here and per-seed mixes</text>
+<text top="988" left="18" width="20" height="11" font="1"><b>623</b></text>
+<text top="1006" left="106" width="193" height="15" font="2">are stable (63.5–66.0%). This</text>
+<text top="1006" left="303" width="53" height="14" font="3">reverses</text>
+<text top="1006" left="361" width="76" height="15" font="2">the teacher-</text>
+<text top="1008" left="18" width="20" height="11" font="1"><b>624</b></text>
+<text top="1026" left="106" width="327" height="15" font="2">alignment worry from the adjudicated subset: on</text>
+<text top="1029" left="18" width="20" height="11" font="1"><b>625</b></text>
+<text top="1047" left="106" width="327" height="15" font="2">uncontaminated human labels the AL gains are</text>
+<text top="1049" left="18" width="20" height="11" font="1"><b>626</b></text>
+<text top="1067" left="106" width="159" height="15" font="2">genuine generalization.</text>
+<text top="1067" left="281" width="152" height="15" font="2">Caveats: accuracy on</text>
+<text top="1069" left="18" width="20" height="11" font="1"><b>627</b></text>
+<text top="1087" left="106" width="117" height="15" font="2">annotator-flagged</text>
+<text top="1087" left="229" width="40" height="14" font="3">mixed</text>
+<text top="1087" left="274" width="160" height="15" font="2">reviews drops below v3</text>
+<text top="1090" left="18" width="20" height="11" font="1"><b>628</b></text>
+<text top="1108" left="106" width="118" height="15" font="2">(40.0% vs. 53.3%,</text>
+<text top="1107" left="228" width="10" height="15" font="7">n</text>
+<text top="1107" left="238" width="29" height="15" font="6">=30</text>
+<text top="1108" left="267" width="167" height="15" font="2">), and the absolute level is</text>
+<text top="1110" left="18" width="20" height="11" font="1"><b>629</b></text>
+<text top="1128" left="106" width="328" height="15" font="2">modest under a single-annotator reference. Binary</text>
+<text top="1130" left="18" width="20" height="11" font="1"><b>630</b></text>
+<text top="1148" left="106" width="260" height="15" font="2">evaluation on the 221 non-neutral rows:</text>
+<text top="1151" left="18" width="20" height="11" font="1"><b>631</b></text>
+<text top="111" left="459" width="20" height="15" font="0">6.4</text>
+<text top="111" left="496" width="179" height="15" font="0">Ablations and diagnostics</text>
+<text top="114" left="850" width="20" height="11" font="1"><b>632</b></text>
+<text top="139" left="459" width="66" height="15" font="2">Appendix</text>
+<text top="139" left="532" width="11" height="15" font="4"><a href="pg8.html#11">C</a></text>
+<text top="139" left="552" width="238" height="15" font="2">collects the statistical diagnostics.</text>
+<text top="142" left="850" width="20" height="11" font="1"><b>633</b></text>
+<text top="160" left="459" width="328" height="15" font="2">AL scaling from 1K to 17K improves the best</text>
+<text top="162" left="850" width="20" height="11" font="1"><b>634</b></text>
+<text top="180" left="459" width="327" height="15" font="2">measured configuration, but adjacent steps are</text>
+<text top="182" left="850" width="20" height="11" font="1"><b>635</b></text>
+<text top="200" left="459" width="264" height="15" font="2">within noise (al17k vs. al14k: McNemar</text>
+<text top="200" left="726" width="8" height="15" font="7">p</text>
+<text top="200" left="735" width="21" height="15" font="6">=0</text>
+<text top="200" left="756" width="5" height="15" font="7">.</text>
+<text top="200" left="760" width="25" height="15" font="6">064</text>
+<text top="200" left="785" width="4" height="15" font="2">,</text>
+<text top="203" left="850" width="20" height="11" font="1"><b>636</b></text>
+<text top="220" left="459" width="38" height="15" font="2">Holm</text>
+<text top="220" left="504" width="8" height="15" font="7">p</text>
+<text top="219" left="512" width="13" height="15" font="5">≈</text>
+<text top="220" left="525" width="8" height="15" font="6">0</text>
+<text top="220" left="533" width="5" height="15" font="7">.</text>
+<text top="220" left="538" width="16" height="15" font="6">45</text>
+<text top="220" left="554" width="233" height="15" font="2">), so our honest claim is “17K is</text>
+<text top="223" left="850" width="20" height="11" font="1"><b>637</b></text>
+<text top="241" left="459" width="330" height="15" font="2">at least as good as 14K”; every mix’s advan-</text>
+<text top="243" left="850" width="20" height="11" font="1"><b>638</b></text>
+<text top="261" left="459" width="330" height="15" font="2">tage over v3 remains significant after correction.</text>
+<text top="264" left="850" width="20" height="11" font="1"><b>639</b></text>
+<text top="281" left="459" width="50" height="15" font="2">The v2</text>
+<text top="280" left="508" width="16" height="15" font="5">→</text>
+<text top="281" left="525" width="265" height="15" font="2">v3 specialist gain is positive but non-</text>
+<text top="284" left="850" width="20" height="11" font="1"><b>640</b></text>
+<text top="302" left="459" width="76" height="15" font="2">significant (</text>
+<text top="302" left="535" width="14" height="15" font="6">∆</text>
+<text top="302" left="549" width="62" height="15" font="2">macro-F1</text>
+<text top="302" left="615" width="21" height="15" font="6">+1</text>
+<text top="302" left="636" width="5" height="15" font="7">.</text>
+<text top="302" left="641" width="8" height="15" font="6">6</text>
+<text top="302" left="649" width="138" height="15" font="2">pp; bootstrap 95% CI</text>
+<text top="304" left="850" width="20" height="11" font="1"><b>641</b></text>
+<text top="322" left="459" width="5" height="15" font="6">[</text>
+<text top="321" left="464" width="13" height="15" font="5">−</text>
+<text top="322" left="476" width="8" height="15" font="6">0</text>
+<text top="322" left="485" width="5" height="15" font="7">.</text>
+<text top="322" left="489" width="8" height="15" font="6">4</text>
+<text top="322" left="497" width="5" height="15" font="7">,</text>
+<text top="322" left="505" width="21" height="15" font="6">+3</text>
+<text top="322" left="526" width="5" height="15" font="7">.</text>
+<text top="322" left="530" width="13" height="15" font="6">8]</text>
+<text top="322" left="543" width="244" height="15" font="2">pp). Length stratification shows the</text>
+<text top="325" left="850" width="20" height="11" font="1"><b>642</b></text>
+<text top="342" left="459" width="83" height="15" font="2">OOD drop is</text>
+<text top="343" left="547" width="21" height="14" font="3">not</text>
+<text top="342" left="572" width="216" height="15" font="2">a short-text artifact—v3 accuracy</text>
+<text top="345" left="850" width="20" height="11" font="1"><b>643</b></text>
+<text top="363" left="459" width="327" height="15" font="2">is flat across ood1000 length buckets while neutral</text>
+<text top="365" left="850" width="20" height="11" font="1"><b>644</b></text>
+<text top="383" left="459" width="220" height="15" font="2">recall collapses with length (51.1</text>
+<text top="382" left="679" width="16" height="15" font="5">→</text>
+<text top="383" left="695" width="94" height="15" font="2">33.3%). Inter-</text>
+<text top="386" left="850" width="20" height="11" font="1"><b>645</b></text>
+<text top="403" left="459" width="147" height="15" font="2">annotator agreement is</text>
+<text top="403" left="611" width="9" height="15" font="7">κ</text>
+<text top="403" left="620" width="21" height="15" font="6">=0</text>
+<text top="403" left="641" width="5" height="15" font="7">.</text>
+<text top="403" left="646" width="25" height="15" font="6">568</text>
+<text top="403" left="674" width="57" height="15" font="2">against a</text>
+<text top="404" left="735" width="51" height="14" font="3">blended</text>
+<text top="406" left="850" width="20" height="11" font="1"><b>646</b></text>
+<text top="424" left="459" width="330" height="15" font="2">human/LLM reference only; the per-row second-</text>
+<text top="426" left="850" width="20" height="11" font="1"><b>647</b></text>
+<text top="444" left="459" width="210" height="15" font="2">human file was never preserved.</text>
+<text top="446" left="850" width="20" height="11" font="1"><b>648</b></text>
+<text top="480" left="459" width="20" height="15" font="0">6.5</text>
+<text top="480" left="496" width="280" height="15" font="0">Negative results and what would change</text>
+<text top="482" left="850" width="20" height="11" font="1"><b>649</b></text>
+<text top="500" left="496" width="109" height="15" font="0">our conclusions</text>
+<text top="503" left="850" width="20" height="11" font="1"><b>650</b></text>
+<text top="528" left="459" width="305" height="15" font="2">Over twenty variants were rejected (Appendix</text>
+<text top="528" left="768" width="10" height="15" font="4"><a href="pg8.html#12">E</a></text>
+<text top="528" left="778" width="10" height="15" font="2"><a href="pg8.html#12">);</a></text>
+<text top="530" left="850" width="20" height="11" font="1"><b>651</b></text>
+<text top="548" left="459" width="327" height="15" font="2">the audit-relevant ones: LoRA underperformed the</text>
+<text top="551" left="850" width="20" height="11" font="1"><b>652</b></text>
+<text top="568" left="459" width="330" height="15" font="2">deployed heads; Qwen3-4B synthetic reviews poi-</text>
+<text top="571" left="850" width="20" height="11" font="1"><b>653</b></text>
+<text top="589" left="459" width="330" height="15" font="2">soned training (OOF 0.7917); a second pseudo-</text>
+<text top="591" left="850" width="20" height="11" font="1"><b>654</b></text>
+<text top="609" left="459" width="327" height="15" font="2">label flywheel degenerated (confidence 0.986); a</text>
+<text top="612" left="850" width="20" height="11" font="1"><b>655</b></text>
+<text top="629" left="459" width="327" height="15" font="2">stacked meta-learner reached only 0.8367/0.7936</text>
+<text top="632" left="850" width="20" height="11" font="1"><b>656</b></text>
+<text top="650" left="459" width="6" height="15" font="2">(</text>
+<text top="649" left="464" width="10" height="15" font="7">n</text>
+<text top="649" left="474" width="37" height="15" font="6">=600</text>
+<text top="650" left="511" width="10" height="15" font="2">).</text>
+<text top="650" left="542" width="245" height="15" font="2">A later five-seed binary ensemble</text>
+<text top="652" left="850" width="20" height="11" font="1"><b>657</b></text>
+<text top="670" left="459" width="124" height="15" font="2">(91.98%) evaluated</text>
+<text top="670" left="586" width="30" height="14" font="3">after</text>
+<text top="670" left="621" width="169" height="15" font="2">the adopted four-seed sub-</text>
+<text top="673" left="850" width="20" height="11" font="1"><b>658</b></text>
+<text top="690" left="459" width="327" height="15" font="2">set (92.27%) was not adopted—direct evidence that</text>
+<text top="693" left="850" width="20" height="11" font="1"><b>659</b></text>
+<text top="711" left="459" width="264" height="15" font="2">headline selection operated on ood1000.</text>
+<text top="713" left="850" width="20" height="11" font="1"><b>660</b></text>
+<text top="732" left="476" width="314" height="15" font="2">Three outcomes would further change our con-</text>
+<text top="734" left="850" width="20" height="11" font="1"><b>661</b></text>
+<text top="752" left="459" width="330" height="15" font="2">clusions: a fold-isolated corpus detector (tighten-</text>
+<text top="754" left="850" width="20" height="11" font="1"><b>662</b></text>
+<text top="772" left="459" width="327" height="15" font="2">ing the Leak A bound), fusion weights re-tuned</text>
+<text top="775" left="850" width="20" height="11" font="1"><b>663</b></text>
+<text top="793" left="459" width="327" height="15" font="2">on clean channels (recovering part of the 5.5pp</text>
+<text top="795" left="850" width="20" height="11" font="1"><b>664</b></text>
+<text top="813" left="459" width="330" height="15" font="2">Leak B inflation), and a second annotator on hu-</text>
+<text top="815" left="850" width="20" height="11" font="1"><b>665</b></text>
+<text top="833" left="459" width="327" height="15" font="2">man400 (upgrading our single-reference evaluation</text>
+<text top="836" left="850" width="20" height="11" font="1"><b>666</b></text>
+<text top="854" left="459" width="327" height="15" font="2">to IAA-backed). Until then, 83–84% three-class</text>
+<text top="856" left="850" width="20" height="11" font="1"><b>667</b></text>
+<text top="874" left="459" width="327" height="15" font="2">and 92.9% binary strict OOF are the numbers we</text>
+<text top="876" left="850" width="20" height="11" font="1"><b>668</b></text>
+<text top="894" left="459" width="198" height="15" font="2">stand behind, and the mixture’s</text>
+<text top="894" left="661" width="29" height="15" font="6">+10</text>
+<text top="894" left="690" width="5" height="15" font="7">.</text>
+<text top="894" left="694" width="8" height="15" font="6">5</text>
+<text top="894" left="703" width="84" height="15" font="2">pp advantage</text>
+<text top="897" left="850" width="20" height="11" font="1"><b>669</b></text>
+<text top="915" left="459" width="327" height="15" font="2">over v3 and the star lookup on clean human labels</text>
+<text top="917" left="850" width="20" height="11" font="1"><b>670</b></text>
+<text top="935" left="459" width="14" height="15" font="2"><a href="pg8.html#8">(§</a></text>
+<text top="935" left="472" width="20" height="15" font="4"><a href="pg8.html#8">6.3</a></text>
+<text top="935" left="493" width="235" height="15" font="2"><a href="pg8.html#8">) </a>is the result we would defend first.</text>
+<text top="937" left="850" width="20" height="11" font="1"><b>671</b></text>
+<text top="972" left="459" width="9" height="16" font="11">7</text>
+<text top="972" left="486" width="301" height="16" font="11">Limitations and Ethical Considerations</text>
+<text top="975" left="850" width="20" height="11" font="1"><b>672</b></text>
+<text top="1006" left="459" width="243" height="15" font="0">Data provenance and terms of use.</text>
+<text top="1006" left="718" width="69" height="15" font="2">All review</text>
+<text top="1008" left="850" width="20" height="11" font="1"><b>673</b></text>
+<text top="1026" left="459" width="330" height="15" font="2">texts are Douban user comments used without plat-</text>
+<text top="1029" left="850" width="20" height="11" font="1"><b>674</b></text>
+<text top="1047" left="459" width="327" height="15" font="2">form authorization. The gold-600 set was scraped</text>
+<text top="1049" left="850" width="20" height="11" font="1"><b>675</b></text>
+<text top="1067" left="459" width="327" height="15" font="2">from a single film page; the corpus derives from the</text>
+<text top="1069" left="850" width="20" height="11" font="1"><b>676</b></text>
+<text top="1087" left="459" width="278" height="15" font="2">Moviedata-10M release. We release only</text>
+<text top="1086" left="742" width="13" height="15" font="5">≈</text>
+<text top="1087" left="754" width="33" height="15" font="2">5.0K</text>
+<text top="1090" left="850" width="20" height="11" font="1"><b>677</b></text>
+<text top="1108" left="459" width="329" height="15" font="2">evaluation reviews with user identifiers stripped,</text>
+<text top="1110" left="850" width="20" height="11" font="1"><b>678</b></text>
+<text top="1128" left="459" width="327" height="15" font="2">for research purposes. Roughly 18.5K unique texts</text>
+<text top="1130" left="850" width="20" height="11" font="1"><b>679</b></text>
+<text top="1148" left="459" width="328" height="15" font="2">were transmitted to the DeepSeek API for teacher</text>
+<text top="1151" left="850" width="20" height="11" font="1"><b>680</b></text>
+<text top="1193" left="442" width="8" height="15" font="2">8</text>
+</page>
+<outline>
+<item page="1">Introduction</item>
+<item page="2">Related Work</item>
+<item page="3">Dataset and Annotation</item>
+<outline>
+<item page="3">Overview</item>
+<item page="3">Gold-600: human labels and the star-rating gap</item>
+<item page="3">Weakly-labelled corpus</item>
+<item page="3">LLM-assisted benchmarks: lab2000 and successors</item>
+<item page="4">Annotation quality: what the agreement numbers do and do not show</item>
+</outline>
+<item page="5">Methodology</item>
+<outline>
+<item page="5">System overview</item>
+<item page="5">Training signal chain</item>
+<item page="5">Audit methodology</item>
+</outline>
+<item page="6">Experimental Setup</item>
+<item page="6">Results and Analysis</item>
+<outline>
+<item page="6">Headline correction: what the audit removed</item>
+<item page="6">Out-of-distribution evaluation under selection and provenance</item>
+<item page="8">The clean human test: human400</item>
+<item page="8">Ablations and diagnostics</item>
+<item page="8">Negative results and what would change our conclusions</item>
+</outline>
+<item page="8">Limitations and Ethical Considerations</item>
+<item page="9">Conclusion</item>
+<item page="10">Audit Methodology Details</item>
+<outline>
+<item page="10">OOF independence taxonomy</item>
+<item page="11">Row-level overlap audit</item>
+</outline>
+<item page="11">Full Configuration Pool</item>
+<item page="11">Audit Diagnostics and Ablations</item>
+<item page="11">Annotation Protocol and Guidelines</item>
+<outline>
+<item page="11">Gold-600</item>
+<item page="12">lab2000 / AL adjudication</item>
+<item page="12">New 400-item held-out set</item>
+</outline>
+<item page="12">Complete Negative-Results List</item>
+<item page="12">Ethics Statement and Data Availability</item>
+</outline>
+</pdf2xml>

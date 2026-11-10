@@ -109,6 +109,13 @@ def main():
 
     print("\n=== binary (non-neutral only) ===")
     print("v3 alone      :", met(pvb, ybb))
+    qwen_path = OUT / "qwen3_4b_human400_probs.npy"
+    if qwen_path.exists():
+        pq = np.load(qwen_path)
+        print("Qwen3-4B 3c   :", met(pq, y3), perclass3(pq, y3))
+        print("Qwen vs mix   :", mcnemar(y3, pq.argmax(1),
+                                     (0.6 * pm3 + 0.4 * pv3).argmax(1))
+              if pm3 is not None else "n/a")
     if pmb is not None:
         for w in (0.3, 0.4, 0.5, 0.6, 0.7):
             print(f"  w_sft={w}:", met(w * pmb + (1 - w) * pvb, ybb))

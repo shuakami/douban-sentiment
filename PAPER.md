@@ -1,5 +1,16 @@
 # Weak Supervision at Scale for Chinese Review Sentiment: A Pseudo-Labeling and Specialist-Decomposition Study
 
+> **Post-audit notice (NAACL 2027 SRW).** This document is the original
+> project report and predates our evaluation audit. Headline numbers
+> below (89.5%/95.9% OOF, 77.1% OOD mix, ood1000-as-test framing) are
+> **superseded**: second-order teacher leakage inflates them by up to
+> +5.5pp, ood1000 is a development/selection set (not a held-out test),
+> and ~13% of its rows appear in a deployed channel's training data.
+> Corrected strict OOF is ≈83–84% (3-class) / 92.9% (binary), and the
+> decisive zero-contamination human test is `data/human400_labels.jsonl`
+> (400 blind single-annotator labels). See `paper/` for the audited
+> write-up.
+
 *Course project report — Douban short-review sentiment classification.*
 
 ## Abstract

@@ -1,0 +1,1434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="24.04.0">
+<page number="5" position="absolute" top="0" left="0" height="1262" width="892">
+	<fontspec id="0" size="5" family="ITWKAR+DejaVuSerif" color="#374151"/>
+	<fontspec id="1" size="4" family="CDTRYZ+DejaVuSerif" color="#000000"/>
+	<fontspec id="2" size="4" family="FJAXVZ+DejaVuSerif" color="#000000"/>
+	<fontspec id="3" size="4" family="CDTRYZ+DejaVuSerif" color="#dc2626"/>
+	<fontspec id="4" size="4" family="FJAXVZ+DejaVuSerif" color="#dc2626"/>
+	<fontspec id="5" size="15" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+	<fontspec id="6" size="15" family="RLTXZD+CMMI10" color="#000000"/>
+	<fontspec id="7" size="15" family="DUFNCW+CMR10" color="#000000"/>
+	<fontspec id="8" size="16" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+	<fontspec id="9" size="16" family="GLIOIQ+NimbusRomNo9L-Regu" color="#00007f"/>
+	<fontspec id="10" size="12" family="ALVSVR+NimbusSanL" color="#bfbfbf"/>
+	<fontspec id="11" size="18" family="ZVBCSJ+NimbusRomNo9L-Medi" color="#000000"/>
+	<fontspec id="12" size="16" family="ZVBCSJ+NimbusRomNo9L-Medi" color="#000000"/>
+	<fontspec id="13" size="16" family="BGLUUG+NimbusRomNo9L-ReguItal" color="#000000"/>
+	<fontspec id="14" size="16" family="RLTXZD+CMMI10" color="#000000"/>
+	<fontspec id="15" size="12" family="ZGALHK+CMMI8" color="#000000"/>
+	<fontspec id="16" size="16" family="DUFNCW+CMR10" color="#000000"/>
+	<fontspec id="17" size="12" family="NMPDOC+CMR8" color="#000000"/>
+	<fontspec id="18" size="12" family="TMCDBM+CMSY8" color="#000000"/>
+	<fontspec id="19" size="16" family="MCCKRK+CMEX10" color="#000000"/>
+	<fontspec id="20" size="16" family="DXHIMK+CMSY10" color="#000000"/>
+<text top="113" left="119" width="45" height="6" font="0"><b>Training signals</b></text>
+<text top="113" left="199" width="44" height="6" font="0"><b>Model channels</b></text>
+<text top="113" left="304" width="41" height="6" font="0"><b>Neutral expert</b></text>
+<text top="113" left="390" width="20" height="6" font="0"><b>Output</b></text>
+<text top="136" left="131" width="21" height="5" font="1">Gold-600</text>
+<text top="142" left="121" width="40" height="5" font="1">600 human labels</text>
+<text top="171" left="127" width="29" height="5" font="1">911K corpus</text>
+<text top="176" left="114" width="56" height="5" font="1">star-rule + stu3c pseudo</text>
+<text top="206" left="132" width="20" height="5" font="1">AL pools</text>
+<text top="211" left="122" width="40" height="5" font="1">~17K LLM labels</text>
+<text top="136" left="200" width="41" height="5" font="1">MacBERT student</text>
+<text top="142" left="214" width="14" height="5" font="1">(w=1)</text>
+<text top="171" left="199" width="44" height="5" font="1">MegatronBERT-1.3B</text>
+<text top="176" left="195" width="53" height="5" font="1">frozen MLP judge (w=2)</text>
+<text top="145" left="281" width="32" height="5" font="1">pn = 0.6·head\</text>
+<text top="150" left="282" width="29" height="5" font="1">+ 0.4·corpus\</text>
+<text top="155" left="281" width="30" height="5" font="1">(w=0.5 blend)</text>
+<text top="195" left="281" width="32" height="5" font="1">dep = (s+2j)/3</text>
+<text top="201" left="284" width="11" height="5" font="1">spec </text>
+<text top="201" left="295" width="4" height="5" font="2">→</text>
+<text top="201" left="299" width="1" height="5" font="1"> </text>
+<text top="201" left="300" width="3" height="5" font="2">fi</text>
+<text top="201" left="303" width="7" height="5" font="1">nal</text>
+<text top="175" left="363" width="15" height="5" font="1">3-class</text>
+<text top="180" left="353" width="34" height="5" font="1">(+ binary head,</text>
+<text top="185" left="354" width="32" height="5" font="1">lexicon guard)</text>
+<text top="235" left="158" width="44" height="5" font="3">Leak B: soft targets (</text>
+<text top="235" left="202" width="3" height="5" font="4">α</text>
+<text top="235" left="205" width="52" height="5" font="3">=0.5) carry val-fold info </text>
+<text top="235" left="257" width="3" height="5" font="4">→</text>
+<text top="235" left="260" width="1" height="5" font="3"> </text>
+<text top="235" left="261" width="3" height="5" font="4">α</text>
+<text top="235" left="264" width="29" height="5" font="3">=1.0 removes</text>
+<text top="235" left="240" width="66" height="5" font="3">Leak A: corpus detector labels </text>
+<text top="235" left="306" width="3" height="5" font="4">←</text>
+<text top="235" left="309" width="14" height="5" font="3"> stu3c </text>
+<text top="235" left="323" width="3" height="5" font="4">←</text>
+<text top="235" left="327" width="26" height="5" font="3"> all 600 gold</text>
+<text top="261" left="106" width="330" height="13" font="5">Figure 1: Deployed three-class pipeline and its training-</text>
+<text top="279" left="106" width="327" height="13" font="5">signal chain. Leak A: the corpus neutral detector’s labels</text>
+<text top="297" left="106" width="327" height="13" font="5">descend from stu3c, a student fit on all 600 gold rows, so</text>
+<text top="315" left="106" width="329" height="13" font="5">its gold predictions carry whole-set information. Leak B:</text>
+<text top="333" left="106" width="139" height="13" font="5">distillation soft targets (</text>
+<text top="333" left="245" width="10" height="13" font="6">α</text>
+<text top="333" left="255" width="19" height="13" font="7">=0</text>
+<text top="333" left="274" width="4" height="13" font="6">.</text>
+<text top="333" left="278" width="7" height="13" font="7">5</text>
+<text top="333" left="286" width="148" height="13" font="5">) are produced by teacher</text>
+<text top="351" left="106" width="327" height="13" font="5">channels whose folds overlap the student’s validation</text>
+<text top="369" left="106" width="55" height="13" font="5">fold. The</text>
+<text top="369" left="165" width="10" height="13" font="6">α</text>
+<text top="369" left="175" width="19" height="13" font="7">=1</text>
+<text top="369" left="194" width="4" height="13" font="6">.</text>
+<text top="369" left="198" width="7" height="13" font="7">0</text>
+<text top="369" left="209" width="225" height="13" font="5">ablation removes the teacher term; the</text>
+<text top="387" left="106" width="231" height="13" font="5">corpus-channel toggle bounds Leak A.</text>
+<text top="438" left="106" width="280" height="15" font="8">adjudicated labels we quantify in Section</text>
+<text top="438" left="391" width="8" height="15" font="9"><a href="pgs.html#6">6</a></text>
+<text top="438" left="399" width="34" height="15" font="8"><a href="pgs.html#6">; </a>and</text>
+<text top="441" left="18" width="20" height="11" font="10"><b>358</b></text>
+<text top="459" left="106" width="331" height="15" font="8">(iv) the only clean test, human-400, carries single-</text>
+<text top="461" left="18" width="20" height="11" font="10"><b>359</b></text>
+<text top="479" left="106" width="327" height="15" font="8">annotator labels with no measurable IAA. Sections</text>
+<text top="482" left="18" width="20" height="11" font="10"><b>360</b></text>
+<text top="499" left="106" width="8" height="15" font="9"><a href="pgs.html#5">4</a></text>
+<text top="499" left="114" width="8" height="15" font="8"><a href="pgs.html#5">–</a></text>
+<text top="499" left="122" width="8" height="15" font="9"><a href="pgs.html#6">6</a></text>
+<text top="499" left="134" width="148" height="15" font="8">quantify each of these.</text>
+<text top="502" left="18" width="20" height="11" font="10"><b>361</b></text>
+<text top="535" left="106" width="9" height="16" font="11">4</text>
+<text top="535" left="133" width="101" height="16" font="11">Methodology</text>
+<text top="539" left="18" width="20" height="11" font="10"><b>362</b></text>
+<text top="569" left="106" width="20" height="15" font="12">4.1</text>
+<text top="569" left="143" width="116" height="15" font="12">System overview</text>
+<text top="572" left="18" width="20" height="11" font="10"><b>363</b></text>
+<text top="596" left="106" width="327" height="15" font="8">Our deployed system is a two-channel ensemble</text>
+<text top="599" left="18" width="20" height="11" font="10"><b>364</b></text>
+<text top="617" left="106" width="231" height="15" font="8">over Chinese review text (Figure</text>
+<text top="617" left="345" width="8" height="15" font="9"><a href="pgs.html#5">1</a></text>
+<text top="617" left="353" width="10" height="15" font="8"><a href="pgs.html#5">).</a></text>
+<text top="617" left="378" width="26" height="15" font="8">The</text>
+<text top="617" left="411" width="25" height="14" font="13">stu-</text>
+<text top="619" left="18" width="20" height="11" font="10"><b>365</b></text>
+<text top="637" left="106" width="29" height="14" font="13">dent</text>
+<text top="637" left="142" width="83" height="15" font="8">channel is a</text>
+<text top="637" left="231" width="168" height="14" font="13">hfl/chinese-macbert-base</text>
+<text top="637" left="405" width="32" height="15" font="8">clas-</text>
+<text top="639" left="18" width="20" height="11" font="10"><b>366</b></text>
+<text top="657" left="106" width="41" height="15" font="8">sifier <a href="pgs.html#9">(</a></text>
+<text top="657" left="147" width="58" height="15" font="9"><a href="pgs.html#9">Cui et al.</a></text>
+<text top="657" left="205" width="4" height="15" font="8"><a href="pgs.html#9">,</a></text>
+<text top="657" left="213" width="32" height="15" font="9"><a href="pgs.html#9">2020</a></text>
+<text top="657" left="245" width="33" height="15" font="8"><a href="pgs.html#9">); </a>the</text>
+<text top="657" left="281" width="35" height="14" font="13">judge</text>
+<text top="657" left="320" width="113" height="15" font="8">channel is a small</text>
+<text top="660" left="18" width="20" height="11" font="10"><b>367</b></text>
+<text top="678" left="106" width="330" height="15" font="8">MLP head on frozen MegatronBERT-1.3B features.</text>
+<text top="680" left="18" width="20" height="11" font="10"><b>368</b></text>
+<text top="698" left="106" width="304" height="15" font="8">Both channels emit class-probability vectors</text>
+<text top="698" left="417" width="11" height="15" font="14">P</text>
+<text top="703" left="427" width="6" height="11" font="15">s</text>
+<text top="700" left="18" width="20" height="11" font="10"><b>369</b></text>
+<text top="718" left="106" width="24" height="15" font="8">and</text>
+<text top="718" left="134" width="11" height="15" font="14">P</text>
+<text top="723" left="145" width="5" height="11" font="15">j</text>
+<text top="718" left="151" width="185" height="15" font="8">, blended with fixed weights</text>
+<text top="718" left="340" width="21" height="15" font="16">1:2</text>
+<text top="718" left="361" width="5" height="15" font="8">:</text>
+<text top="721" left="18" width="20" height="11" font="10"><b>370</b></text>
+<text top="756" left="195" width="47" height="15" font="16">dep =</text>
+<text top="753" left="253" width="6" height="11" font="17">1</text>
+<text top="765" left="253" width="6" height="11" font="17">3</text>
+<text top="756" left="264" width="11" height="15" font="14">P</text>
+<text top="762" left="275" width="6" height="11" font="15">s</text>
+<text top="756" left="290" width="13" height="15" font="16">+</text>
+<text top="753" left="312" width="6" height="11" font="17">2</text>
+<text top="765" left="312" width="6" height="11" font="17">3</text>
+<text top="756" left="323" width="11" height="15" font="14">P</text>
+<text top="762" left="334" width="5" height="11" font="15">j</text>
+<text top="756" left="340" width="5" height="15" font="14">.</text>
+<text top="756" left="416" width="19" height="15" font="8">(1)</text>
+<text top="759" left="18" width="20" height="11" font="10"><b>371</b></text>
+<text top="794" left="106" width="164" height="15" font="8">For the three-class task, a</text>
+<text top="795" left="275" width="111" height="14" font="13">neutral specialist</text>
+<text top="794" left="391" width="43" height="15" font="8">refines</text>
+<text top="797" left="18" width="20" height="11" font="10"><b>372</b></text>
+<text top="814" left="106" width="25" height="15" font="16">dep</text>
+<text top="815" left="132" width="127" height="15" font="8">. Two estimators of</text>
+<text top="814" left="262" width="11" height="15" font="14">P</text>
+<text top="814" left="275" width="38" height="15" font="16">(neu)</text>
+<text top="815" left="313" width="120" height="15" font="8">—a frozen-feature</text>
+<text top="817" left="18" width="20" height="11" font="10"><b>373</b></text>
+<text top="835" left="106" width="331" height="15" font="8">MLP head and a corpus-trained neutral detector—</text>
+<text top="838" left="18" width="20" height="11" font="10"><b>374</b></text>
+<text top="855" left="106" width="84" height="15" font="8">are mixed as</text>
+<text top="855" left="195" width="8" height="15" font="14">p</text>
+<text top="861" left="203" width="8" height="11" font="15">n</text>
+<text top="855" left="216" width="26" height="15" font="16">= 0</text>
+<text top="855" left="242" width="5" height="15" font="14">.</text>
+<text top="855" left="247" width="8" height="15" font="16">6</text>
+<text top="855" left="257" width="11" height="15" font="14">P</text>
+<text top="852" left="270" width="26" height="11" font="17">head</text>
+<text top="862" left="268" width="20" height="11" font="17">neu</text>
+<text top="855" left="301" width="25" height="15" font="16">+ 0</text>
+<text top="855" left="326" width="5" height="15" font="14">.</text>
+<text top="855" left="330" width="8" height="15" font="16">4</text>
+<text top="855" left="341" width="11" height="15" font="14">P</text>
+<text top="850" left="354" width="36" height="11" font="17">corpus</text>
+<text top="860" left="351" width="20" height="11" font="17">neu</text>
+<text top="855" left="391" width="46" height="15" font="8">. Writ-</text>
+<text top="858" left="18" width="20" height="11" font="10"><b>375</b></text>
+<text top="876" left="106" width="21" height="15" font="8">ing</text>
+<text top="875" left="131" width="7" height="15" font="14">r</text>
+<text top="881" left="139" width="10" height="11" font="17">+</text>
+<text top="875" left="149" width="15" height="15" font="14">, r</text>
+<text top="880" left="164" width="10" height="11" font="18">−</text>
+<text top="876" left="179" width="225" height="15" font="8">for the positive/negative masses of</text>
+<text top="875" left="408" width="25" height="15" font="16">dep</text>
+<text top="878" left="18" width="20" height="11" font="10"><b>376</b></text>
+<text top="896" left="106" width="330" height="15" font="8">renormalized to sum to one, the specialist distribu-</text>
+<text top="898" left="18" width="20" height="11" font="10"><b>377</b></text>
+<text top="916" left="106" width="151" height="15" font="8">tion and final blend are</text>
+<text top="919" left="18" width="20" height="11" font="10"><b>378</b></text>
+<text top="950" left="128" width="48" height="15" font="16">spec =</text>
+<text top="947" left="180" width="7" height="7" font="19"></text>
+<text top="950" left="187" width="15" height="15" font="16">(1</text>
+<text top="949" left="205" width="13" height="15" font="20">−</text>
+<text top="950" left="221" width="8" height="15" font="14">p</text>
+<text top="955" left="230" width="8" height="11" font="15">n</text>
+<text top="950" left="238" width="6" height="15" font="16">)</text>
+<text top="950" left="247" width="7" height="15" font="14">r</text>
+<text top="955" left="255" width="10" height="11" font="17">+</text>
+<text top="950" left="265" width="20" height="15" font="14">, p</text>
+<text top="955" left="285" width="8" height="11" font="15">n</text>
+<text top="950" left="294" width="5" height="15" font="14">,</text>
+<text top="950" left="306" width="15" height="15" font="16">(1</text>
+<text top="949" left="324" width="13" height="15" font="20">−</text>
+<text top="950" left="340" width="8" height="15" font="14">p</text>
+<text top="955" left="348" width="8" height="11" font="15">n</text>
+<text top="950" left="357" width="6" height="15" font="16">)</text>
+<text top="950" left="366" width="7" height="15" font="14">r</text>
+<text top="955" left="373" width="10" height="11" font="18">−</text>
+<text top="947" left="384" width="7" height="7" font="19"></text>
+<text top="950" left="391" width="5" height="15" font="14">,</text>
+<text top="984" left="127" width="48" height="15" font="16">final =</text>
+<text top="973" left="182" width="54" height="15" font="16">dep + 0</text>
+<text top="973" left="235" width="5" height="15" font="14">.</text>
+<text top="973" left="240" width="41" height="15" font="16">5 spec</text>
+<text top="995" left="221" width="8" height="15" font="16">1</text>
+<text top="995" left="229" width="5" height="15" font="14">.</text>
+<text top="995" left="234" width="8" height="15" font="16">5</text>
+<text top="984" left="283" width="5" height="15" font="14">.</text>
+<text top="970" left="416" width="19" height="15" font="8">(2)</text>
+<text top="972" left="18" width="20" height="11" font="10"><b>379</b></text>
+<text top="1026" left="106" width="152" height="15" font="8">A post-hoc temperature</text>
+<text top="1026" left="261" width="10" height="15" font="14">T</text>
+<text top="1026" left="273" width="21" height="15" font="16">=0</text>
+<text top="1026" left="294" width="5" height="15" font="14">.</text>
+<text top="1026" left="299" width="16" height="15" font="16">37</text>
+<text top="1026" left="319" width="117" height="15" font="8">is applied for cali-</text>
+<text top="1029" left="18" width="20" height="11" font="10"><b>380</b></text>
+<text top="1047" left="106" width="327" height="15" font="8">bration; it is argmax-invariant and therefore does</text>
+<text top="1049" left="18" width="20" height="11" font="10"><b>381</b></text>
+<text top="1067" left="106" width="327" height="15" font="8">not affect accuracy or macro-F1. For ultra-short</text>
+<text top="1069" left="18" width="20" height="11" font="10"><b>382</b></text>
+<text top="1087" left="106" width="330" height="15" font="8">slang-only inputs, a rule-based lexicon guard over-</text>
+<text top="1090" left="18" width="20" height="11" font="10"><b>383</b></text>
+<text top="1108" left="106" width="327" height="15" font="8">rides the ensemble (it never fires on gold-600). The</text>
+<text top="1110" left="18" width="20" height="11" font="10"><b>384</b></text>
+<text top="1128" left="106" width="327" height="15" font="8">binary task uses the same dep-blend without the</text>
+<text top="1130" left="18" width="20" height="11" font="10"><b>385</b></text>
+<text top="1148" left="106" width="289" height="15" font="8">specialist and a fixed 0.5 decision threshold.</text>
+<text top="1151" left="18" width="20" height="11" font="10"><b>386</b></text>
+<text top="111" left="459" width="20" height="15" font="12">4.2</text>
+<text top="111" left="496" width="148" height="15" font="12">Training signal chain</text>
+<text top="114" left="850" width="20" height="11" font="10"><b>387</b></text>
+<text top="139" left="459" width="328" height="15" font="8">Labels reach the deployed models through four</text>
+<text top="141" left="850" width="20" height="11" font="10"><b>388</b></text>
+<text top="159" left="459" width="328" height="15" font="8">stages, each of which later proved relevant to our</text>
+<text top="162" left="850" width="20" height="11" font="10"><b>389</b></text>
+<text top="180" left="459" width="37" height="15" font="8">audit.</text>
+<text top="182" left="850" width="20" height="11" font="10"><b>390</b></text>
+<text top="213" left="459" width="75" height="15" font="12">Gold seed.</text>
+<text top="213" left="551" width="236" height="15" font="8">600 human semantic labels from a</text>
+<text top="215" left="850" width="20" height="11" font="10"><b>391</b></text>
+<text top="233" left="459" width="327" height="15" font="8">single Douban film page (316 positive / 92 neutral</text>
+<text top="236" left="850" width="20" height="11" font="10"><b>392</b></text>
+<text top="254" left="459" width="331" height="15" font="8">/ 192 negative; binary evaluation on the 508 non-</text>
+<text top="256" left="850" width="20" height="11" font="10"><b>393</b></text>
+<text top="274" left="459" width="327" height="15" font="8">neutral rows) provide hard and soft targets for the</text>
+<text top="276" left="850" width="20" height="11" font="10"><b>394</b></text>
+<text top="294" left="459" width="162" height="15" font="8">first students and judges.</text>
+<text top="297" left="850" width="20" height="11" font="10"><b>395</b></text>
+<text top="327" left="459" width="141" height="15" font="12">Pseudo-label pools.</text>
+<text top="328" left="617" width="172" height="15" font="8">Following classical self-</text>
+<text top="330" left="850" width="20" height="11" font="10"><b>396</b></text>
+<text top="348" left="459" width="257" height="15" font="8">training and pseudo-labeling practice <a href="pgs.html#10">(</a></text>
+<text top="348" left="717" width="25" height="15" font="9"><a href="pgs.html#10">Lee</a></text>
+<text top="348" left="742" width="4" height="15" font="8"><a href="pgs.html#10">,</a></text>
+<text top="348" left="750" width="33" height="15" font="9"><a href="pgs.html#10">2013</a></text>
+<text top="348" left="783" width="5" height="15" font="8"><a href="pgs.html#10">;</a></text>
+<text top="350" left="850" width="20" height="11" font="10"><b>397</b></text>
+<text top="368" left="459" width="63" height="15" font="9"><a href="pgs.html#10">Xie et al.</a></text>
+<text top="368" left="521" width="4" height="15" font="8"><a href="pgs.html#10">,</a></text>
+<text top="368" left="530" width="42" height="15" font="9"><a href="pgs.html#10">2020b</a></text>
+<text top="368" left="572" width="214" height="15" font="8"><a href="pgs.html#10">), </a>a 3-class student re-scores all</text>
+<text top="371" left="850" width="20" height="11" font="10"><b>398</b></text>
+<text top="389" left="459" width="327" height="15" font="8">910,998 corpus rows under a weak-supervision</text>
+<text top="391" left="850" width="20" height="11" font="10"><b>399</b></text>
+<text top="409" left="459" width="79" height="15" font="8">framework <a href="pgs.html#10">(</a></text>
+<text top="409" left="538" width="78" height="15" font="9"><a href="pgs.html#10">Ratner et al.</a></text>
+<text top="409" left="617" width="4" height="15" font="8"><a href="pgs.html#10">,</a></text>
+<text top="409" left="625" width="32" height="15" font="9"><a href="pgs.html#10">2017</a></text>
+<text top="409" left="657" width="130" height="15" font="8"><a href="pgs.html#10">); </a>the confident pool</text>
+<text top="411" left="850" width="20" height="11" font="10"><b>400</b></text>
+<text top="429" left="459" width="6" height="15" font="8">(</text>
+<text top="429" left="464" width="30" height="15" font="16">conf</text>
+<text top="428" left="495" width="13" height="15" font="20">≥</text>
+<text top="429" left="508" width="8" height="15" font="16">0</text>
+<text top="429" left="516" width="5" height="15" font="14">.</text>
+<text top="429" left="521" width="8" height="15" font="16">7</text>
+<text top="429" left="529" width="261" height="15" font="8">, 271,905 rows) is sampled under per-</text>
+<text top="432" left="850" width="20" height="11" font="10"><b>401</b></text>
+<text top="450" left="459" width="327" height="15" font="8">class caps into 115K–195K-row training subsets</text>
+<text top="452" left="850" width="20" height="11" font="10"><b>402</b></text>
+<text top="470" left="459" width="327" height="15" font="8">for full-fit corpus specialists. Binary pools use</text>
+<text top="472" left="850" width="20" height="11" font="10"><b>403</b></text>
+<text top="490" left="459" width="30" height="15" font="16">conf</text>
+<text top="489" left="490" width="13" height="15" font="20">≥</text>
+<text top="490" left="503" width="8" height="15" font="16">0</text>
+<text top="490" left="511" width="5" height="15" font="14">.</text>
+<text top="490" left="515" width="8" height="15" font="16">8</text>
+<text top="490" left="524" width="263" height="15" font="8">; star-rating-derived label variants serve</text>
+<text top="493" left="850" width="20" height="11" font="10"><b>404</b></text>
+<text top="511" left="459" width="81" height="15" font="8">as ablations.</text>
+<text top="513" left="850" width="20" height="11" font="10"><b>405</b></text>
+<text top="544" left="459" width="132" height="15" font="12">Corpus specialists.</text>
+<text top="544" left="607" width="180" height="15" font="8">Full-fit MacBERT students</text>
+<text top="546" left="850" width="20" height="11" font="10"><b>406</b></text>
+<text top="564" left="459" width="327" height="15" font="8">and frozen-feature MLP heads are trained on these</text>
+<text top="567" left="850" width="20" height="11" font="10"><b>407</b></text>
+<text top="584" left="459" width="327" height="15" font="8">pseudo-label pools, including the deployed neutral</text>
+<text top="587" left="850" width="20" height="11" font="10"><b>408</b></text>
+<text top="605" left="459" width="104" height="15" font="8">corpus detector.</text>
+<text top="607" left="850" width="20" height="11" font="10"><b>409</b></text>
+<text top="638" left="459" width="224" height="15" font="12">Active learning and SFT mixes.</text>
+<text top="638" left="700" width="87" height="15" font="8">Margin-band</text>
+<text top="641" left="850" width="20" height="11" font="10"><b>410</b></text>
+<text top="658" left="459" width="5" height="15" font="8">(</text>
+<text top="658" left="464" width="13" height="15" font="16">[0</text>
+<text top="658" left="477" width="5" height="15" font="14">.</text>
+<text top="658" left="481" width="16" height="15" font="16">15</text>
+<text top="658" left="498" width="5" height="15" font="14">,</text>
+<text top="658" left="505" width="8" height="15" font="16">0</text>
+<text top="658" left="513" width="5" height="15" font="14">.</text>
+<text top="658" left="518" width="23" height="15" font="16">70)</text>
+<text top="658" left="540" width="249" height="15" font="8">) and cross-student disagreement min-</text>
+<text top="661" left="850" width="20" height="11" font="10"><b>411</b></text>
+<text top="679" left="459" width="329" height="15" font="8">ing select 17,000 mutually disjoint corpus rows,</text>
+<text top="681" left="850" width="20" height="11" font="10"><b>412</b></text>
+<text top="699" left="459" width="331" height="15" font="8">which are labeled by LLM teachers (DeepSeek-</text>
+<text top="702" left="850" width="20" height="11" font="10"><b>413</b></text>
+<text top="719" left="459" width="331" height="15" font="8">V4.1-Flash primary; Qwen3-4B and hybrid vari-</text>
+<text top="722" left="850" width="20" height="11" font="10"><b>414</b></text>
+<text top="740" left="459" width="328" height="15" font="8">ants as comparisons) in rounds from 1K to 17K</text>
+<text top="742" left="850" width="20" height="11" font="10"><b>415</b></text>
+<text top="760" left="459" width="327" height="15" font="8">labels. A per-fold SFT student is then trained on</text>
+<text top="763" left="850" width="20" height="11" font="10"><b>416</b></text>
+<text top="780" left="459" width="30" height="15" font="8">gold</text>
+<text top="780" left="489" width="13" height="15" font="16">+</text>
+<text top="780" left="502" width="288" height="15" font="8">AL labels and fused with the deployed en-</text>
+<text top="783" left="850" width="20" height="11" font="10"><b>417</b></text>
+<text top="801" left="459" width="115" height="15" font="8">semble at weight</text>
+<text top="800" left="580" width="12" height="15" font="14">w</text>
+<text top="806" left="592" width="25" height="11" font="17">SFT</text>
+<text top="801" left="622" width="167" height="15" font="8">selected by 5-fold cross-</text>
+<text top="803" left="850" width="20" height="11" font="10"><b>418</b></text>
+<text top="821" left="459" width="69" height="15" font="8">validation.</text>
+<text top="824" left="850" width="20" height="11" font="10"><b>419</b></text>
+<text top="856" left="459" width="20" height="15" font="12">4.3</text>
+<text top="856" left="496" width="133" height="15" font="12">Audit methodology</text>
+<text top="859" left="850" width="20" height="11" font="10"><b>420</b></text>
+<text top="884" left="459" width="330" height="15" font="8">Our contribution is as much the audit as the sys-</text>
+<text top="886" left="850" width="20" height="11" font="10"><b>421</b></text>
+<text top="904" left="459" width="327" height="15" font="8">tem. We distinguish three levels of evaluation</text>
+<text top="907" left="850" width="20" height="11" font="10"><b>422</b></text>
+<text top="925" left="459" width="108" height="15" font="8">independence—</text>
+<text top="925" left="568" width="148" height="14" font="13">per-row fold isolation</text>
+<text top="925" left="715" width="4" height="15" font="8">,</text>
+<text top="925" left="725" width="62" height="14" font="13">upstream</text>
+<text top="927" left="850" width="20" height="11" font="10"><b>423</b></text>
+<text top="945" left="459" width="104" height="14" font="13">signal isolation</text>
+<text top="945" left="563" width="33" height="15" font="8">, and</text>
+<text top="945" left="600" width="156" height="14" font="13">selection independence</text>
+<text top="945" left="756" width="31" height="15" font="8">—of</text>
+<text top="947" left="850" width="20" height="11" font="10"><b>424</b></text>
+<text top="965" left="459" width="331" height="15" font="8">which our headline score satisfied only the first (Ap-</text>
+<text top="968" left="850" width="20" height="11" font="10"><b>425</b></text>
+<text top="986" left="459" width="44" height="15" font="8">pendix</text>
+<text top="986" left="507" width="12" height="15" font="9"><a href="pgs.html#10">A</a></text>
+<text top="986" left="522" width="267" height="15" font="8">gives the full taxonomy). Two leak mech-</text>
+<text top="988" left="850" width="20" height="11" font="10"><b>426</b></text>
+<text top="1006" left="459" width="271" height="15" font="8">anisms violate upstream signal isolation.</text>
+<text top="1006" left="735" width="52" height="15" font="12">Leak A</text>
+<text top="1008" left="850" width="20" height="11" font="10"><b>427</b></text>
+<text top="1026" left="459" width="331" height="15" font="8">(transitive pseudo-label): a channel’s training la-</text>
+<text top="1029" left="850" width="20" height="11" font="10"><b>428</b></text>
+<text top="1047" left="459" width="327" height="15" font="8">bels are outputs of a model fit on 100% of the</text>
+<text top="1049" left="850" width="20" height="11" font="10"><b>429</b></text>
+<text top="1067" left="459" width="223" height="15" font="8">evaluation labels—the chain gold</text>
+<text top="1066" left="682" width="16" height="15" font="20">→</text>
+<text top="1067" left="699" width="35" height="15" font="8">stu3c</text>
+<text top="1066" left="734" width="16" height="15" font="20">→</text>
+<text top="1067" left="750" width="37" height="15" font="8">911K</text>
+<text top="1069" left="850" width="20" height="11" font="10"><b>430</b></text>
+<text top="1087" left="459" width="91" height="15" font="8">pseudo-labels</text>
+<text top="1086" left="550" width="16" height="15" font="20">→</text>
+<text top="1087" left="567" width="223" height="15" font="8">corpus detector places gold infor-</text>
+<text top="1090" left="850" width="20" height="11" font="10"><b>431</b></text>
+<text top="1108" left="459" width="327" height="15" font="8">mation inside the deployed neutral channel at</text>
+<text top="1110" left="850" width="20" height="11" font="10"><b>432</b></text>
+<text top="1127" left="459" width="13" height="15" font="20">≈</text>
+<text top="1128" left="472" width="150" height="15" font="8">13% effective weight.</text>
+<text top="1128" left="634" width="54" height="15" font="12">Leak B</text>
+<text top="1128" left="694" width="93" height="15" font="8">(second-order</text>
+<text top="1130" left="850" width="20" height="11" font="10"><b>433</b></text>
+<text top="1148" left="459" width="330" height="15" font="8">teacher): per-fold soft distillation targets are emit-</text>
+<text top="1151" left="850" width="20" height="11" font="10"><b>434</b></text>
+<text top="1193" left="442" width="8" height="15" font="8">5</text>
+</page>
+<page number="6" position="absolute" top="0" left="0" height="1262" width="892">
+	<fontspec id="21" size="16" family="HLJKGS+Inconsolatazi4" color="#000000"/>
+<text top="112" left="106" width="330" height="15" font="8">ted by teachers whose own folds overlap the stu-</text>
+<text top="114" left="18" width="20" height="11" font="10"><b>435</b></text>
+<text top="132" left="106" width="182" height="15" font="8">dent’s validation fold, so at</text>
+<text top="132" left="293" width="10" height="15" font="14">α</text>
+<text top="132" left="304" width="21" height="15" font="16">=0</text>
+<text top="132" left="325" width="5" height="15" font="14">.</text>
+<text top="132" left="329" width="8" height="15" font="16">5</text>
+<text top="132" left="342" width="94" height="15" font="8">half the distil-</text>
+<text top="134" left="18" width="20" height="11" font="10"><b>436</b></text>
+<text top="152" left="106" width="327" height="15" font="8">lation loss targets contaminated information. Both</text>
+<text top="155" left="18" width="20" height="11" font="10"><b>437</b></text>
+<text top="173" left="106" width="327" height="15" font="8">are invisible to standard OOF reporting because the</text>
+<text top="175" left="18" width="20" height="11" font="10"><b>438</b></text>
+<text top="193" left="106" width="201" height="15" font="8">CV machinery itself is correct.</text>
+<text top="195" left="18" width="20" height="11" font="10"><b>439</b></text>
+<text top="218" left="123" width="26" height="15" font="8">Our</text>
+<text top="218" left="154" width="153" height="14" font="13">leak-isolation protocol</text>
+<text top="218" left="311" width="122" height="15" font="8">reruns all distilled</text>
+<text top="221" left="18" width="20" height="11" font="10"><b>440</b></text>
+<text top="239" left="106" width="93" height="15" font="8">channels with</text>
+<text top="238" left="204" width="10" height="15" font="14">α</text>
+<text top="238" left="215" width="21" height="15" font="16">=1</text>
+<text top="238" left="236" width="5" height="15" font="14">.</text>
+<text top="238" left="240" width="8" height="15" font="16">0</text>
+<text top="239" left="254" width="180" height="15" font="8">(hard labels only), holding</text>
+<text top="241" left="18" width="20" height="11" font="10"><b>441</b></text>
+<text top="259" left="106" width="329" height="15" font="8">folds, hyperparameters, and fusion weights fixed,</text>
+<text top="261" left="18" width="20" height="11" font="10"><b>442</b></text>
+<text top="279" left="106" width="263" height="15" font="8">and toggles the corpus channel on/off. A</text>
+<text top="279" left="374" width="60" height="14" font="13">row-level</text>
+<text top="282" left="18" width="20" height="11" font="10"><b>443</b></text>
+<text top="300" left="106" width="57" height="14" font="13">cid audit</text>
+<text top="300" left="167" width="266" height="15" font="8">intersects every evaluation set’s comment</text>
+<text top="302" left="18" width="20" height="11" font="10"><b>444</b></text>
+<text top="320" left="106" width="330" height="15" font="8">IDs with the exact training manifest of each corpus-</text>
+<text top="322" left="18" width="20" height="11" font="10"><b>445</b></text>
+<text top="340" left="106" width="330" height="15" font="8">derived model, reporting per-model and union over-</text>
+<text top="343" left="18" width="20" height="11" font="10"><b>446</b></text>
+<text top="361" left="106" width="230" height="15" font="8">lap plus a near-duplicate check. A</text>
+<text top="361" left="341" width="93" height="14" font="13">selection-bias</text>
+<text top="363" left="18" width="20" height="11" font="10"><b>447</b></text>
+<text top="381" left="106" width="73" height="14" font="13">accounting</text>
+<text top="381" left="183" width="251" height="15" font="8">enumerates the full candidate pool (26</text>
+<text top="383" left="18" width="20" height="11" font="10"><b>448</b></text>
+<text top="401" left="106" width="150" height="15" font="8">mixture configurations,</text>
+<text top="400" left="260" width="13" height="15" font="20">≈</text>
+<text top="401" left="273" width="161" height="15" font="8">73 SFT runs) and reports</text>
+<text top="404" left="18" width="20" height="11" font="10"><b>449</b></text>
+<text top="421" left="106" width="330" height="15" font="8">every number as a maximum over it, distinguish-</text>
+<text top="424" left="18" width="20" height="11" font="10"><b>450</b></text>
+<text top="442" left="106" width="330" height="15" font="8">ing cross-fit weight selection from oracle selec-</text>
+<text top="444" left="18" width="20" height="11" font="10"><b>451</b></text>
+<text top="462" left="106" width="38" height="15" font="8">tion <a href="pgs.html#9">(</a></text>
+<text top="462" left="144" width="72" height="15" font="9"><a href="pgs.html#9">Dror et al.</a></text>
+<text top="462" left="216" width="4" height="15" font="8"><a href="pgs.html#9">,</a></text>
+<text top="462" left="226" width="33" height="15" font="9"><a href="pgs.html#9">2018</a></text>
+<text top="462" left="259" width="177" height="15" font="8"><a href="pgs.html#9">). </a>Finally, all OOD num-</text>
+<text top="465" left="18" width="20" height="11" font="10"><b>452</b></text>
+<text top="482" left="106" width="114" height="15" font="8">bers are reported</text>
+<text top="483" left="225" width="209" height="14" font="13">split by annotation provenance</text>
+<text top="485" left="18" width="20" height="11" font="10"><b>453</b></text>
+<text top="503" left="106" width="328" height="15" font="8">(LLM-consensus vs. human-adjudicated), and the</text>
+<text top="505" left="18" width="20" height="11" font="10"><b>454</b></text>
+<text top="523" left="106" width="327" height="15" font="8">two LLM passes’ self-consistency is measured on</text>
+<text top="526" left="18" width="20" height="11" font="10"><b>455</b></text>
+<text top="543" left="106" width="115" height="15" font="8">adjudicated rows.</text>
+<text top="546" left="18" width="20" height="11" font="10"><b>456</b></text>
+<text top="595" left="106" width="9" height="16" font="11">5</text>
+<text top="595" left="133" width="153" height="16" font="11">Experimental Setup</text>
+<text top="599" left="18" width="20" height="11" font="10"><b>457</b></text>
+<text top="640" left="106" width="112" height="15" font="12">Evaluation sets.</text>
+<text top="640" left="235" width="67" height="15" font="8">Table 1 <a href="pgs.html#3">(§</a></text>
+<text top="640" left="302" width="8" height="15" font="9"><a href="pgs.html#3">3</a></text>
+<text top="640" left="311" width="126" height="15" font="8"><a href="pgs.html#3">) </a>inventories all la-</text>
+<text top="643" left="18" width="20" height="11" font="10"><b>458</b></text>
+<text top="660" left="106" width="198" height="15" font="8">bel sources; here we fix the</text>
+<text top="661" left="312" width="26" height="14" font="13">role</text>
+<text top="660" left="345" width="91" height="15" font="8">of each eval-</text>
+<text top="663" left="18" width="20" height="11" font="10"><b>459</b></text>
+<text top="681" left="106" width="187" height="15" font="8">uation set under the audit.</text>
+<text top="681" left="310" width="105" height="15" font="12">gold-600 OOF</text>
+<text top="681" left="423" width="11" height="15" font="8">is</text>
+<text top="683" left="18" width="20" height="11" font="10"><b>460</b></text>
+<text top="701" left="106" width="330" height="15" font="8">the only evaluation never used for model se-</text>
+<text top="703" left="18" width="20" height="11" font="10"><b>461</b></text>
+<text top="721" left="106" width="329" height="15" font="8">lection: 5-fold stratified out-of-fold predictions,</text>
+<text top="724" left="18" width="20" height="11" font="10"><b>462</b></text>
+<text top="742" left="106" width="208" height="15" font="8">with the residual caveats of <a href="pgs.html#5">§</a></text>
+<text top="742" left="314" width="21" height="15" font="9"><a href="pgs.html#5">4.3</a></text>
+<text top="742" left="342" width="92" height="15" font="8">(frozen tuned</text>
+<text top="744" left="18" width="20" height="11" font="10"><b>463</b></text>
+<text top="762" left="106" width="242" height="15" font="8">weights, Leak A/B bounded by the</text>
+<text top="762" left="353" width="10" height="15" font="14">α</text>
+<text top="762" left="364" width="21" height="15" font="16">=1</text>
+<text top="762" left="384" width="5" height="15" font="14">.</text>
+<text top="762" left="389" width="8" height="15" font="16">0</text>
+<text top="762" left="403" width="33" height="15" font="8">abla-</text>
+<text top="764" left="18" width="20" height="11" font="10"><b>464</b></text>
+<text top="782" left="106" width="36" height="15" font="8">tion).</text>
+<text top="782" left="149" width="59" height="15" font="12">ood1000</text>
+<text top="782" left="213" width="6" height="15" font="8">(</text>
+<text top="782" left="219" width="10" height="15" font="14">n</text>
+<text top="782" left="228" width="45" height="15" font="16">=1000</text>
+<text top="782" left="274" width="162" height="15" font="8">; 800 LLM-consensus +</text>
+<text top="785" left="18" width="20" height="11" font="10"><b>465</b></text>
+<text top="803" left="106" width="327" height="15" font="8">200 human-adjudicated labels, the latter collected</text>
+<text top="805" left="18" width="20" height="11" font="10"><b>466</b></text>
+<text top="823" left="106" width="288" height="15" font="8">with student predictions visible) served as the</text>
+<text top="823" left="397" width="39" height="14" font="13">devel-</text>
+<text top="825" left="18" width="20" height="11" font="10"><b>467</b></text>
+<text top="843" left="106" width="135" height="14" font="13">opment/selection set</text>
+<text top="843" left="246" width="191" height="15" font="8">for every Stage-2 decision—</text>
+<text top="846" left="18" width="20" height="11" font="10"><b>468</b></text>
+<text top="864" left="106" width="328" height="15" font="8">AL scale, teacher, epochs, seed subsets, and fusion</text>
+<text top="866" left="18" width="20" height="11" font="10"><b>469</b></text>
+<text top="884" left="106" width="204" height="15" font="8">weights; it is not a held-out test.</text>
+<text top="884" left="315" width="59" height="15" font="12">fresh500</text>
+<text top="884" left="377" width="5" height="15" font="8">(</text>
+<text top="884" left="382" width="10" height="15" font="14">n</text>
+<text top="884" left="392" width="37" height="15" font="16">=500</text>
+<text top="884" left="429" width="5" height="15" font="8">)</text>
+<text top="886" left="18" width="20" height="11" font="10"><b>470</b></text>
+<text top="904" left="106" width="328" height="15" font="8">is a uniformly resampled set disjoint from all prior</text>
+<text top="907" left="18" width="20" height="11" font="10"><b>471</b></text>
+<text top="925" left="106" width="331" height="15" font="8">pools, but its labels are DeepSeek-Flash outputs—</text>
+<text top="927" left="18" width="20" height="11" font="10"><b>472</b></text>
+<text top="945" left="106" width="214" height="15" font="8">the same teacher family behind</text>
+<text top="944" left="326" width="13" height="15" font="20">≈</text>
+<text top="945" left="338" width="98" height="15" font="8">16K AL train-</text>
+<text top="947" left="18" width="20" height="11" font="10"><b>473</b></text>
+<text top="965" left="106" width="330" height="15" font="8">ing labels—and only the top-2 ood1000 configu-</text>
+<text top="968" left="18" width="20" height="11" font="10"><b>474</b></text>
+<text top="986" left="106" width="190" height="15" font="8">rations were evaluated on it.</text>
+<text top="985" left="304" width="47" height="15" font="12">lab500</text>
+<text top="986" left="356" width="81" height="15" font="8">(500 single-</text>
+<text top="988" left="18" width="20" height="11" font="10"><b>475</b></text>
+<text top="1006" left="106" width="327" height="15" font="8">LLM + 331 two-pass-consensus rows) is row-level</text>
+<text top="1008" left="18" width="20" height="11" font="10"><b>476</b></text>
+<text top="1026" left="106" width="108" height="15" font="8">contaminated <a href="pgs.html#6">(§</a></text>
+<text top="1026" left="214" width="8" height="15" font="9"><a href="pgs.html#6">6</a></text>
+<text top="1026" left="223" width="214" height="15" font="8"><a href="pgs.html#6">) </a>and is used only for annotator-</text>
+<text top="1029" left="18" width="20" height="11" font="10"><b>477</b></text>
+<text top="1047" left="106" width="136" height="15" font="8">agreement analyses.</text>
+<text top="1046" left="251" width="75" height="15" font="12">human400</text>
+<text top="1047" left="332" width="6" height="15" font="8">(</text>
+<text top="1046" left="337" width="10" height="15" font="14">n</text>
+<text top="1046" left="347" width="37" height="15" font="16">=400</text>
+<text top="1047" left="384" width="50" height="15" font="8">) is our</text>
+<text top="1049" left="18" width="20" height="11" font="10"><b>478</b></text>
+<text top="1067" left="106" width="330" height="15" font="8">zero-contamination final test: length-stratified cor-</text>
+<text top="1069" left="18" width="20" height="11" font="10"><b>479</b></text>
+<text top="1087" left="106" width="330" height="15" font="8">pus reviews excluding every known pool, blind-</text>
+<text top="1090" left="18" width="20" height="11" font="10"><b>480</b></text>
+<text top="1108" left="106" width="329" height="15" font="8">labelled by a single author under written guidelines,</text>
+<text top="1110" left="18" width="20" height="11" font="10"><b>481</b></text>
+<text top="1128" left="106" width="328" height="15" font="8">with post-hoc verification of zero identifier overlap</text>
+<text top="1130" left="18" width="20" height="11" font="10"><b>482</b></text>
+<text top="1148" left="106" width="235" height="15" font="8">against all training pools (Appendix</text>
+<text top="1148" left="346" width="12" height="15" font="9"><a href="pgs.html#11">D</a></text>
+<text top="1148" left="358" width="10" height="15" font="8"><a href="pgs.html#11">).</a></text>
+<text top="1151" left="18" width="20" height="11" font="10"><b>483</b></text>
+<text top="111" left="459" width="155" height="15" font="12">Metrics and statistics.</text>
+<text top="112" left="630" width="157" height="15" font="8">We report accuracy and</text>
+<text top="114" left="850" width="20" height="11" font="10"><b>484</b></text>
+<text top="132" left="459" width="327" height="15" font="8">macro-F1 for both tasks, plus per-class recall to</text>
+<text top="134" left="850" width="20" height="11" font="10"><b>485</b></text>
+<text top="152" left="459" width="327" height="15" font="8">expose neutral-class collapse. Comparisons use</text>
+<text top="155" left="850" width="20" height="11" font="10"><b>486</b></text>
+<text top="173" left="459" width="327" height="15" font="8">McNemar’s exact test, 5,000-resample bootstrap</text>
+<text top="175" left="850" width="20" height="11" font="10"><b>487</b></text>
+<text top="193" left="459" width="327" height="15" font="8">confidence intervals, and Holm correction over the</text>
+<text top="195" left="850" width="20" height="11" font="10"><b>488</b></text>
+<text top="213" left="459" width="181" height="15" font="8">22-test comparison family <a href="pgs.html#9">(</a></text>
+<text top="213" left="640" width="67" height="15" font="9"><a href="pgs.html#9">Dror et al.</a></text>
+<text top="213" left="707" width="4" height="15" font="8"><a href="pgs.html#9">,</a></text>
+<text top="213" left="715" width="33" height="15" font="9"><a href="pgs.html#9">2018</a></text>
+<text top="213" left="748" width="10" height="15" font="8"><a href="pgs.html#9">).</a></text>
+<text top="216" left="850" width="20" height="11" font="10"><b>489</b></text>
+<text top="246" left="459" width="137" height="15" font="12">Systems compared.</text>
+<text top="246" left="613" width="174" height="15" font="8">Deployed v3 (uncorrected</text>
+<text top="248" left="850" width="20" height="11" font="10"><b>490</b></text>
+<text top="266" left="459" width="24" height="15" font="8">and</text>
+<text top="266" left="487" width="10" height="15" font="14">α</text>
+<text top="266" left="498" width="21" height="15" font="16">=1</text>
+<text top="266" left="519" width="5" height="15" font="14">.</text>
+<text top="266" left="523" width="8" height="15" font="16">0</text>
+<text top="266" left="536" width="251" height="15" font="8">ablations); SFT mixtures at AL scales</text>
+<text top="269" left="850" width="20" height="11" font="10"><b>491</b></text>
+<text top="287" left="458" width="331" height="15" font="8">1K–17K; TF-IDF and frozen-feature MLP base-</text>
+<text top="289" left="850" width="20" height="11" font="10"><b>492</b></text>
+<text top="307" left="459" width="327" height="15" font="8">lines; Qwen3-4B zero-shot; DeepSeek-V4.1-Flash</text>
+<text top="309" left="850" width="20" height="11" font="10"><b>493</b></text>
+<text top="327" left="459" width="203" height="15" font="8">and V4-Pro zero-shot teachers.</text>
+<text top="330" left="850" width="20" height="11" font="10"><b>494</b></text>
+<text top="360" left="459" width="118" height="15" font="12">Implementation.</text>
+<text top="360" left="594" width="105" height="15" font="8">MacBERT-base</text>
+<text top="360" left="735" width="53" height="15" font="8">student;</text>
+<text top="362" left="850" width="20" height="11" font="10"><b>495</b></text>
+<text top="380" left="459" width="43" height="15" font="8">frozen</text>
+<text top="380" left="520" width="142" height="15" font="8">MegatronBERT-1.3B</text>
+<text top="380" left="680" width="42" height="15" font="8">judge;</text>
+<text top="380" left="746" width="41" height="15" font="8">5-fold</text>
+<text top="383" left="850" width="20" height="11" font="10"><b>496</b></text>
+<text top="401" left="459" width="123" height="14" font="21">StratifiedKFold</text>
+<text top="401" left="589" width="198" height="15" font="8">(seed 42) for gold OOF and</text>
+<text top="403" left="850" width="20" height="11" font="10"><b>497</b></text>
+<text top="421" left="459" width="329" height="15" font="8">seed-0 cross-fit for mixture weights; seeds {42,</text>
+<text top="423" left="850" width="20" height="11" font="10"><b>498</b></text>
+<text top="441" left="458" width="220" height="15" font="8">123, 456, 789, 999}; distillation</text>
+<text top="441" left="684" width="10" height="15" font="14">α</text>
+<text top="440" left="701" width="26" height="15" font="20">∈ {</text>
+<text top="441" left="727" width="8" height="15" font="16">0</text>
+<text top="441" left="735" width="5" height="15" font="14">.</text>
+<text top="441" left="740" width="8" height="15" font="16">5</text>
+<text top="441" left="748" width="5" height="15" font="14">,</text>
+<text top="441" left="755" width="8" height="15" font="16">1</text>
+<text top="441" left="764" width="5" height="15" font="14">.</text>
+<text top="441" left="768" width="8" height="15" font="16">0</text>
+<text top="440" left="776" width="8" height="15" font="20">}</text>
+<text top="441" left="784" width="4" height="15" font="8">,</text>
+<text top="444" left="850" width="20" height="11" font="10"><b>499</b></text>
+<text top="461" left="459" width="7" height="15" font="14">τ</text>
+<text top="461" left="468" width="21" height="15" font="16">=2</text>
+<text top="462" left="489" width="297" height="15" font="8">, 8 epochs. Full hyperparameters are released</text>
+<text top="464" left="850" width="20" height="11" font="10"><b>500</b></text>
+<text top="482" left="459" width="236" height="15" font="8">with the code and configuration log.</text>
+<text top="484" left="850" width="20" height="11" font="10"><b>501</b></text>
+<text top="518" left="459" width="9" height="16" font="11">6</text>
+<text top="518" left="486" width="158" height="16" font="11">Results and Analysis</text>
+<text top="521" left="850" width="20" height="11" font="10"><b>502</b></text>
+<text top="551" left="459" width="20" height="15" font="12">6.1</text>
+<text top="551" left="496" width="250" height="15" font="12">Headline correction: what the audit</text>
+<text top="554" left="850" width="20" height="11" font="10"><b>503</b></text>
+<text top="571" left="496" width="60" height="15" font="12">removed</text>
+<text top="574" left="850" width="20" height="11" font="10"><b>504</b></text>
+<text top="598" left="459" width="37" height="15" font="8">Table</text>
+<text top="598" left="504" width="8" height="15" font="9"><a href="pgs.html#7">2</a></text>
+<text top="598" left="521" width="269" height="15" font="8">contrasts our previously reported (un-</text>
+<text top="601" left="850" width="20" height="11" font="10"><b>505</b></text>
+<text top="619" left="459" width="234" height="15" font="8">corrected) headline with the strict</text>
+<text top="619" left="699" width="10" height="15" font="14">α</text>
+<text top="619" left="710" width="21" height="15" font="16">=1</text>
+<text top="619" left="731" width="5" height="15" font="14">.</text>
+<text top="619" left="735" width="8" height="15" font="16">0</text>
+<text top="619" left="750" width="39" height="15" font="8">rerun.</text>
+<text top="621" left="850" width="20" height="11" font="10"><b>506</b></text>
+<text top="639" left="459" width="331" height="15" font="8">The three-class deployed 89.5%/85.9% decom-</text>
+<text top="642" left="850" width="20" height="11" font="10"><b>507</b></text>
+<text top="659" left="459" width="330" height="15" font="8">poses cleanly: Leak B (second-order teacher tar-</text>
+<text top="662" left="850" width="20" height="11" font="10"><b>508</b></text>
+<text top="680" left="459" width="118" height="15" font="8">gets) accounts for</text>
+<text top="680" left="581" width="21" height="15" font="16">+5</text>
+<text top="680" left="602" width="5" height="15" font="14">.</text>
+<text top="680" left="606" width="8" height="15" font="16">5</text>
+<text top="680" left="615" width="89" height="15" font="8">pp accuracy (</text>
+<text top="680" left="703" width="16" height="15" font="16">89</text>
+<text top="680" left="720" width="5" height="15" font="14">.</text>
+<text top="680" left="724" width="8" height="15" font="16">5</text>
+<text top="679" left="737" width="16" height="15" font="20">→</text>
+<text top="680" left="758" width="16" height="15" font="16">84</text>
+<text top="680" left="774" width="5" height="15" font="14">.</text>
+<text top="680" left="779" width="8" height="15" font="16">0</text>
+<text top="682" left="850" width="20" height="11" font="10"><b>509</b></text>
+<text top="700" left="459" width="328" height="15" font="8">with the corpus channel kept), and the transitive</text>
+<text top="703" left="850" width="20" height="11" font="10"><b>510</b></text>
+<text top="720" left="459" width="328" height="15" font="8">corpus channel (Leak A) contributes a further</text>
+<text top="723" left="850" width="20" height="11" font="10"><b>511</b></text>
+<text top="741" left="456" width="21" height="15" font="16">+0</text>
+<text top="741" left="477" width="5" height="15" font="14">.</text>
+<text top="741" left="481" width="8" height="15" font="16">7</text>
+<text top="741" left="490" width="247" height="15" font="8">pp that vanishes when it is removed (</text>
+<text top="741" left="737" width="16" height="15" font="16">84</text>
+<text top="741" left="753" width="5" height="15" font="14">.</text>
+<text top="741" left="758" width="8" height="15" font="16">0</text>
+<text top="740" left="770" width="16" height="15" font="20">→</text>
+<text top="743" left="850" width="20" height="11" font="10"><b>512</b></text>
+<text top="761" left="459" width="16" height="15" font="16">83</text>
+<text top="761" left="476" width="5" height="15" font="14">.</text>
+<text top="761" left="480" width="8" height="15" font="16">3</text>
+<text top="761" left="488" width="10" height="15" font="8">).</text>
+<text top="761" left="517" width="272" height="15" font="8">The honest strict-OOF range is there-</text>
+<text top="764" left="850" width="20" height="11" font="10"><b>513</b></text>
+<text top="781" left="459" width="27" height="15" font="8">fore</text>
+<text top="781" left="493" width="296" height="15" font="12">83.3–84.0% accuracy / 76.3–77.5 macro-</text>
+<text top="784" left="850" width="20" height="11" font="10"><b>514</b></text>
+<text top="802" left="459" width="19" height="15" font="12">F1</text>
+<text top="802" left="484" width="302" height="15" font="8">for three-class. The binary pipeline has no</text>
+<text top="804" left="850" width="20" height="11" font="10"><b>515</b></text>
+<text top="822" left="459" width="256" height="15" font="8">corpus channel, so its entire inflation (</text>
+<text top="822" left="715" width="21" height="15" font="16">+3</text>
+<text top="822" left="736" width="5" height="15" font="14">.</text>
+<text top="822" left="741" width="8" height="15" font="16">0</text>
+<text top="822" left="749" width="38" height="15" font="8">pp) is</text>
+<text top="825" left="850" width="20" height="11" font="10"><b>516</b></text>
+<text top="842" left="459" width="102" height="15" font="8">Leak B, leaving</text>
+<text top="842" left="566" width="93" height="15" font="12">92.9%/92.4%</text>
+<text top="842" left="659" width="128" height="15" font="8">. These are ablation</text>
+<text top="845" left="850" width="20" height="11" font="10"><b>517</b></text>
+<text top="863" left="459" width="329" height="15" font="8">bounds: a single seed, frozen deployed weights,</text>
+<text top="865" left="850" width="20" height="11" font="10"><b>518</b></text>
+<text top="883" left="459" width="23" height="15" font="8">and</text>
+<text top="883" left="486" width="10" height="15" font="14">α</text>
+<text top="883" left="496" width="21" height="15" font="16">=1</text>
+<text top="883" left="517" width="5" height="15" font="14">.</text>
+<text top="883" left="522" width="8" height="15" font="16">0</text>
+<text top="883" left="533" width="256" height="15" font="8">not re-tuned; the fusion weights’ tuning-</text>
+<text top="885" left="850" width="20" height="11" font="10"><b>519</b></text>
+<text top="903" left="459" width="330" height="15" font="8">on-eval is disclosed but not separately quantified.</text>
+<text top="906" left="850" width="20" height="11" font="10"><b>520</b></text>
+<text top="924" left="458" width="328" height="15" font="8">We state plainly that our earlier headline claims</text>
+<text top="926" left="850" width="20" height="11" font="10"><b>521</b></text>
+<text top="944" left="459" width="331" height="15" font="8">were inflated; the corrected system remains prac-</text>
+<text top="946" left="850" width="20" height="11" font="10"><b>522</b></text>
+<text top="964" left="459" width="330" height="15" font="8">tically useful—92.9% binary strict OOF at edge-</text>
+<text top="967" left="850" width="20" height="11" font="10"><b>523</b></text>
+<text top="985" left="459" width="327" height="15" font="8">deployable size—but the honest numbers are the</text>
+<text top="987" left="850" width="20" height="11" font="10"><b>524</b></text>
+<text top="1005" left="459" width="84" height="15" font="8">contribution.</text>
+<text top="1007" left="850" width="20" height="11" font="10"><b>525</b></text>
+<text top="1040" left="459" width="20" height="15" font="12">6.2</text>
+<text top="1040" left="496" width="257" height="15" font="12">Out-of-distribution evaluation under</text>
+<text top="1042" left="850" width="20" height="11" font="10"><b>526</b></text>
+<text top="1060" left="496" width="175" height="15" font="12">selection and provenance</text>
+<text top="1063" left="850" width="20" height="11" font="10"><b>527</b></text>
+<text top="1087" left="459" width="224" height="15" font="12">ood1000 is a development set.</text>
+<text top="1087" left="699" width="90" height="15" font="8">Every Stage-</text>
+<text top="1090" left="850" width="20" height="11" font="10"><b>528</b></text>
+<text top="1108" left="459" width="330" height="15" font="8">2 decision was made by reading ood1000 ac-</text>
+<text top="1110" left="850" width="20" height="11" font="10"><b>529</b></text>
+<text top="1128" left="459" width="49" height="15" font="8">curacy:</text>
+<text top="1128" left="523" width="99" height="15" font="8">AL scale (1K</text>
+<text top="1127" left="622" width="16" height="15" font="20">→</text>
+<text top="1128" left="639" width="148" height="15" font="8">17K), teacher choice</text>
+<text top="1130" left="850" width="20" height="11" font="10"><b>530</b></text>
+<text top="1148" left="459" width="328" height="15" font="8">(DeepSeek/Qwen/hybrid), per-task epochs, seed</text>
+<text top="1151" left="850" width="20" height="11" font="10"><b>531</b></text>
+<text top="1193" left="442" width="8" height="15" font="8">6</text>
+</page>
+<page number="7" position="absolute" top="0" left="0" height="1262" width="892">
+	<fontspec id="22" size="13" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+	<fontspec id="23" size="13" family="JBGOHN+CMMI9" color="#000000"/>
+	<fontspec id="24" size="13" family="ULSUDT+CMR9" color="#000000"/>
+	<fontspec id="25" size="15" family="DXHIMK+CMSY10" color="#000000"/>
+	<fontspec id="26" size="10" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+	<fontspec id="27" size="10" family="FRUNXE+CMMI7" color="#000000"/>
+	<fontspec id="28" size="15" family="GLIOIQ+NimbusRomNo9L-Regu" color="#00007f"/>
+	<fontspec id="29" size="9" family="DPJFUJ+DejaVuSerif" color="#000000"/>
+	<fontspec id="30" size="10" family="DPJFUJ+DejaVuSerif" color="#000000"/>
+	<fontspec id="31" size="9" family="DPJFUJ+DejaVuSerif" color="#ffffff"/>
+	<fontspec id="32" size="11" family="DPJFUJ+DejaVuSerif" color="#000000"/>
+<text top="114" left="115" width="25" height="12" font="22">Task</text>
+<text top="114" left="171" width="84" height="12" font="22">Pipeline variant</text>
+<text top="114" left="371" width="22" height="12" font="22">Acc</text>
+<text top="114" left="411" width="54" height="12" font="22">Macro-F1</text>
+<text top="160" left="115" width="37" height="12" font="22">3-class</text>
+<text top="137" left="171" width="127" height="12" font="22">deployed, uncorrected (</text>
+<text top="137" left="298" width="9" height="12" font="23">α</text>
+<text top="137" left="307" width="18" height="12" font="24">=0</text>
+<text top="137" left="324" width="4" height="12" font="23">.</text>
+<text top="137" left="328" width="7" height="12" font="24">5</text>
+<text top="137" left="335" width="4" height="12" font="22">)</text>
+<text top="137" left="370" width="24" height="12" font="22">89.5</text>
+<text top="137" left="426" width="24" height="12" font="22">85.9</text>
+<text top="152" left="171" width="9" height="12" font="23">α</text>
+<text top="152" left="179" width="18" height="12" font="24">=1</text>
+<text top="152" left="197" width="4" height="12" font="23">.</text>
+<text top="152" left="201" width="7" height="12" font="24">0</text>
+<text top="152" left="208" width="114" height="12" font="22">, corpus channel kept</text>
+<text top="152" left="370" width="24" height="12" font="22">84.0</text>
+<text top="152" left="426" width="24" height="12" font="22">77.5</text>
+<text top="167" left="171" width="9" height="12" font="23">α</text>
+<text top="167" left="179" width="18" height="12" font="24">=1</text>
+<text top="167" left="197" width="4" height="12" font="23">.</text>
+<text top="167" left="201" width="7" height="12" font="24">0</text>
+<text top="167" left="208" width="138" height="12" font="22">, corpus channel removed</text>
+<text top="167" left="370" width="24" height="12" font="22">83.3</text>
+<text top="167" left="426" width="24" height="12" font="22">76.3</text>
+<text top="182" left="171" width="9" height="12" font="23">α</text>
+<text top="182" left="179" width="18" height="12" font="24">=0</text>
+<text top="182" left="197" width="4" height="12" font="23">.</text>
+<text top="182" left="201" width="7" height="12" font="24">5</text>
+<text top="182" left="208" width="138" height="12" font="22">, corpus channel removed</text>
+<text top="182" left="370" width="24" height="12" font="22">87.5</text>
+<text top="182" left="426" width="24" height="12" font="22">81.3</text>
+<text top="213" left="115" width="34" height="12" font="22">binary</text>
+<text top="206" left="171" width="127" height="12" font="22">deployed, uncorrected (</text>
+<text top="205" left="298" width="9" height="12" font="23">α</text>
+<text top="205" left="307" width="18" height="12" font="24">=0</text>
+<text top="205" left="324" width="4" height="12" font="23">.</text>
+<text top="205" left="328" width="7" height="12" font="24">5</text>
+<text top="206" left="335" width="4" height="12" font="22">)</text>
+<text top="206" left="370" width="24" height="12" font="22">95.9</text>
+<text top="206" left="426" width="24" height="12" font="22">95.6</text>
+<text top="220" left="171" width="9" height="12" font="23">α</text>
+<text top="220" left="179" width="18" height="12" font="24">=1</text>
+<text top="220" left="197" width="4" height="12" font="23">.</text>
+<text top="220" left="201" width="7" height="12" font="24">0</text>
+<text top="221" left="211" width="141" height="12" font="22">(no corpus channel exists)</text>
+<text top="221" left="370" width="24" height="12" font="22">92.9</text>
+<text top="221" left="426" width="24" height="12" font="22">92.4</text>
+<text top="256" left="106" width="330" height="13" font="5">Table 2: Gold-600 out-of-fold results (%). “Uncor-</text>
+<text top="274" left="106" width="327" height="13" font="5">rected” rows are the previously reported deployed</text>
+<text top="292" left="106" width="42" height="13" font="5">scores;</text>
+<text top="291" left="152" width="10" height="13" font="6">α</text>
+<text top="291" left="161" width="19" height="13" font="7">=1</text>
+<text top="291" left="180" width="4" height="13" font="6">.</text>
+<text top="291" left="185" width="7" height="13" font="7">0</text>
+<text top="292" left="196" width="240" height="13" font="5">rows remove second-order teacher leak-</text>
+<text top="310" left="106" width="327" height="13" font="5">age (Leak B). The corpus-channel toggle bounds</text>
+<text top="327" left="106" width="95" height="13" font="5">Leak A. Leak B</text>
+<text top="326" left="205" width="12" height="14" font="25">≈</text>
+<text top="327" left="221" width="19" height="13" font="7">+5</text>
+<text top="327" left="240" width="4" height="13" font="6">.</text>
+<text top="327" left="244" width="7" height="13" font="7">5</text>
+<text top="327" left="252" width="78" height="13" font="5">pp (3-class) /</text>
+<text top="327" left="333" width="19" height="13" font="7">+3</text>
+<text top="327" left="352" width="4" height="13" font="6">.</text>
+<text top="327" left="357" width="7" height="13" font="7">0</text>
+<text top="327" left="364" width="71" height="13" font="5">pp (binary);</text>
+<text top="345" left="106" width="44" height="13" font="5">Leak A</text>
+<text top="344" left="154" width="12" height="14" font="25">≈</text>
+<text top="345" left="170" width="19" height="13" font="7">+0</text>
+<text top="345" left="189" width="4" height="13" font="6">.</text>
+<text top="345" left="193" width="7" height="13" font="7">7</text>
+<text top="345" left="201" width="19" height="13" font="5">pp.</text>
+<text top="395" left="106" width="330" height="15" font="8">count and subset, and fusion weights via cross-</text>
+<text top="397" left="18" width="20" height="11" font="10"><b>532</b></text>
+<text top="415" left="106" width="331" height="15" font="8">validation on ood1000 itself—26 mixture configu-</text>
+<text top="418" left="18" width="20" height="11" font="10"><b>533</b></text>
+<text top="436" left="106" width="73" height="15" font="8">rations and</text>
+<text top="434" left="184" width="13" height="15" font="20">≈</text>
+<text top="436" left="196" width="240" height="15" font="8">73 SFT runs in total, with four com-</text>
+<text top="438" left="18" width="20" height="11" font="10"><b>534</b></text>
+<text top="456" left="106" width="330" height="15" font="8">mits updating the OOD headline within two hours.</text>
+<text top="458" left="18" width="20" height="11" font="10"><b>535</b></text>
+<text top="476" left="106" width="327" height="15" font="8">Out-of-distribution claims are only as honest as</text>
+<text top="479" left="18" width="20" height="11" font="10"><b>536</b></text>
+<text top="497" left="106" width="246" height="15" font="8">the selection protocol behind them <a href="pgs.html#9">(</a></text>
+<text top="497" left="353" width="79" height="15" font="9"><a href="pgs.html#9">Baran et al.</a></text>
+<text top="497" left="432" width="4" height="15" font="8"><a href="pgs.html#9">,</a></text>
+<text top="499" left="18" width="20" height="11" font="10"><b>537</b></text>
+<text top="517" left="106" width="32" height="15" font="9"><a href="pgs.html#9">2023</a></text>
+<text top="517" left="138" width="274" height="15" font="8"><a href="pgs.html#9">); </a>we therefore report ood1000 numbers as</text>
+<text top="517" left="416" width="20" height="14" font="13">de-</text>
+<text top="519" left="18" width="20" height="11" font="10"><b>538</b></text>
+<text top="537" left="106" width="135" height="14" font="13">velopment estimates</text>
+<text top="537" left="245" width="174" height="15" font="8">with an estimated best-of-</text>
+<text top="537" left="419" width="13" height="15" font="14">N</text>
+<text top="540" left="18" width="20" height="11" font="10"><b>539</b></text>
+<text top="558" left="106" width="78" height="15" font="8">optimism of</text>
+<text top="557" left="187" width="21" height="15" font="16">+0</text>
+<text top="557" left="208" width="5" height="15" font="14">.</text>
+<text top="557" left="213" width="8" height="15" font="16">3</text>
+<text top="558" left="221" width="8" height="15" font="8">–</text>
+<text top="557" left="229" width="8" height="15" font="16">1</text>
+<text top="557" left="237" width="5" height="15" font="14">.</text>
+<text top="557" left="242" width="8" height="15" font="16">0</text>
+<text top="558" left="250" width="102" height="15" font="8">pp (3-class) and</text>
+<text top="557" left="355" width="21" height="15" font="16">+0</text>
+<text top="557" left="376" width="5" height="15" font="14">.</text>
+<text top="557" left="381" width="8" height="15" font="16">2</text>
+<text top="558" left="389" width="8" height="15" font="8">–</text>
+<text top="557" left="397" width="8" height="15" font="16">0</text>
+<text top="557" left="405" width="5" height="15" font="14">.</text>
+<text top="557" left="409" width="8" height="15" font="16">7</text>
+<text top="558" left="418" width="16" height="15" font="8">pp</text>
+<text top="560" left="18" width="20" height="11" font="10"><b>540</b></text>
+<text top="578" left="106" width="328" height="15" font="8">(binary). The best measured configuration (al17kds</text>
+<text top="580" left="18" width="20" height="11" font="10"><b>541</b></text>
+<text top="598" left="106" width="327" height="15" font="8">mix) reaches 77.1%/77.4 macro-F1 (3-class) and</text>
+<text top="601" left="18" width="20" height="11" font="10"><b>542</b></text>
+<text top="619" left="106" width="135" height="15" font="8">92.3%/92.1 (binary,</text>
+<text top="618" left="248" width="10" height="15" font="14">n</text>
+<text top="618" left="258" width="37" height="15" font="16">=673</text>
+<text top="619" left="302" width="132" height="15" font="8">non-neutral) versus</text>
+<text top="621" left="18" width="20" height="11" font="10"><b>543</b></text>
+<text top="639" left="106" width="328" height="15" font="8">v3’s 65.0% and 85.0%; McNemar tests on this set</text>
+<text top="641" left="18" width="20" height="11" font="10"><b>544</b></text>
+<text top="659" left="106" width="327" height="15" font="8">are anti-conservative because the set was reused</text>
+<text top="662" left="18" width="20" height="11" font="10"><b>545</b></text>
+<text top="680" left="106" width="119" height="15" font="8">for selection. On</text>
+<text top="679" left="231" width="61" height="15" font="12">fresh500</text>
+<text top="680" left="292" width="145" height="15" font="8">—a clean sample ex-</text>
+<text top="682" left="18" width="20" height="11" font="10"><b>546</b></text>
+<text top="700" left="106" width="327" height="15" font="8">cluded from all prior pools—the fixed al17k recipe</text>
+<text top="702" left="18" width="20" height="11" font="10"><b>547</b></text>
+<text top="720" left="106" width="328" height="15" font="8">replicates at 77.0% (3-class) and 93.7% (binary)</text>
+<text top="723" left="18" width="20" height="11" font="10"><b>548</b></text>
+<text top="740" left="106" width="328" height="15" font="8">versus v3’s 58.8% and 86.3%, so the AL-scaled</text>
+<text top="743" left="18" width="20" height="11" font="10"><b>549</b></text>
+<text top="761" left="106" width="327" height="15" font="8">family’s advantage over v3 is real; but fresh500</text>
+<text top="763" left="18" width="20" height="11" font="10"><b>550</b></text>
+<text top="781" left="106" width="327" height="15" font="8">labels come from the same DeepSeek teacher that</text>
+<text top="784" left="18" width="20" height="11" font="10"><b>551</b></text>
+<text top="801" left="106" width="327" height="15" font="8">produced most AL labels, so it measures agreement</text>
+<text top="804" left="18" width="20" height="11" font="10"><b>552</b></text>
+<text top="822" left="106" width="331" height="15" font="8">with teacher conventions as much as generalization.</text>
+<text top="824" left="18" width="20" height="11" font="10"><b>553</b></text>
+<text top="853" left="106" width="179" height="15" font="12">Row-level contamination.</text>
+<text top="853" left="302" width="132" height="15" font="8">Our cid audit shows</text>
+<text top="855" left="18" width="20" height="11" font="10"><b>554</b></text>
+<text top="873" left="106" width="329" height="15" font="8">evaluation texts entered corpus training sets: 68.7%</text>
+<text top="876" left="18" width="20" height="11" font="10"><b>555</b></text>
+<text top="894" left="106" width="329" height="15" font="8">of ood1000, 70.2% of fresh500, and 74.8%/77.3%</text>
+<text top="896" left="18" width="20" height="11" font="10"><b>556</b></text>
+<text top="914" left="106" width="327" height="15" font="8">of lab500 rows share a corpus ID with at least one</text>
+<text top="916" left="18" width="20" height="11" font="10"><b>557</b></text>
+<text top="934" left="106" width="327" height="15" font="8">corpus-trained model, plus 220/107 near-duplicate</text>
+<text top="937" left="18" width="20" height="11" font="10"><b>558</b></text>
+<text top="954" left="106" width="330" height="15" font="8">rows on ood/fresh. The deployed neutral detec-</text>
+<text top="957" left="18" width="20" height="11" font="10"><b>559</b></text>
+<text top="975" left="106" width="327" height="15" font="8">tor specifically trained on 13.0% of ood1000 and</text>
+<text top="977" left="18" width="20" height="11" font="10"><b>560</b></text>
+<text top="995" left="105" width="270" height="15" font="8">13.2% of fresh500; AL/SFT pools have</text>
+<text top="995" left="380" width="28" height="14" font="13">zero</text>
+<text top="995" left="413" width="20" height="15" font="8">cid</text>
+<text top="998" left="18" width="20" height="11" font="10"><b>561</b></text>
+<text top="1015" left="106" width="327" height="15" font="8">overlap, so the SFT-mix gains cannot be explained</text>
+<text top="1018" left="18" width="20" height="11" font="10"><b>562</b></text>
+<text top="1036" left="106" width="327" height="15" font="8">by row memorization, but every corpus-channel</text>
+<text top="1038" left="18" width="20" height="11" font="10"><b>563</b></text>
+<text top="1056" left="106" width="225" height="15" font="8">number carries bounded exposure.</text>
+<text top="1059" left="18" width="20" height="11" font="10"><b>564</b></text>
+<text top="1087" left="106" width="327" height="15" font="12">The provenance split is the most consequential</text>
+<text top="1090" left="18" width="20" height="11" font="10"><b>565</b></text>
+<text top="1107" left="106" width="54" height="15" font="12">finding.</text>
+<text top="1108" left="177" width="44" height="15" font="8">Figure</text>
+<text top="1108" left="224" width="8" height="15" font="9"><a href="pgs.html#7">2</a></text>
+<text top="1108" left="237" width="197" height="15" font="8">summarizes label provenance</text>
+<text top="1110" left="18" width="20" height="11" font="10"><b>566</b></text>
+<text top="1128" left="106" width="121" height="15" font="8">across splits; Table</text>
+<text top="1128" left="231" width="8" height="15" font="9"><a href="pgs.html#7">3</a></text>
+<text top="1128" left="243" width="193" height="15" font="8">splits ood1000 by label prove-</text>
+<text top="1130" left="18" width="20" height="11" font="10"><b>567</b></text>
+<text top="1148" left="106" width="327" height="15" font="8">nance. Every system drops 20–32pp on the 200</text>
+<text top="1151" left="18" width="20" height="11" font="10"><b>568</b></text>
+<text top="114" left="463" width="42" height="9" font="26">Eval rows</text>
+<text top="114" left="577" width="7" height="9" font="27">n</text>
+<text top="114" left="609" width="10" height="9" font="26">v3</text>
+<text top="114" left="631" width="152" height="9" font="26">al17kds mix DS-Flash Qwen3-4B</text>
+<text top="134" left="463" width="77" height="9" font="26">ood1000, all (dev)</text>
+<text top="134" left="577" width="47" height="9" font="26">1000 65.0</text>
+<text top="134" left="648" width="18" height="9" font="26">77.1</text>
+<text top="134" left="701" width="18" height="9" font="26">82.0</text>
+<text top="134" left="751" width="18" height="9" font="26">70.6</text>
+<text top="146" left="473" width="68" height="9" font="26">LLM-consensus</text>
+<text top="146" left="577" width="16" height="9" font="26">800</text>
+<text top="146" left="605" width="18" height="9" font="26">69.6</text>
+<text top="146" left="648" width="18" height="9" font="26">82.4</text>
+<text top="146" left="701" width="18" height="9" font="26">87.5</text>
+<text top="146" left="751" width="18" height="9" font="26">75.1</text>
+<text top="158" left="473" width="80" height="9" font="26">human-adjudicated</text>
+<text top="158" left="577" width="16" height="9" font="26">200</text>
+<text top="158" left="605" width="18" height="9" font="26">46.5</text>
+<text top="158" left="648" width="18" height="9" font="26">56.0</text>
+<text top="158" left="701" width="18" height="9" font="26">59.5</text>
+<text top="158" left="751" width="18" height="9" font="26">52.5</text>
+<text top="179" left="463" width="87" height="9" font="26">fresh500 (DS labels)</text>
+<text top="179" left="577" width="16" height="9" font="26">500</text>
+<text top="179" left="605" width="18" height="9" font="26">58.8</text>
+<text top="179" left="648" width="18" height="9" font="26">77.0</text>
+<text top="179" left="704" width="10" height="9" font="26">—</text>
+<text top="179" left="755" width="10" height="9" font="26">—</text>
+<text top="199" left="463" width="130" height="9" font="26">human400 (blind human) 400</text>
+<text top="199" left="605" width="18" height="9" font="26">55.8</text>
+<text top="199" left="648" width="18" height="9" font="26">66.3</text>
+<text top="199" left="704" width="10" height="9" font="26">—</text>
+<text top="199" left="755" width="10" height="9" font="26">—</text>
+<text top="231" left="459" width="330" height="13" font="5">Table 3: 3-class accuracy (%) by evaluation set and la-</text>
+<text top="249" left="459" width="327" height="13" font="5">bel provenance. ood1000 is a development/selection</text>
+<text top="267" left="459" width="330" height="13" font="5">set, not a held-out test; its 200 “user” rows were ad-</text>
+<text top="285" left="459" width="327" height="13" font="5">judicated with student predictions visible. DS-Flash</text>
+<text top="303" left="459" width="57" height="13" font="5">parseable</text>
+<text top="303" left="520" width="9" height="13" font="6">n</text>
+<text top="303" left="529" width="260" height="13" font="5">: 992 all / 797 consensus / 195 adjudicated.</text>
+<text top="321" left="459" width="330" height="13" font="5">fresh500 labels are DeepSeek-Flash pseudo-labels. hu-</text>
+<text top="339" left="459" width="327" height="13" font="5">man400 labels are single-author blind annotations with</text>
+<text top="357" left="459" width="330" height="13" font="5">zero known pool overlap; mix uses the frozen ood1000-</text>
+<text top="375" left="459" width="224" height="13" font="5">selected weights, not re-tuned here <a href="pgs.html#8">(§</a></text>
+<text top="375" left="683" width="19" height="13" font="28"><a href="pgs.html#8">6.3</a></text>
+<text top="375" left="702" width="9" height="13" font="5"><a href="pgs.html#8">).</a></text>
+<text top="649" left="521" width="145" height="11" font="29">gold-600 ood1000 fresh500</text>
+<text top="649" left="680" width="32" height="11" font="29">lab500</text>
+<text top="650" left="728" width="39" height="11" font="29">AL train</text>
+<text top="661" left="731" width="34" height="11" font="29">(~17K)</text>
+<text top="635" left="498" width="7" height="12" font="30">0</text>
+<text top="606" left="491" width="13" height="12" font="30">20</text>
+<text top="576" left="491" width="13" height="12" font="30">40</text>
+<text top="547" left="491" width="13" height="12" font="30">60</text>
+<text top="517" left="491" width="13" height="12" font="30">80</text>
+<text top="487" left="484" width="20" height="12" font="30">100</text>
+<text top="604" left="476" width="0" height="12" font="30">la</text>
+<text top="595" left="476" width="0" height="12" font="30">b</text>
+<text top="588" left="476" width="0" height="12" font="30">e</text>
+<text top="582" left="476" width="0" height="12" font="30">l </text>
+<text top="575" left="476" width="0" height="12" font="30">p</text>
+<text top="569" left="476" width="0" height="12" font="30">ro</text>
+<text top="558" left="476" width="0" height="12" font="30">ve</text>
+<text top="546" left="476" width="0" height="12" font="30">n</text>
+<text top="539" left="476" width="0" height="12" font="30">a</text>
+<text top="533" left="476" width="0" height="12" font="30">n</text>
+<text top="526" left="476" width="0" height="12" font="30">ce</text>
+<text top="514" left="476" width="0" height="12" font="30"> (</text>
+<text top="507" left="476" width="0" height="12" font="30">%</text>
+<text top="497" left="476" width="0" height="12" font="30">)</text>
+<text top="561" left="529" width="26" height="10" font="31">100%</text>
+<text top="620" left="583" width="20" height="10" font="31">20%</text>
+<text top="546" left="583" width="20" height="10" font="31">80%</text>
+<text top="561" left="632" width="26" height="10" font="31">100%</text>
+<text top="561" left="683" width="26" height="10" font="31">100%</text>
+<text top="560" left="738" width="20" height="10" font="31">98%</text>
+<text top="457" left="522" width="246" height="13" font="32">Annotation-source composition of each split</text>
+<text top="482" left="659" width="87" height="10" font="29">human-adjudicated</text>
+<text top="495" left="659" width="108" height="10" font="29">LLM consensus/teacher</text>
+<text top="702" left="459" width="330" height="13" font="5">Figure 2: Annotation-source composition of each eval-</text>
+<text top="720" left="459" width="329" height="13" font="5">uation split. Only gold-600 is fully human-labelled;</text>
+<text top="738" left="459" width="330" height="13" font="5">ood1000’s “human” share is 20% and anchoring-</text>
+<text top="756" left="459" width="327" height="13" font="5">exposed; fresh500 and lab500 carry LLM-teacher labels</text>
+<text top="774" left="459" width="69" height="13" font="5">throughout.</text>
+<text top="864" left="459" width="330" height="15" font="8">human-adjudicated rows, which are disagreement-</text>
+<text top="866" left="850" width="20" height="11" font="10"><b>569</b></text>
+<text top="884" left="459" width="327" height="15" font="8">enriched and intrinsically harder. Crucially, on this</text>
+<text top="886" left="850" width="20" height="11" font="10"><b>570</b></text>
+<text top="904" left="459" width="327" height="15" font="8">subset the ranking changes: DeepSeek-V4.1-Flash</text>
+<text top="907" left="850" width="20" height="11" font="10"><b>571</b></text>
+<text top="925" left="459" width="119" height="15" font="8">zero-shot (59.5%,</text>
+<text top="924" left="583" width="10" height="15" font="14">n</text>
+<text top="924" left="593" width="37" height="15" font="16">=195</text>
+<text top="925" left="630" width="6" height="15" font="8">)</text>
+<text top="925" left="640" width="52" height="14" font="13">exceeds</text>
+<text top="925" left="696" width="90" height="15" font="8">our best local</text>
+<text top="927" left="850" width="20" height="11" font="10"><b>572</b></text>
+<text top="945" left="459" width="327" height="15" font="8">mixture (56.0%), while v3 falls to 46.5%. The two</text>
+<text top="947" left="850" width="20" height="11" font="10"><b>573</b></text>
+<text top="965" left="459" width="327" height="15" font="8">LLM annotation passes agree on only 29.8% of the</text>
+<text top="968" left="850" width="20" height="11" font="10"><b>574</b></text>
+<text top="986" left="459" width="146" height="15" font="8">47 adjudicated rows (</text>
+<text top="985" left="604" width="9" height="15" font="14">κ</text>
+<text top="985" left="614" width="13" height="15" font="16">=</text>
+<text top="984" left="627" width="13" height="15" font="20">−</text>
+<text top="985" left="639" width="8" height="15" font="16">0</text>
+<text top="985" left="648" width="5" height="15" font="14">.</text>
+<text top="985" left="652" width="16" height="15" font="16">18</text>
+<text top="986" left="668" width="118" height="15" font="8">) versus 100% on</text>
+<text top="988" left="850" width="20" height="11" font="10"><b>575</b></text>
+<text top="1006" left="459" width="330" height="15" font="8">consensus rows by construction, indicating the con-</text>
+<text top="1008" left="850" width="20" height="11" font="10"><b>576</b></text>
+<text top="1026" left="459" width="327" height="15" font="8">sensus labels encode a single model’s conventions</text>
+<text top="1029" left="850" width="20" height="11" font="10"><b>577</b></text>
+<text top="1047" left="459" width="6" height="15" font="8"><a href="pgs.html#10">(</a></text>
+<text top="1047" left="464" width="105" height="15" font="9"><a href="pgs.html#10">Schroeder et al.</a></text>
+<text top="1047" left="569" width="4" height="15" font="8"><a href="pgs.html#10">,</a></text>
+<text top="1047" left="577" width="33" height="15" font="9"><a href="pgs.html#10">2025</a></text>
+<text top="1047" left="611" width="5" height="15" font="8"><a href="pgs.html#10">;</a></text>
+<text top="1047" left="620" width="82" height="15" font="9"><a href="pgs.html#10">Møller et al.</a></text>
+<text top="1047" left="702" width="4" height="15" font="8"><a href="pgs.html#10">,</a></text>
+<text top="1047" left="711" width="33" height="15" font="9"><a href="pgs.html#10">2024</a></text>
+<text top="1047" left="744" width="42" height="15" font="8"><a href="pgs.html#10">). </a>Part</text>
+<text top="1049" left="850" width="20" height="11" font="10"><b>578</b></text>
+<text top="1067" left="459" width="327" height="15" font="8">of the mixture’s consensus-subset lead is therefore</text>
+<text top="1069" left="850" width="20" height="11" font="10"><b>579</b></text>
+<text top="1087" left="459" width="330" height="15" font="8">label-convention alignment, not broad generaliza-</text>
+<text top="1090" left="850" width="20" height="11" font="10"><b>580</b></text>
+<text top="1108" left="459" width="328" height="15" font="8">tion. Binary evaluation is more robust: the best mix</text>
+<text top="1110" left="850" width="20" height="11" font="10"><b>581</b></text>
+<text top="1128" left="459" width="277" height="15" font="8">loses only 8.4pp across provenance (93.7</text>
+<text top="1127" left="737" width="16" height="15" font="20">→</text>
+<text top="1128" left="753" width="35" height="15" font="8">85.3)</text>
+<text top="1130" left="850" width="20" height="11" font="10"><b>582</b></text>
+<text top="1148" left="459" width="192" height="15" font="8">versus 26.4pp for three-class.</text>
+<text top="1151" left="850" width="20" height="11" font="10"><b>583</b></text>
+<text top="1193" left="442" width="8" height="15" font="8">7</text>
+</page>
+<page number="8" position="absolute" top="0" left="0" height="1262" width="892">
+	<fontspec id="33" size="12" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+<text top="111" left="106" width="20" height="15" font="12">6.3</text>
+<text top="111" left="143" width="234" height="15" font="12">The clean human test: human400</text>
+<text top="114" left="18" width="20" height="11" font="10"><b>584</b></text>
+<text top="145" left="106" width="328" height="15" font="8">human400 is the only evaluation set in this paper</text>
+<text top="147" left="18" width="20" height="11" font="10"><b>585</b></text>
+<text top="165" left="106" width="30" height="15" font="8">with</text>
+<text top="165" left="141" width="28" height="14" font="13">zero</text>
+<text top="165" left="174" width="262" height="15" font="8">known training exposure and fully hu-</text>
+<text top="167" left="18" width="20" height="11" font="10"><b>586</b></text>
+<text top="185" left="106" width="327" height="15" font="8">man labels: 400 corpus reviews, length-stratified</text>
+<text top="188" left="18" width="20" height="11" font="10"><b>587</b></text>
+<text top="206" left="106" width="328" height="15" font="8">(160/120/80/40), sampled from the 911K pool with</text>
+<text top="208" left="18" width="20" height="11" font="10"><b>588</b></text>
+<text top="226" left="106" width="327" height="15" font="8">every known training and evaluation pool excluded</text>
+<text top="228" left="18" width="20" height="11" font="10"><b>589</b></text>
+<text top="246" left="106" width="328" height="15" font="8">by identifier, and blind-labelled by a single author</text>
+<text top="249" left="18" width="20" height="11" font="10"><b>590</b></text>
+<text top="267" left="106" width="245" height="15" font="8">under written guidelines (Appendix</text>
+<text top="267" left="358" width="12" height="15" font="9"><a href="pgs.html#11">D</a></text>
+<text top="267" left="370" width="66" height="15" font="8"><a href="pgs.html#11">). </a>Labels:</text>
+<text top="269" left="18" width="20" height="11" font="10"><b>591</b></text>
+<text top="287" left="105" width="330" height="15" font="8">156 positive / 179 neutral / 65 negative, with 31</text>
+<text top="289" left="18" width="20" height="11" font="10"><b>592</b></text>
+<text top="307" left="106" width="330" height="15" font="8">mixed, 29 off-topic, and 2 spoiler flags; single-</text>
+<text top="310" left="18" width="20" height="11" font="10"><b>593</b></text>
+<text top="328" left="106" width="320" height="15" font="8">annotator, so no human–human IAA is available.</text>
+<text top="330" left="18" width="20" height="11" font="10"><b>594</b></text>
+<text top="371" left="106" width="235" height="15" font="12">Deployed v3 on human labels.</text>
+<text top="371" left="357" width="76" height="15" font="8">v3 reaches</text>
+<text top="373" left="18" width="20" height="11" font="10"><b>595</b></text>
+<text top="391" left="106" width="327" height="15" font="8">55.8% three-class accuracy (macro-F1 55.4) and</text>
+<text top="394" left="18" width="20" height="11" font="10"><b>596</b></text>
+<text top="411" left="106" width="328" height="15" font="8">76.5% binary accuracy on the 221 non-neutral</text>
+<text top="414" left="18" width="20" height="11" font="10"><b>597</b></text>
+<text top="432" left="106" width="328" height="15" font="8">rows—far below its dev-set estimates and below</text>
+<text top="434" left="18" width="20" height="11" font="10"><b>598</b></text>
+<text top="452" left="106" width="327" height="15" font="8">its 58.8% on fresh500’s teacher labels. Per-class</text>
+<text top="455" left="18" width="20" height="11" font="10"><b>599</b></text>
+<text top="472" left="106" width="330" height="15" font="8">recall is balanced but low (positive 51.3%, neu-</text>
+<text top="475" left="18" width="20" height="11" font="10"><b>600</b></text>
+<text top="493" left="106" width="327" height="15" font="8">tral 50.3%, negative 81.5%); dominant errors are</text>
+<text top="495" left="18" width="20" height="11" font="10"><b>601</b></text>
+<text top="513" left="106" width="46" height="15" font="8">neutral</text>
+<text top="512" left="152" width="16" height="15" font="20">→</text>
+<text top="513" left="169" width="170" height="15" font="8">negative (66) and positive</text>
+<text top="512" left="339" width="16" height="15" font="20">→</text>
+<text top="513" left="355" width="82" height="15" font="8">neutral (45).</text>
+<text top="515" left="18" width="20" height="11" font="10"><b>602</b></text>
+<text top="533" left="106" width="329" height="15" font="8">Accuracy is flat across length strata (53.7–56.7%)</text>
+<text top="536" left="18" width="20" height="11" font="10"><b>603</b></text>
+<text top="554" left="106" width="327" height="15" font="8">but rises with model confidence (43.9% below 0.5</text>
+<text top="556" left="18" width="20" height="11" font="10"><b>604</b></text>
+<text top="574" left="106" width="75" height="15" font="8">to 67.9% at</text>
+<text top="573" left="185" width="13" height="15" font="20">≥</text>
+<text top="574" left="198" width="30" height="15" font="8">0.9).</text>
+<text top="576" left="18" width="20" height="11" font="10"><b>605</b></text>
+<text top="617" left="106" width="278" height="15" font="12">A star-rating lookup ties the ensemble.</text>
+<text top="617" left="400" width="36" height="15" font="8">Map-</text>
+<text top="620" left="18" width="20" height="11" font="10"><b>606</b></text>
+<text top="638" left="106" width="257" height="15" font="8">ping Douban star ratings to labels (4–5</text>
+<text top="636" left="363" width="16" height="15" font="20">→</text>
+<text top="638" left="380" width="56" height="15" font="8">positive,</text>
+<text top="640" left="18" width="20" height="11" font="10"><b>607</b></text>
+<text top="658" left="106" width="8" height="15" font="8">3</text>
+<text top="657" left="115" width="16" height="15" font="20">→</text>
+<text top="658" left="131" width="51" height="15" font="8">neutral,</text>
+<text top="658" left="199" width="25" height="15" font="8">1–2</text>
+<text top="657" left="224" width="16" height="15" font="20">→</text>
+<text top="658" left="240" width="132" height="15" font="8">negative) achieves</text>
+<text top="658" left="387" width="47" height="14" font="13">exactly</text>
+<text top="660" left="18" width="20" height="11" font="10"><b>608</b></text>
+<text top="678" left="106" width="327" height="15" font="8">55.75%—the same 223/400 correct as v3—while</text>
+<text top="681" left="18" width="20" height="11" font="10"><b>609</b></text>
+<text top="698" left="106" width="330" height="15" font="8">the systems agree on only 44.3% of rows. A triv-</text>
+<text top="701" left="18" width="20" height="11" font="10"><b>610</b></text>
+<text top="719" left="106" width="166" height="15" font="8">ial binary rating rule (1–2</text>
+<text top="718" left="272" width="16" height="15" font="20">→</text>
+<text top="719" left="288" width="146" height="15" font="8">negative, else positive)</text>
+<text top="721" left="18" width="20" height="11" font="10"><b>611</b></text>
+<text top="739" left="106" width="329" height="15" font="8">reaches 83.7%, exceeding v3’s 76.5%. Per-rating,</text>
+<text top="742" left="18" width="20" height="11" font="10"><b>612</b></text>
+<text top="759" left="106" width="327" height="15" font="8">only 62.7% of 5-star and 50.7% of 4-star reviews</text>
+<text top="762" left="18" width="20" height="11" font="10"><b>613</b></text>
+<text top="780" left="106" width="327" height="15" font="8">are human-positive; stars encode recommendation</text>
+<text top="782" left="18" width="20" height="11" font="10"><b>614</b></text>
+<text top="800" left="106" width="327" height="15" font="8">intent, not semantic stance. On gold-600 the same</text>
+<text top="803" left="18" width="20" height="11" font="10"><b>615</b></text>
+<text top="820" left="106" width="327" height="15" font="8">rule scored 71.3%; on this noisier corpus sample it</text>
+<text top="823" left="18" width="20" height="11" font="10"><b>616</b></text>
+<text top="841" left="106" width="95" height="15" font="8">falls to 55.8%.</text>
+<text top="843" left="18" width="20" height="11" font="10"><b>617</b></text>
+<text top="884" left="106" width="330" height="15" font="12">The AL mixture generalizes to human labels.</text>
+<text top="886" left="18" width="20" height="11" font="10"><b>618</b></text>
+<text top="904" left="106" width="328" height="15" font="8">The decisive comparison is the frozen-weight al17k</text>
+<text top="907" left="18" width="20" height="11" font="10"><b>619</b></text>
+<text top="925" left="106" width="69" height="15" font="8">mixture <a href="pgs.html#6">(§</a></text>
+<text top="925" left="175" width="8" height="15" font="9"><a href="pgs.html#6">5</a></text>
+<text top="925" left="183" width="10" height="15" font="8"><a href="pgs.html#6">):</a></text>
+<text top="924" left="199" width="45" height="15" font="12">66.3%</text>
+<text top="925" left="248" width="189" height="15" font="8">three-class accuracy (macro-</text>
+<text top="927" left="18" width="20" height="11" font="10"><b>620</b></text>
+<text top="945" left="106" width="58" height="15" font="8">F1 65.0),</text>
+<text top="945" left="168" width="29" height="15" font="16">+10</text>
+<text top="945" left="197" width="5" height="15" font="14">.</text>
+<text top="945" left="201" width="8" height="15" font="16">5</text>
+<text top="945" left="210" width="141" height="15" font="8">pp over v3 (McNemar</text>
+<text top="945" left="354" width="8" height="15" font="14">p</text>
+<text top="945" left="362" width="21" height="15" font="16">=2</text>
+<text top="944" left="383" width="13" height="15" font="20">×</text>
+<text top="945" left="396" width="16" height="15" font="16">10</text>
+<text top="941" left="412" width="10" height="11" font="18">−</text>
+<text top="942" left="422" width="6" height="11" font="17">4</text>
+<text top="945" left="429" width="5" height="15" font="8">)</text>
+<text top="947" left="18" width="20" height="11" font="10"><b>621</b></text>
+<text top="965" left="106" width="150" height="15" font="8">and the star lookup (</text>
+<text top="965" left="256" width="8" height="15" font="14">p</text>
+<text top="965" left="264" width="21" height="15" font="16">=1</text>
+<text top="965" left="285" width="5" height="15" font="14">.</text>
+<text top="965" left="290" width="8" height="15" font="16">6</text>
+<text top="964" left="298" width="13" height="15" font="20">×</text>
+<text top="965" left="311" width="16" height="15" font="16">10</text>
+<text top="961" left="327" width="10" height="11" font="18">−</text>
+<text top="962" left="337" width="6" height="11" font="17">3</text>
+<text top="965" left="344" width="90" height="15" font="8">); the frozen</text>
+<text top="968" left="18" width="20" height="11" font="10"><b>622</b></text>
+<text top="985" left="106" width="12" height="15" font="14">w</text>
+<text top="991" left="118" width="12" height="11" font="33">sft</text>
+<text top="985" left="131" width="21" height="15" font="16">=0</text>
+<text top="985" left="152" width="5" height="15" font="14">.</text>
+<text top="985" left="156" width="8" height="15" font="16">6</text>
+<text top="986" left="169" width="265" height="15" font="8">is also optimal here and per-seed mixes</text>
+<text top="988" left="18" width="20" height="11" font="10"><b>623</b></text>
+<text top="1006" left="106" width="193" height="15" font="8">are stable (63.5–66.0%). This</text>
+<text top="1006" left="303" width="53" height="14" font="13">reverses</text>
+<text top="1006" left="361" width="76" height="15" font="8">the teacher-</text>
+<text top="1008" left="18" width="20" height="11" font="10"><b>624</b></text>
+<text top="1026" left="106" width="327" height="15" font="8">alignment worry from the adjudicated subset: on</text>
+<text top="1029" left="18" width="20" height="11" font="10"><b>625</b></text>
+<text top="1047" left="106" width="327" height="15" font="8">uncontaminated human labels the AL gains are</text>
+<text top="1049" left="18" width="20" height="11" font="10"><b>626</b></text>
+<text top="1067" left="106" width="159" height="15" font="8">genuine generalization.</text>
+<text top="1067" left="281" width="152" height="15" font="8">Caveats: accuracy on</text>
+<text top="1069" left="18" width="20" height="11" font="10"><b>627</b></text>
+<text top="1087" left="106" width="117" height="15" font="8">annotator-flagged</text>
+<text top="1087" left="229" width="40" height="14" font="13">mixed</text>
+<text top="1087" left="274" width="160" height="15" font="8">reviews drops below v3</text>
+<text top="1090" left="18" width="20" height="11" font="10"><b>628</b></text>
+<text top="1108" left="106" width="118" height="15" font="8">(40.0% vs. 53.3%,</text>
+<text top="1107" left="228" width="10" height="15" font="14">n</text>
+<text top="1107" left="238" width="29" height="15" font="16">=30</text>
+<text top="1108" left="267" width="167" height="15" font="8">), and the absolute level is</text>
+<text top="1110" left="18" width="20" height="11" font="10"><b>629</b></text>
+<text top="1128" left="106" width="328" height="15" font="8">modest under a single-annotator reference. Binary</text>
+<text top="1130" left="18" width="20" height="11" font="10"><b>630</b></text>
+<text top="1148" left="106" width="260" height="15" font="8">evaluation on the 221 non-neutral rows:</text>
+<text top="1151" left="18" width="20" height="11" font="10"><b>631</b></text>
+<text top="111" left="459" width="20" height="15" font="12">6.4</text>
+<text top="111" left="496" width="179" height="15" font="12">Ablations and diagnostics</text>
+<text top="114" left="850" width="20" height="11" font="10"><b>632</b></text>
+<text top="139" left="459" width="66" height="15" font="8">Appendix</text>
+<text top="139" left="532" width="11" height="15" font="9"><a href="pgs.html#11">C</a></text>
+<text top="139" left="552" width="238" height="15" font="8">collects the statistical diagnostics.</text>
+<text top="142" left="850" width="20" height="11" font="10"><b>633</b></text>
+<text top="160" left="459" width="328" height="15" font="8">AL scaling from 1K to 17K improves the best</text>
+<text top="162" left="850" width="20" height="11" font="10"><b>634</b></text>
+<text top="180" left="459" width="327" height="15" font="8">measured configuration, but adjacent steps are</text>
+<text top="182" left="850" width="20" height="11" font="10"><b>635</b></text>
+<text top="200" left="459" width="264" height="15" font="8">within noise (al17k vs. al14k: McNemar</text>
+<text top="200" left="726" width="8" height="15" font="14">p</text>
+<text top="200" left="735" width="21" height="15" font="16">=0</text>
+<text top="200" left="756" width="5" height="15" font="14">.</text>
+<text top="200" left="760" width="25" height="15" font="16">064</text>
+<text top="200" left="785" width="4" height="15" font="8">,</text>
+<text top="203" left="850" width="20" height="11" font="10"><b>636</b></text>
+<text top="220" left="459" width="38" height="15" font="8">Holm</text>
+<text top="220" left="504" width="8" height="15" font="14">p</text>
+<text top="219" left="512" width="13" height="15" font="20">≈</text>
+<text top="220" left="525" width="8" height="15" font="16">0</text>
+<text top="220" left="533" width="5" height="15" font="14">.</text>
+<text top="220" left="538" width="16" height="15" font="16">45</text>
+<text top="220" left="554" width="233" height="15" font="8">), so our honest claim is “17K is</text>
+<text top="223" left="850" width="20" height="11" font="10"><b>637</b></text>
+<text top="241" left="459" width="330" height="15" font="8">at least as good as 14K”; every mix’s advan-</text>
+<text top="243" left="850" width="20" height="11" font="10"><b>638</b></text>
+<text top="261" left="459" width="330" height="15" font="8">tage over v3 remains significant after correction.</text>
+<text top="264" left="850" width="20" height="11" font="10"><b>639</b></text>
+<text top="281" left="459" width="50" height="15" font="8">The v2</text>
+<text top="280" left="508" width="16" height="15" font="20">→</text>
+<text top="281" left="525" width="265" height="15" font="8">v3 specialist gain is positive but non-</text>
+<text top="284" left="850" width="20" height="11" font="10"><b>640</b></text>
+<text top="302" left="459" width="76" height="15" font="8">significant (</text>
+<text top="302" left="535" width="14" height="15" font="16">∆</text>
+<text top="302" left="549" width="62" height="15" font="8">macro-F1</text>
+<text top="302" left="615" width="21" height="15" font="16">+1</text>
+<text top="302" left="636" width="5" height="15" font="14">.</text>
+<text top="302" left="641" width="8" height="15" font="16">6</text>
+<text top="302" left="649" width="138" height="15" font="8">pp; bootstrap 95% CI</text>
+<text top="304" left="850" width="20" height="11" font="10"><b>641</b></text>
+<text top="322" left="459" width="5" height="15" font="16">[</text>
+<text top="321" left="464" width="13" height="15" font="20">−</text>
+<text top="322" left="476" width="8" height="15" font="16">0</text>
+<text top="322" left="485" width="5" height="15" font="14">.</text>
+<text top="322" left="489" width="8" height="15" font="16">4</text>
+<text top="322" left="497" width="5" height="15" font="14">,</text>
+<text top="322" left="505" width="21" height="15" font="16">+3</text>
+<text top="322" left="526" width="5" height="15" font="14">.</text>
+<text top="322" left="530" width="13" height="15" font="16">8]</text>
+<text top="322" left="543" width="244" height="15" font="8">pp). Length stratification shows the</text>
+<text top="325" left="850" width="20" height="11" font="10"><b>642</b></text>
+<text top="342" left="459" width="83" height="15" font="8">OOD drop is</text>
+<text top="343" left="547" width="21" height="14" font="13">not</text>
+<text top="342" left="572" width="216" height="15" font="8">a short-text artifact—v3 accuracy</text>
+<text top="345" left="850" width="20" height="11" font="10"><b>643</b></text>
+<text top="363" left="459" width="327" height="15" font="8">is flat across ood1000 length buckets while neutral</text>
+<text top="365" left="850" width="20" height="11" font="10"><b>644</b></text>
+<text top="383" left="459" width="220" height="15" font="8">recall collapses with length (51.1</text>
+<text top="382" left="679" width="16" height="15" font="20">→</text>
+<text top="383" left="695" width="94" height="15" font="8">33.3%). Inter-</text>
+<text top="386" left="850" width="20" height="11" font="10"><b>645</b></text>
+<text top="403" left="459" width="147" height="15" font="8">annotator agreement is</text>
+<text top="403" left="611" width="9" height="15" font="14">κ</text>
+<text top="403" left="620" width="21" height="15" font="16">=0</text>
+<text top="403" left="641" width="5" height="15" font="14">.</text>
+<text top="403" left="646" width="25" height="15" font="16">568</text>
+<text top="403" left="674" width="57" height="15" font="8">against a</text>
+<text top="404" left="735" width="51" height="14" font="13">blended</text>
+<text top="406" left="850" width="20" height="11" font="10"><b>646</b></text>
+<text top="424" left="459" width="330" height="15" font="8">human/LLM reference only; the per-row second-</text>
+<text top="426" left="850" width="20" height="11" font="10"><b>647</b></text>
+<text top="444" left="459" width="210" height="15" font="8">human file was never preserved.</text>
+<text top="446" left="850" width="20" height="11" font="10"><b>648</b></text>
+<text top="480" left="459" width="20" height="15" font="12">6.5</text>
+<text top="480" left="496" width="280" height="15" font="12">Negative results and what would change</text>
+<text top="482" left="850" width="20" height="11" font="10"><b>649</b></text>
+<text top="500" left="496" width="109" height="15" font="12">our conclusions</text>
+<text top="503" left="850" width="20" height="11" font="10"><b>650</b></text>
+<text top="528" left="459" width="305" height="15" font="8">Over twenty variants were rejected (Appendix</text>
+<text top="528" left="768" width="10" height="15" font="9"><a href="pgs.html#12">E</a></text>
+<text top="528" left="778" width="10" height="15" font="8"><a href="pgs.html#12">);</a></text>
+<text top="530" left="850" width="20" height="11" font="10"><b>651</b></text>
+<text top="548" left="459" width="327" height="15" font="8">the audit-relevant ones: LoRA underperformed the</text>
+<text top="551" left="850" width="20" height="11" font="10"><b>652</b></text>
+<text top="568" left="459" width="330" height="15" font="8">deployed heads; Qwen3-4B synthetic reviews poi-</text>
+<text top="571" left="850" width="20" height="11" font="10"><b>653</b></text>
+<text top="589" left="459" width="330" height="15" font="8">soned training (OOF 0.7917); a second pseudo-</text>
+<text top="591" left="850" width="20" height="11" font="10"><b>654</b></text>
+<text top="609" left="459" width="327" height="15" font="8">label flywheel degenerated (confidence 0.986); a</text>
+<text top="612" left="850" width="20" height="11" font="10"><b>655</b></text>
+<text top="629" left="459" width="327" height="15" font="8">stacked meta-learner reached only 0.8367/0.7936</text>
+<text top="632" left="850" width="20" height="11" font="10"><b>656</b></text>
+<text top="650" left="459" width="6" height="15" font="8">(</text>
+<text top="649" left="464" width="10" height="15" font="14">n</text>
+<text top="649" left="474" width="37" height="15" font="16">=600</text>
+<text top="650" left="511" width="10" height="15" font="8">).</text>
+<text top="650" left="542" width="245" height="15" font="8">A later five-seed binary ensemble</text>
+<text top="652" left="850" width="20" height="11" font="10"><b>657</b></text>
+<text top="670" left="459" width="124" height="15" font="8">(91.98%) evaluated</text>
+<text top="670" left="586" width="30" height="14" font="13">after</text>
+<text top="670" left="621" width="169" height="15" font="8">the adopted four-seed sub-</text>
+<text top="673" left="850" width="20" height="11" font="10"><b>658</b></text>
+<text top="690" left="459" width="327" height="15" font="8">set (92.27%) was not adopted—direct evidence that</text>
+<text top="693" left="850" width="20" height="11" font="10"><b>659</b></text>
+<text top="711" left="459" width="264" height="15" font="8">headline selection operated on ood1000.</text>
+<text top="713" left="850" width="20" height="11" font="10"><b>660</b></text>
+<text top="732" left="476" width="314" height="15" font="8">Three outcomes would further change our con-</text>
+<text top="734" left="850" width="20" height="11" font="10"><b>661</b></text>
+<text top="752" left="459" width="330" height="15" font="8">clusions: a fold-isolated corpus detector (tighten-</text>
+<text top="754" left="850" width="20" height="11" font="10"><b>662</b></text>
+<text top="772" left="459" width="327" height="15" font="8">ing the Leak A bound), fusion weights re-tuned</text>
+<text top="775" left="850" width="20" height="11" font="10"><b>663</b></text>
+<text top="793" left="459" width="327" height="15" font="8">on clean channels (recovering part of the 5.5pp</text>
+<text top="795" left="850" width="20" height="11" font="10"><b>664</b></text>
+<text top="813" left="459" width="330" height="15" font="8">Leak B inflation), and a second annotator on hu-</text>
+<text top="815" left="850" width="20" height="11" font="10"><b>665</b></text>
+<text top="833" left="459" width="327" height="15" font="8">man400 (upgrading our single-reference evaluation</text>
+<text top="836" left="850" width="20" height="11" font="10"><b>666</b></text>
+<text top="854" left="459" width="327" height="15" font="8">to IAA-backed). Until then, 83–84% three-class</text>
+<text top="856" left="850" width="20" height="11" font="10"><b>667</b></text>
+<text top="874" left="459" width="327" height="15" font="8">and 92.9% binary strict OOF are the numbers we</text>
+<text top="876" left="850" width="20" height="11" font="10"><b>668</b></text>
+<text top="894" left="459" width="198" height="15" font="8">stand behind, and the mixture’s</text>
+<text top="894" left="661" width="29" height="15" font="16">+10</text>
+<text top="894" left="690" width="5" height="15" font="14">.</text>
+<text top="894" left="694" width="8" height="15" font="16">5</text>
+<text top="894" left="703" width="84" height="15" font="8">pp advantage</text>
+<text top="897" left="850" width="20" height="11" font="10"><b>669</b></text>
+<text top="915" left="459" width="327" height="15" font="8">over v3 and the star lookup on clean human labels</text>
+<text top="917" left="850" width="20" height="11" font="10"><b>670</b></text>
+<text top="935" left="459" width="14" height="15" font="8"><a href="pgs.html#8">(§</a></text>
+<text top="935" left="472" width="20" height="15" font="9"><a href="pgs.html#8">6.3</a></text>
+<text top="935" left="493" width="235" height="15" font="8"><a href="pgs.html#8">) </a>is the result we would defend first.</text>
+<text top="937" left="850" width="20" height="11" font="10"><b>671</b></text>
+<text top="972" left="459" width="9" height="16" font="11">7</text>
+<text top="972" left="486" width="301" height="16" font="11">Limitations and Ethical Considerations</text>
+<text top="975" left="850" width="20" height="11" font="10"><b>672</b></text>
+<text top="1006" left="459" width="243" height="15" font="12">Data provenance and terms of use.</text>
+<text top="1006" left="718" width="69" height="15" font="8">All review</text>
+<text top="1008" left="850" width="20" height="11" font="10"><b>673</b></text>
+<text top="1026" left="459" width="330" height="15" font="8">texts are Douban user comments used without plat-</text>
+<text top="1029" left="850" width="20" height="11" font="10"><b>674</b></text>
+<text top="1047" left="459" width="327" height="15" font="8">form authorization. The gold-600 set was scraped</text>
+<text top="1049" left="850" width="20" height="11" font="10"><b>675</b></text>
+<text top="1067" left="459" width="327" height="15" font="8">from a single film page; the corpus derives from the</text>
+<text top="1069" left="850" width="20" height="11" font="10"><b>676</b></text>
+<text top="1087" left="459" width="278" height="15" font="8">Moviedata-10M release. We release only</text>
+<text top="1086" left="742" width="13" height="15" font="20">≈</text>
+<text top="1087" left="754" width="33" height="15" font="8">5.0K</text>
+<text top="1090" left="850" width="20" height="11" font="10"><b>677</b></text>
+<text top="1108" left="459" width="329" height="15" font="8">evaluation reviews with user identifiers stripped,</text>
+<text top="1110" left="850" width="20" height="11" font="10"><b>678</b></text>
+<text top="1128" left="459" width="327" height="15" font="8">for research purposes. Roughly 18.5K unique texts</text>
+<text top="1130" left="850" width="20" height="11" font="10"><b>679</b></text>
+<text top="1148" left="459" width="328" height="15" font="8">were transmitted to the DeepSeek API for teacher</text>
+<text top="1151" left="850" width="20" height="11" font="10"><b>680</b></text>
+<text top="1193" left="442" width="8" height="15" font="8">8</text>
+</page>
+<outline>
+<item page="1">Introduction</item>
+<item page="2">Related Work</item>
+<item page="3">Dataset and Annotation</item>
+<outline>
+<item page="3">Overview</item>
+<item page="3">Gold-600: human labels and the star-rating gap</item>
+<item page="3">Weakly-labelled corpus</item>
+<item page="3">LLM-assisted benchmarks: lab2000 and successors</item>
+<item page="4">Annotation quality: what the agreement numbers do and do not show</item>
+</outline>
+<item page="5">Methodology</item>
+<outline>
+<item page="5">System overview</item>
+<item page="5">Training signal chain</item>
+<item page="5">Audit methodology</item>
+</outline>
+<item page="6">Experimental Setup</item>
+<item page="6">Results and Analysis</item>
+<outline>
+<item page="6">Headline correction: what the audit removed</item>
+<item page="6">Out-of-distribution evaluation under selection and provenance</item>
+<item page="8">The clean human test: human400</item>
+<item page="8">Ablations and diagnostics</item>
+<item page="8">Negative results and what would change our conclusions</item>
+</outline>
+<item page="8">Limitations and Ethical Considerations</item>
+<item page="9">Conclusion</item>
+<item page="10">Audit Methodology Details</item>
+<outline>
+<item page="10">OOF independence taxonomy</item>
+<item page="11">Row-level overlap audit</item>
+</outline>
+<item page="11">Full Configuration Pool</item>
+<item page="11">Audit Diagnostics and Ablations</item>
+<item page="11">Annotation Protocol and Guidelines</item>
+<outline>
+<item page="11">Gold-600</item>
+<item page="12">lab2000 / AL adjudication</item>
+<item page="12">New 400-item held-out set</item>
+</outline>
+<item page="12">Complete Negative-Results List</item>
+<item page="12">Ethics Statement and Data Availability</item>
+</outline>
+</pdf2xml>

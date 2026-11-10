@@ -162,7 +162,7 @@ al1000 & 1{,}000 & LLM consensus + 279 human-adjudicated & AL training \\
 AL expansions (al5000--al17k) & $\sim$17{,}000 & Frontier-LLM teacher labels & AL training \\
 fresh500 & 500 & DeepSeek teacher labels & Dev replication check \\
 lab500 & 500 & Two LLM annotators; 331 consensus rows & Superseded pilot \\
-human-400 & 400 & Blind human annotation (in progress) & Final held-out test \\
+human-400 & 400 & Blind single-annotator labels; length-stratified & Final held-out test \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -245,11 +245,25 @@ Qwen3-4B zero-shot), with 331 rows reaching consensus. Superseded by
 lab2000; additionally, a pilot cross-validation script used lab500
 itself as a training set, so it cannot be treated as unseen data.
 
-\paragraph{human-400 (in progress).} The only planned zero-contamination
-test: 400 corpus reviews sampled with length stratification after
-excluding every previously used text pool, to be blind-annotated by
-humans under written guidelines. Annotation is ongoing; results will
-appear in the appendix.
+\paragraph{human-400.} The only zero-contamination test: 400 corpus
+reviews sampled with length stratification (160/120/80/40 across
+$\le$20, 21--50, 51--100, and $>$100 characters; corpus median is 24)
+after excluding every previously used text or identifier pool. One
+author blind-annotated all rows under written guidelines
+(Appendix~\ref{app:annotation}), with optional flags for mixed,
+off-topic, spoiler, and uncertain cases. We verify post-hoc that all
+400 content IDs have \emph{zero} overlap with every training pool of
+every evaluated system (gold-600, all lab2000/AL pools, the 271{,}905-row
+confident pseudo pool underlying the corpus neutral detector, and the
+mb13b feature pools). Label distribution is positive 156 / neutral 179
+/ negative 65---neutral-heavy relative to gold-600 (15.3\%), as expected
+for a random short-review sample. As an independent check on the
+rating--sentiment gap, star-implied labels agree with these human
+labels on only \textbf{55.8\%} of rows (vs.\ 71.3\% on curated
+gold-600); among 5$\star$ reviews only 62.7\% are semantically positive
+(22 neutral, 3 negative). Single-annotator labeling means no IAA is
+computable on this set; we treat it as our primary OOD evidence while
+flagging the limitation in Section~\ref{sec:limitations}.
 
 \subsection{Annotation quality: what the agreement numbers do and do not show}
 
@@ -295,6 +309,6 @@ set---used for AL scale, teacher, epoch, and weight selection---with
 $\sim$69\% of its rows exposed to earlier corpus-derived training, and
 its adjudicated subset is anchoring-exposed; (iii) most benchmark labels
 are LLM consensus, whose inflation over adjudicated labels we quantify
-in Section~\ref{sec:results}; and (iv) the only planned clean test,
-human-400, is small and still in progress. Sections
+in Section~\ref{sec:results}; and (iv) the only clean test, human-400,
+carries single-annotator labels with no measurable IAA. Sections
 \ref{sec:method}--\ref{sec:results} quantify each of these.

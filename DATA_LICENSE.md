@@ -14,11 +14,14 @@ to source code only.
 - `lab2000/`, `lab500_*.jsonl`, `fresh500`-related artifacts — derived from
   the same Douban review pool; LLM-generated labels are marked as such in the
   accompanying metadata.
+- `human400_labels.jsonl` — 400 corpus reviews with blind single-annotator
+  semantic labels (no star ratings shown at annotation time); the
+  contamination-free final test set.
 - The 910,998-row training corpus derives from **Moviedata-10M** by
   csuldw (CSU, 2019; https://github.com/csuldw/AntSpider), released for
   research use with attribution required. **The raw corpus is not
   redistributed** in this repository; only derived evaluation/benchmark
-  subsets (~4.6K reviews) are included.
+  subsets (~5.0K reviews, including human400) are included.
 
 ## Terms
 

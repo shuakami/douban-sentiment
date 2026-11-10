@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="24.04.0">
+<page number="9" position="absolute" top="0" left="0" height="1262" width="892">
+	<fontspec id="0" size="18" family="KMEADJ+NimbusRomNo9L-Medi" color="#000000"/>
+	<fontspec id="1" size="12" family="ALVSVR+NimbusSanL" color="#bfbfbf"/>
+	<fontspec id="2" size="15" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+	<fontspec id="3" size="15" family="GLIOIQ+NimbusRomNo9L-Regu" color="#00007f"/>
+	<fontspec id="4" size="15" family="BGLUUG+NimbusRomNo9L-ReguItal" color="#000000"/>
+	<fontspec id="5" size="15" family="HLJKGS+Inconsolatazi4" color="#00007f"/>
+	<fontspec id="6" size="16" family="GLIOIQ+NimbusRomNo9L-Regu" color="#000000"/>
+<text top="110" left="106" width="83" height="16" font="0">References</text>
+<text top="114" left="18" width="20" height="11" font="1"><b>699</b></text>
+<text top="140" left="106" width="149" height="13" font="2">Hend Al-Khalifa. 2026.</text>
+<text top="140" left="268" width="168" height="13" font="3"><a href="https://aclanthology.org/2026.aacl-long.27/">Twenty-five years of inter-</a></text>
+<text top="142" left="18" width="20" height="11" font="1"><b>700</b></text>
+<text top="157" left="123" width="312" height="13" font="3"><a href="https://aclanthology.org/2026.aacl-long.27/">annotator agreement in NLP: A systematic survey</a></text>
+<text top="158" left="18" width="20" height="11" font="1"><b>701</b></text>
+<text top="173" left="123" width="257" height="13" font="3"><a href="https://aclanthology.org/2026.aacl-long.27/">of trends, metrics, and reporting practices</a></text>
+<text top="173" left="380" width="24" height="13" font="2"><a href="https://aclanthology.org/2026.aacl-long.27/">. </a>In</text>
+<text top="173" left="409" width="27" height="13" font="4">Pro-</text>
+<text top="175" left="18" width="20" height="11" font="1"><b>702</b></text>
+<text top="190" left="123" width="311" height="13" font="4">ceedings of AACL-IJCNLP 2026 (Volume 1: Long</text>
+<text top="191" left="18" width="20" height="11" font="1"><b>703</b></text>
+<text top="206" left="122" width="46" height="13" font="4">Papers)</text>
+<text top="206" left="168" width="101" height="13" font="2">, pages 579–602.</text>
+<text top="208" left="18" width="20" height="11" font="1"><b>704</b></text>
+<text top="238" left="106" width="330" height="13" font="2">AntSpider / Moviedata-10M contributors. 2019.</text>
+<text top="240" left="18" width="20" height="11" font="1"><b>705</b></text>
+<text top="254" left="123" width="101" height="13" font="2">Moviedata-10m:</text>
+<text top="254" left="242" width="191" height="13" font="2">A large-scale douban movie</text>
+<text top="256" left="18" width="20" height="11" font="1"><b>706</b></text>
+<text top="271" left="123" width="96" height="13" font="2">review dataset.</text>
+<text top="271" left="241" width="194" height="12" font="5"><a href="https://github.com/csuldw/AntSpider">https://github.com/csuldw/</a></text>
+<text top="272" left="18" width="20" height="11" font="1"><b>707</b></text>
+<text top="288" left="122" width="67" height="12" font="5"><a href="https://github.com/csuldw/AntSpider">AntSpider</a></text>
+<text top="287" left="190" width="247" height="13" font="2"><a href="https://github.com/csuldw/AntSpider">. </a>Research-use dataset; raw data not re-</text>
+<text top="289" left="18" width="20" height="11" font="1"><b>708</b></text>
+<text top="304" left="123" width="67" height="13" font="2">distributed.</text>
+<text top="305" left="18" width="20" height="11" font="1"><b>709</b></text>
+<text top="336" left="106" width="330" height="13" font="2">Eric Arazo, Diego Ortego, Paul Albert, Noel E.</text>
+<text top="337" left="18" width="20" height="11" font="1"><b>710</b></text>
+<text top="352" left="123" width="252" height="13" font="2">O’Connor, and Kevin McGuinness. 2019.</text>
+<text top="352" left="380" width="56" height="13" font="3"><a href="https://doi.org/10.48550/arXiv.1908.02983">Unsuper-</a></text>
+<text top="354" left="18" width="20" height="11" font="1"><b>711</b></text>
+<text top="369" left="122" width="287" height="13" font="3"><a href="https://doi.org/10.48550/arXiv.1908.02983">vised label noise modeling and loss correction</a></text>
+<text top="369" left="409" width="25" height="13" font="2"><a href="https://doi.org/10.48550/arXiv.1908.02983">. </a>In</text>
+<text top="370" left="18" width="20" height="11" font="1"><b>712</b></text>
+<text top="385" left="122" width="129" height="13" font="4">Proceedings of ICML</text>
+<text top="385" left="251" width="101" height="13" font="2">, pages 312–321.</text>
+<text top="387" left="18" width="20" height="11" font="1"><b>713</b></text>
+<text top="417" left="106" width="253" height="13" font="2">Ron Artstein and Massimo Poesio. 2008.</text>
+<text top="417" left="367" width="67" height="13" font="3"><a href="https://doi.org/10.1162/coli.07-034-R2">Inter-coder</a></text>
+<text top="418" left="18" width="20" height="11" font="1"><b>714</b></text>
+<text top="433" left="123" width="243" height="13" font="3"><a href="https://doi.org/10.1162/coli.07-034-R2">agreement for computational linguistics</a></text>
+<text top="433" left="366" width="4" height="13" font="2"><a href="https://doi.org/10.1162/coli.07-034-R2">.</a></text>
+<text top="434" left="375" width="61" height="13" font="4">Computa-</text>
+<text top="435" left="18" width="20" height="11" font="1"><b>715</b></text>
+<text top="450" left="123" width="104" height="13" font="4">tional Linguistics</text>
+<text top="450" left="227" width="100" height="13" font="2">, 34(4):555–596.</text>
+<text top="451" left="18" width="20" height="11" font="1"><b>716</b></text>
+<text top="482" left="106" width="329" height="13" font="2">Simone Balloccu, Patrícia Schmidtová, Mateusz Lango,</text>
+<text top="483" left="18" width="20" height="11" font="1"><b>717</b></text>
+<text top="498" left="123" width="153" height="13" font="2">and Ondˇrej Dušek. 2024.</text>
+<text top="498" left="281" width="153" height="13" font="3"><a href="https://doi.org/10.18653/v1/2024.eacl-long.5">Leak, cheat, repeat: Data</a></text>
+<text top="500" left="18" width="20" height="11" font="1"><b>718</b></text>
+<text top="515" left="123" width="314" height="13" font="3"><a href="https://doi.org/10.18653/v1/2024.eacl-long.5">contamination and evaluation malpractices in closed-</a></text>
+<text top="516" left="18" width="20" height="11" font="1"><b>719</b></text>
+<text top="531" left="123" width="78" height="13" font="3"><a href="https://doi.org/10.18653/v1/2024.eacl-long.5">source LLMs</a></text>
+<text top="531" left="201" width="21" height="13" font="2"><a href="https://doi.org/10.18653/v1/2024.eacl-long.5">. </a>In</text>
+<text top="531" left="225" width="209" height="13" font="4">Proceedings of EACL 2024 (Volume</text>
+<text top="533" left="18" width="20" height="11" font="1"><b>720</b></text>
+<text top="548" left="122" width="98" height="13" font="4">1: Long Papers)</text>
+<text top="548" left="219" width="86" height="13" font="2">, pages 67–93.</text>
+<text top="549" left="18" width="20" height="11" font="1"><b>721</b></text>
+<text top="579" left="106" width="327" height="13" font="2">Mateusz Baran, Joanna Baran, Mateusz Wójcik, Maciej</text>
+<text top="581" left="18" width="20" height="11" font="1"><b>722</b></text>
+<text top="596" left="123" width="221" height="13" font="2">Zi˛eba, and Adam Gonczarek. 2023.</text>
+<text top="596" left="352" width="84" height="13" font="3"><a href="https://doi.org/10.18653/v1/2023.acl-srw.20">Classical out-</a></text>
+<text top="597" left="18" width="20" height="11" font="1"><b>723</b></text>
+<text top="612" left="123" width="311" height="13" font="3"><a href="https://doi.org/10.18653/v1/2023.acl-srw.20">of-distribution detection methods benchmark in text</a></text>
+<text top="614" left="18" width="20" height="11" font="1"><b>724</b></text>
+<text top="629" left="123" width="111" height="13" font="3"><a href="https://doi.org/10.18653/v1/2023.acl-srw.20">classification tasks</a></text>
+<text top="629" left="234" width="21" height="13" font="2"><a href="https://doi.org/10.18653/v1/2023.acl-srw.20">. </a>In</text>
+<text top="629" left="259" width="175" height="13" font="4">Proceedings of the ACL 2023</text>
+<text top="630" left="18" width="20" height="11" font="1"><b>725</b></text>
+<text top="645" left="122" width="166" height="13" font="4">Student Research Workshop</text>
+<text top="645" left="289" width="101" height="13" font="2">, pages 119–129.</text>
+<text top="647" left="18" width="20" height="11" font="1"><b>726</b></text>
+<text top="677" left="106" width="287" height="13" font="2">Emily M. Bender and Batya Friedman. 2018.</text>
+<text top="677" left="405" width="29" height="13" font="3"><a href="https://doi.org/10.1162/tacl_a_00041">Data</a></text>
+<text top="679" left="18" width="20" height="11" font="1"><b>727</b></text>
+<text top="694" left="123" width="311" height="13" font="3"><a href="https://doi.org/10.1162/tacl_a_00041">statements for natural language processing: Toward</a></text>
+<text top="695" left="18" width="20" height="11" font="1"><b>728</b></text>
+<text top="710" left="123" width="310" height="13" font="3"><a href="https://doi.org/10.1162/tacl_a_00041">mitigating system bias and enabling better science</a></text>
+<text top="710" left="433" width="4" height="13" font="2"><a href="https://doi.org/10.1162/tacl_a_00041">.</a></text>
+<text top="712" left="18" width="20" height="11" font="1"><b>729</b></text>
+<text top="727" left="122" width="145" height="13" font="4">Transactions of the ACL</text>
+<text top="726" left="267" width="75" height="13" font="2">, 6:587–604.</text>
+<text top="728" left="18" width="20" height="11" font="1"><b>730</b></text>
+<text top="758" left="106" width="327" height="13" font="2">Yiming Cui, Wanxiang Che, Ting Liu, Bing Qin, Shijin</text>
+<text top="760" left="18" width="20" height="11" font="1"><b>731</b></text>
+<text top="775" left="122" width="179" height="13" font="2">Wang, and Guoping Hu. 2020.</text>
+<text top="775" left="306" width="128" height="13" font="3"><a href="https://doi.org/10.18653/v1/2020.findings-emnlp.58">Revisiting pre-trained</a></text>
+<text top="776" left="497" width="20" height="11" font="1"><b>732</b></text>
+<text top="791" left="123" width="289" height="13" font="3"><a href="https://doi.org/10.18653/v1/2020.findings-emnlp.58">models for Chinese natural language processing</a></text>
+<text top="791" left="412" width="22" height="13" font="2"><a href="https://doi.org/10.18653/v1/2020.findings-emnlp.58">. </a>In</text>
+<text top="793" left="497" width="20" height="11" font="1"><b>733</b></text>
+<text top="808" left="122" width="121" height="13" font="4">Findings of EMNLP</text>
+<text top="808" left="242" width="101" height="13" font="2">, pages 657–668.</text>
+<text top="809" left="497" width="20" height="11" font="1"><b>734</b></text>
+<text top="840" left="106" width="330" height="13" font="2">Aida Mostafazadeh Davani, Mark Díaz, and Vinodku-</text>
+<text top="841" left="497" width="20" height="11" font="1"><a href="https://doi.org/10.14778/3157794.3157797"><b>735</b></a></text>
+<text top="856" left="123" width="140" height="13" font="2">mar Prabhakaran. 2022.</text>
+<text top="856" left="268" width="168" height="13" font="3"><a href="https://doi.org/10.1162/tacl_a_00449">Dealing with disagreements:</a></text>
+<text top="858" left="497" width="20" height="11" font="1"><b>736</b></text>
+<text top="873" left="123" width="314" height="13" font="3"><a href="https://doi.org/10.1162/tacl_a_00449">Looking beyond the majority vote in subjective an-</a></text>
+<text top="874" left="497" width="20" height="11" font="1"><b>737</b></text>
+<text top="889" left="123" width="55" height="13" font="3"><a href="https://doi.org/10.1162/tacl_a_00449">notations</a></text>
+<text top="889" left="177" width="4" height="13" font="2"><a href="https://doi.org/10.1162/tacl_a_00449">.</a></text>
+<text top="889" left="187" width="145" height="13" font="4">Transactions of the ACL</text>
+<text top="889" left="332" width="75" height="13" font="2">, 10:92–110.</text>
+<text top="890" left="497" width="20" height="11" font="1"><b>738</b></text>
+<text top="921" left="106" width="327" height="13" font="2">Rotem Dror, Gili Baumer, Segev Shlomov, and Roi</text>
+<text top="922" left="497" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/2023.findings-emnlp.722"><b>739</b></a></text>
+<text top="937" left="123" width="95" height="13" font="2">Reichart. 2018.</text>
+<text top="937" left="229" width="204" height="13" font="3"><a href="https://doi.org/10.18653/v1/P18-1128">The hitchhiker’s guide to testing</a></text>
+<text top="939" left="497" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/2023.findings-emnlp.722"><b>740</b></a></text>
+<text top="954" left="123" width="310" height="13" font="3"><a href="https://doi.org/10.18653/v1/P18-1128">statistical significance in natural language processing</a></text>
+<text top="954" left="433" width="4" height="13" font="2"><a href="https://doi.org/10.18653/v1/P18-1128">.</a></text>
+<text top="955" left="497" width="20" height="11" font="1"><b>741</b></text>
+<text top="970" left="123" width="12" height="13" font="2">In</text>
+<text top="970" left="139" width="120" height="13" font="4">Proceedings of ACL</text>
+<text top="970" left="259" width="116" height="13" font="2">, pages 1383–1392.</text>
+<text top="972" left="497" width="20" height="11" font="1"><b>742</b></text>
+<text top="1002" left="106" width="329" height="13" font="2">Timnit Gebru, Jamie Morgenstern, Briana Vecchione,</text>
+<text top="1004" left="497" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/2025.findings-acl.1323"><b>743</b></a></text>
+<text top="1019" left="122" width="311" height="13" font="2">Jennifer Wortman Vaughan, Hanna Wallach, Hal</text>
+<text top="1020" left="497" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/2025.findings-acl.1323"><b>744</b></a></text>
+<text top="1035" left="123" width="221" height="13" font="2">Daumé III, and Kate Crawford. 2021.</text>
+<text top="1035" left="349" width="85" height="13" font="3"><a href="https://doi.org/10.1145/3458723">Datasheets for</a></text>
+<text top="1036" left="497" width="20" height="11" font="1"><b>745</b></text>
+<text top="1051" left="123" width="48" height="13" font="3"><a href="https://doi.org/10.1145/3458723">datasets</a></text>
+<text top="1051" left="171" width="4" height="13" font="2"><a href="https://doi.org/10.1145/3458723">.</a></text>
+<text top="1052" left="182" width="178" height="13" font="4">Communications of the ACM</text>
+<text top="1051" left="360" width="76" height="13" font="2">, 64(12):86–</text>
+<text top="1053" left="497" width="20" height="11" font="1"><b>746</b></text>
+<text top="1068" left="123" width="19" height="13" font="2">92.</text>
+<text top="1069" left="497" width="20" height="11" font="1"><b>747</b></text>
+<text top="1100" left="106" width="240" height="13" font="2">Dan Hendrycks and Kevin Gimpel. 2017.</text>
+<text top="1100" left="352" width="82" height="13" font="3"><a href="https://arxiv.org/abs/1610.02136">A baseline for</a></text>
+<text top="1101" left="497" width="20" height="11" font="1"><b>748</b></text>
+<text top="1116" left="123" width="314" height="13" font="3"><a href="https://arxiv.org/abs/1610.02136">detecting misclassified and out-of-distribution exam-</a></text>
+<text top="1118" left="497" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/2020.acl-main.374"><b>749</b></a></text>
+<text top="1133" left="123" width="137" height="13" font="3"><a href="https://arxiv.org/abs/1610.02136">ples in neural networks</a></text>
+<text top="1133" left="260" width="21" height="13" font="2"><a href="https://arxiv.org/abs/1610.02136">. </a>In</text>
+<text top="1133" left="285" width="149" height="13" font="4">International Conference</text>
+<text top="1134" left="497" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/2020.acl-main.374"><b>750</b></a></text>
+<text top="1149" left="123" width="173" height="13" font="4">on Learning Representations</text>
+<text top="1149" left="296" width="4" height="13" font="2">.</text>
+<text top="1151" left="497" width="20" height="11" font="1"><b>751</b></text>
+<text top="113" left="459" width="271" height="13" font="2">Sayash Kapoor and Arvind Narayanan. 2023.</text>
+<text top="113" left="736" width="51" height="13" font="3"><a href="https://doi.org/10.1016/j.patter.2023.100804">Leakage</a></text>
+<text top="114" left="850" width="20" height="11" font="1"><b>752</b></text>
+<text top="129" left="476" width="314" height="13" font="3"><a href="https://doi.org/10.1016/j.patter.2023.100804">and the reproducibility crisis in machine-learning-</a></text>
+<text top="131" left="850" width="20" height="11" font="1"><b>753</b></text>
+<text top="145" left="476" width="82" height="13" font="3"><a href="https://doi.org/10.1016/j.patter.2023.100804">based science</a></text>
+<text top="145" left="557" width="4" height="13" font="2"><a href="https://doi.org/10.1016/j.patter.2023.100804">.</a></text>
+<text top="146" left="566" width="49" height="13" font="4">Patterns</text>
+<text top="145" left="616" width="85" height="13" font="2">, 4(9):100804.</text>
+<text top="147" left="850" width="20" height="11" font="1"><b>754</b></text>
+<text top="177" left="459" width="327" height="13" font="2">Maria Kunilovskaya, Gagan Bhatia, Lisa Sophie</text>
+<text top="178" left="850" width="20" height="11" font="1"><b>755</b></text>
+<text top="193" left="475" width="313" height="13" font="2">Albertelli, Yanran Chen, Christian Greisinger,</text>
+<text top="195" left="850" width="20" height="11" font="1"><b>756</b></text>
+<text top="210" left="476" width="313" height="13" font="2">Lotta Kiefer, Christoph Leiter, Subhadeep Roy,</text>
+<text top="211" left="850" width="20" height="11" font="1"><b>757</b></text>
+<text top="226" left="475" width="311" height="13" font="2">Tewodros Achamaleh Bizuneh, Muhammad Arslan</text>
+<text top="228" left="850" width="20" height="11" font="1"><b>758</b></text>
+<text top="243" left="476" width="311" height="13" font="2">Manzoor, Sebastian Pohl, Yufang Hou, and Steffen</text>
+<text top="244" left="850" width="20" height="11" font="1"><b>759</b></text>
+<text top="259" left="476" width="71" height="13" font="2">Eger. 2026.</text>
+<text top="259" left="555" width="231" height="13" font="3"><a href="https://doi.org/10.18653/v1/2026.emnlp-main.396">Who annotates in NLP? a large-scale</a></text>
+<text top="260" left="850" width="20" height="11" font="1"><b>760</b></text>
+<text top="275" left="476" width="311" height="13" font="3"><a href="https://doi.org/10.18653/v1/2026.emnlp-main.396">assessment of human annotation reporting between</a></text>
+<text top="277" left="850" width="20" height="11" font="1"><b>761</b></text>
+<text top="292" left="476" width="92" height="13" font="3"><a href="https://doi.org/10.18653/v1/2026.emnlp-main.396">2018 and 2025</a></text>
+<text top="292" left="568" width="25" height="13" font="2"><a href="https://doi.org/10.18653/v1/2026.emnlp-main.396">. </a>In</text>
+<text top="292" left="597" width="147" height="13" font="4">Proceedings of EMNLP</text>
+<text top="292" left="743" width="43" height="13" font="2">, pages</text>
+<text top="293" left="850" width="20" height="11" font="1"><b>762</b></text>
+<text top="308" left="476" width="71" height="13" font="2">9085–9120.</text>
+<text top="310" left="850" width="20" height="11" font="1"><b>763</b></text>
+<text top="340" left="459" width="327" height="13" font="2">Dong-Hyun Lee. 2013. Pseudo-label: The simple and</text>
+<text top="341" left="850" width="20" height="11" font="1"><b>764</b></text>
+<text top="356" left="476" width="311" height="13" font="2">efficient semi-supervised learning method for deep</text>
+<text top="358" left="850" width="20" height="11" font="1"><b>765</b></text>
+<text top="373" left="476" width="119" height="13" font="2">neural networks. In</text>
+<text top="373" left="598" width="191" height="13" font="4">ICML 2013 Workshop on Chal-</text>
+<text top="374" left="850" width="20" height="11" font="1"><b>766</b></text>
+<text top="389" left="476" width="206" height="13" font="4">lenges in Representation Learning</text>
+<text top="389" left="681" width="4" height="13" font="2">.</text>
+<text top="390" left="850" width="20" height="11" font="1"><b>767</b></text>
+<text top="420" left="459" width="330" height="13" font="2">Anders Giovanni Møller, Arianna Pera, Jacob Dals-</text>
+<text top="422" left="850" width="20" height="11" font="1"><b>768</b></text>
+<text top="437" left="476" width="233" height="13" font="2">gaard, and Luca Maria Aiello. 2024.</text>
+<text top="437" left="721" width="66" height="13" font="3"><a href="https://doi.org/10.18653/v1/2024.eacl-short.17">The parrot</a></text>
+<text top="438" left="850" width="20" height="11" font="1"><b>769</b></text>
+<text top="453" left="476" width="311" height="13" font="3"><a href="https://doi.org/10.18653/v1/2024.eacl-short.17">dilemma: Human-labeled vs. LLM-augmented data</a></text>
+<text top="455" left="850" width="20" height="11" font="1"><b>770</b></text>
+<text top="470" left="476" width="125" height="13" font="3"><a href="https://doi.org/10.18653/v1/2024.eacl-short.17">in classification tasks</a></text>
+<text top="470" left="601" width="21" height="13" font="2"><a href="https://doi.org/10.18653/v1/2024.eacl-short.17">. </a>In</text>
+<text top="470" left="626" width="161" height="13" font="4">Proceedings of EACL 2024</text>
+<text top="471" left="850" width="20" height="11" font="1"><b>771</b></text>
+<text top="486" left="475" width="152" height="13" font="4">(Volume 2: Short Papers)</text>
+<text top="486" left="626" width="101" height="13" font="2">, pages 179–192.</text>
+<text top="488" left="850" width="20" height="11" font="1"><b>772</b></text>
+<text top="517" left="459" width="328" height="13" font="2">Nikita Neveditsin, Pawan Lingras, and Vijay Kumar</text>
+<text top="519" left="850" width="20" height="11" font="1"><b>773</b></text>
+<text top="534" left="476" width="74" height="13" font="2">Mago. 2025.</text>
+<text top="534" left="555" width="233" height="13" font="3"><a href="https://doi.org/10.18653/v1/2025.naacl-srw.14">From annotation to adaptation: Metrics,</a></text>
+<text top="535" left="850" width="20" height="11" font="1"><b>774</b></text>
+<text top="550" left="476" width="311" height="13" font="3"><a href="https://doi.org/10.18653/v1/2025.naacl-srw.14">synthetic data, and aspect extraction for aspect-based</a></text>
+<text top="552" left="850" width="20" height="11" font="1"><b>775</b></text>
+<text top="567" left="476" width="287" height="13" font="3"><a href="https://doi.org/10.18653/v1/2025.naacl-srw.14">sentiment analysis with large language models</a></text>
+<text top="567" left="762" width="24" height="13" font="2"><a href="https://doi.org/10.18653/v1/2025.naacl-srw.14">. </a>In</text>
+<text top="568" left="850" width="20" height="11" font="1"><b>776</b></text>
+<text top="583" left="475" width="241" height="13" font="4">NAACL 2025 Student Research Workshop</text>
+<text top="583" left="717" width="72" height="13" font="2">, pages 142–</text>
+<text top="585" left="850" width="20" height="11" font="1"><b>777</b></text>
+<text top="600" left="474" width="26" height="13" font="2">161.</text>
+<text top="601" left="850" width="20" height="11" font="1"><b>778</b></text>
+<text top="631" left="459" width="330" height="13" font="2">Curtis G. Northcutt, Lu Jiang, and Isaac L. Chuang.</text>
+<text top="632" left="850" width="20" height="11" font="1"><b>779</b></text>
+<text top="647" left="476" width="312" height="13" font="2">2021. Confident learning: Estimating uncertainty</text>
+<text top="649" left="850" width="20" height="11" font="1"><b>780</b></text>
+<text top="664" left="476" width="103" height="13" font="2">in dataset labels.</text>
+<text top="664" left="587" width="199" height="13" font="4">Journal of Artificial Intelligence</text>
+<text top="665" left="850" width="20" height="11" font="1"><b>781</b></text>
+<text top="680" left="475" width="55" height="13" font="4">Research</text>
+<text top="680" left="530" width="98" height="13" font="2">, 70:1373–1411.</text>
+<text top="682" left="850" width="20" height="11" font="1"><b>782</b></text>
+<text top="712" left="459" width="182" height="13" font="2">Bo Pang and Lillian Lee. 2005.</text>
+<text top="712" left="646" width="140" height="13" font="3"><a href="https://doi.org/10.3115/1219840.1219855">Seeing stars: Exploiting</a></text>
+<text top="713" left="850" width="20" height="11" font="1"><b>783</b></text>
+<text top="728" left="476" width="311" height="13" font="3"><a href="https://doi.org/10.3115/1219840.1219855">class relationships for sentiment categorization with</a></text>
+<text top="729" left="850" width="20" height="11" font="1"><b>784</b></text>
+<text top="744" left="476" width="131" height="13" font="3"><a href="https://doi.org/10.3115/1219840.1219855">respect to rating scales</a></text>
+<text top="744" left="606" width="21" height="13" font="2"><a href="https://doi.org/10.3115/1219840.1219855">. </a>In</text>
+<text top="745" left="631" width="116" height="13" font="4">Proceedings of ACL</text>
+<text top="744" left="747" width="40" height="13" font="2">, pages</text>
+<text top="746" left="850" width="20" height="11" font="1"><b>785</b></text>
+<text top="761" left="474" width="56" height="13" font="2">115–124.</text>
+<text top="762" left="371" width="20" height="11" font="1"><b>786</b></text>
+<text top="792" left="459" width="330" height="13" font="2">Alexander Ratner, Stephen H. Bach, Henry R. Ehren-</text>
+<text top="794" left="371" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/2020.findings-emnlp.58"><b>787</b></a></text>
+<text top="809" left="476" width="314" height="13" font="2">berg, Jason Fries, Sen Wu, and Christopher Ré. 2017.</text>
+<text top="810" left="371" width="20" height="11" font="1"><b>788</b></text>
+<text top="825" left="476" width="314" height="13" font="3"><a href="https://doi.org/10.14778/3157794.3157797">Snorkel: Rapid training data creation with weak su-</a></text>
+<text top="827" left="371" width="20" height="11" font="1"><b>789</b></text>
+<text top="841" left="476" width="57" height="13" font="3"><a href="https://doi.org/10.14778/3157794.3157797">pervision</a></text>
+<text top="841" left="532" width="4" height="13" font="2"><a href="https://doi.org/10.14778/3157794.3157797">.</a></text>
+<text top="842" left="547" width="238" height="13" font="4">Proceedings of the VLDB Endowment</text>
+<text top="841" left="785" width="4" height="13" font="2">,</text>
+<text top="843" left="371" width="20" height="11" font="1"><b>790</b></text>
+<text top="858" left="474" width="93" height="13" font="2">11(3):269–282.</text>
+<text top="859" left="371" width="20" height="11" font="1"><a href="https://doi.org/10.1162/tacl_a_00449"><b>791</b></a></text>
+<text top="889" left="459" width="327" height="13" font="2">Oscar Sainz, Jon Campos, Iker García-Ferrero, Julen</text>
+<text top="891" left="371" width="20" height="11" font="1"><b>792</b></text>
+<text top="906" left="476" width="314" height="13" font="2">Etxaniz, Oier Lopez de Lacalle, and Eneko Agirre.</text>
+<text top="907" left="371" width="20" height="11" font="1"><b>793</b></text>
+<text top="922" left="476" width="33" height="13" font="2">2023.</text>
+<text top="922" left="514" width="275" height="13" font="3"><a href="https://doi.org/10.18653/v1/2023.findings-emnlp.722">NLP evaluation in trouble: On the need to mea-</a></text>
+<text top="924" left="371" width="20" height="11" font="1"><b>794</b></text>
+<text top="939" left="476" width="310" height="13" font="3"><a href="https://doi.org/10.18653/v1/2023.findings-emnlp.722">sure LLM data contamination for each benchmark</a></text>
+<text top="939" left="785" width="4" height="13" font="2"><a href="https://doi.org/10.18653/v1/2023.findings-emnlp.722">.</a></text>
+<text top="940" left="371" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/P18-1128"><b>795</b></a></text>
+<text top="955" left="476" width="12" height="13" font="2">In</text>
+<text top="955" left="492" width="121" height="13" font="4">Findings of EMNLP</text>
+<text top="955" left="612" width="131" height="13" font="2">, pages 10776–10787.</text>
+<text top="956" left="371" width="20" height="11" font="1"><a href="https://doi.org/10.18653/v1/P18-1128"><b>796</b></a></text>
+<text top="986" left="459" width="299" height="13" font="2">Hope Schroeder, Deb Roy, and Jad Kabbara. 2025.</text>
+<text top="986" left="764" width="23" height="13" font="3"><a href="https://doi.org/10.18653/v1/2025.findings-acl.1323">Just</a></text>
+<text top="988" left="371" width="20" height="11" font="1"><b>797</b></text>
+<text top="1003" left="476" width="311" height="13" font="3"><a href="https://doi.org/10.18653/v1/2025.findings-acl.1323">put a human in the loop? investigating LLM-assisted</a></text>
+<text top="1004" left="371" width="20" height="11" font="1"><b>798</b></text>
+<text top="1019" left="476" width="178" height="13" font="3"><a href="https://doi.org/10.18653/v1/2025.findings-acl.1323">annotation for subjective tasks</a></text>
+<text top="1019" left="653" width="21" height="13" font="2"><a href="https://doi.org/10.18653/v1/2025.findings-acl.1323">. </a>In</text>
+<text top="1019" left="678" width="111" height="13" font="4">Findings of the As-</text>
+<text top="1021" left="371" width="20" height="11" font="1"><b>799</b></text>
+<text top="1036" left="476" width="309" height="13" font="4">sociation for Computational Linguistics: ACL 2025</text>
+<text top="1036" left="785" width="4" height="13" font="2">,</text>
+<text top="1037" left="371" width="20" height="11" font="1"><a href="https://doi.org/10.1145/3458723"><b>800</b></a></text>
+<text top="1052" left="476" width="124" height="13" font="2">pages 25771–25795.</text>
+<text top="1054" left="371" width="20" height="11" font="1"><b>801</b></text>
+<text top="1083" left="459" width="329" height="13" font="2">Hao Tian, Can Gao, Xinyan Xiao, Hao Liu, Bolei He,</text>
+<text top="1085" left="371" width="20" height="11" font="1"><b>802</b></text>
+<text top="1100" left="476" width="268" height="13" font="2">Hua Wu, Haifeng Wang, and Feng Wu. 2020.</text>
+<text top="1100" left="749" width="40" height="13" font="3"><a href="https://doi.org/10.18653/v1/2020.acl-main.374">SKEP:</a></text>
+<text top="1101" left="371" width="20" height="11" font="1"><a href="https://arxiv.org/abs/1610.02136"><b>803</b></a></text>
+<text top="1116" left="476" width="314" height="13" font="3"><a href="https://doi.org/10.18653/v1/2020.acl-main.374">Sentiment knowledge enhanced pre-training for sen-</a></text>
+<text top="1118" left="371" width="20" height="11" font="1"><a href="https://arxiv.org/abs/1610.02136"><b>804</b></a></text>
+<text top="1133" left="476" width="89" height="13" font="3"><a href="https://doi.org/10.18653/v1/2020.acl-main.374">timent analysis</a></text>
+<text top="1133" left="564" width="21" height="13" font="2"><a href="https://doi.org/10.18653/v1/2020.acl-main.374">. </a>In</text>
+<text top="1133" left="589" width="118" height="13" font="4">Proceedings of ACL</text>
+<text top="1133" left="708" width="81" height="13" font="2">, pages 4067–</text>
+<text top="1134" left="371" width="20" height="11" font="1"><b>805</b></text>
+<text top="1149" left="475" width="34" height="13" font="2">4076.</text>
+<text top="1151" left="371" width="20" height="11" font="1"><b>806</b></text>
+<text top="1193" left="442" width="8" height="15" font="6">9</text>
+</page>
+<outline>
+<item page="1">Introduction</item>
+<item page="2">Related Work</item>
+<item page="3">Dataset and Annotation</item>
+<outline>
+<item page="3">Overview</item>
+<item page="3">Gold-600: human labels and the star-rating gap</item>
+<item page="3">Weakly-labelled corpus</item>
+<item page="3">LLM-assisted benchmarks: lab2000 and successors</item>
+<item page="4">Annotation quality: what the agreement numbers do and do not show</item>
+</outline>
+<item page="5">Methodology</item>
+<outline>
+<item page="5">System overview</item>
+<item page="5">Training signal chain</item>
+<item page="5">Audit methodology</item>
+</outline>
+<item page="6">Experimental Setup</item>
+<item page="6">Results and Analysis</item>
+<outline>
+<item page="6">Headline correction: what the audit removed</item>
+<item page="6">Out-of-distribution evaluation under selection and provenance</item>
+<item page="7">The clean human test: human400</item>
+<item page="8">Ablations and diagnostics</item>
+<item page="8">Negative results and what would change our conclusions</item>
+</outline>
+<item page="8">Limitations and Ethical Considerations</item>
+<item page="8">Conclusion</item>
+<item page="10">Audit Methodology Details</item>
+<outline>
+<item page="10">OOF independence taxonomy</item>
+<item page="10">Row-level overlap audit</item>
+</outline>
+<item page="11">Full Configuration Pool</item>
+<item page="11">Audit Diagnostics and Ablations</item>
+<item page="11">human400 Detailed Results</item>
+<item page="11">Annotation Protocol and Guidelines</item>
+<outline>
+<item page="1">Gold-600</item>
+<item page="1">lab2000 / AL adjudication</item>
+<item page="1">New 400-item held-out set</item>
+</outline>
+<item page="12">Complete Negative-Results List</item>
+<item page="12">Ethics Statement and Data Availability</item>
+</outline>
+</pdf2xml>
