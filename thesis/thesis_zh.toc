@@ -14,19 +14,19 @@
 \contentsline {subsection}{\numberline {3.4}星级评分不是情感标签}{6}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}第二阶段基准：lab2000}{7}{subsection.3.5}%
 \contentsline {paragraph}{标注协议。}{7}{paragraph*.11}%
-\contentsline {section}{\numberline {4}方法}{7}{section.4}%
-\contentsline {subsection}{\numberline {4.1}概述}{7}{subsection.4.1}%
+\contentsline {section}{\numberline {4}方法}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}概述}{8}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}教师集成与蒸馏}{8}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}冻结判别器}{8}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}伪标签飞轮}{8}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.4}伪标签飞轮}{9}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}中性专家}{9}{subsection.4.5}%
 \contentsline {paragraph}{语料训练检测器。}{9}{paragraph*.13}%
 \contentsline {paragraph}{专家混合。}{9}{paragraph*.14}%
 \contentsline {subsection}{\numberline {4.6}语料规模学生模型}{9}{subsection.4.6}%
 \contentsline {subsection}{\numberline {4.7}模型校准}{9}{subsection.4.7}%
 \contentsline {subsection}{\numberline {4.8}部署}{9}{subsection.4.8}%
-\contentsline {section}{\numberline {5}实验设置}{9}{section.5}%
-\contentsline {paragraph}{评估协议。}{9}{paragraph*.15}%
+\contentsline {section}{\numberline {5}实验设置}{10}{section.5}%
+\contentsline {paragraph}{评估协议。}{10}{paragraph*.15}%
 \contentsline {paragraph}{指标。}{10}{paragraph*.16}%
 \contentsline {paragraph}{基线。}{10}{paragraph*.17}%
 \contentsline {section}{\numberline {6}结果}{10}{section.6}%
@@ -34,35 +34,36 @@
 \contentsline {subsection}{\numberline {6.2}金标 OOF 数字的泄漏审计}{11}{subsection.6.2}%
 \contentsline {paragraph}{泄漏 B：二级教师泄漏。}{11}{paragraph*.20}%
 \contentsline {paragraph}{泄漏 A：伪标签的传递性污染。}{11}{paragraph*.21}%
-\contentsline {paragraph}{在评估集上调参。}{11}{paragraph*.22}%
+\contentsline {paragraph}{泄漏 C：重复文本的折间泄漏。}{11}{paragraph*.22}%
+\contentsline {paragraph}{在评估集上调参。}{12}{paragraph*.23}%
 \contentsline {subsection}{\numberline {6.3}语料规模单模型}{12}{subsection.6.3}%
 \contentsline {subsection}{\numberline {6.4}伪标签规模效应}{12}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}跨域银标评估}{13}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.5}跨域评分代理评估}{13}{subsection.6.5}%
 \contentsline {section}{\numberline {7}分析}{13}{section.7}%
 \contentsline {subsection}{\numberline {7.1}模型校准}{13}{subsection.7.1}%
 \contentsline {subsection}{\numberline {7.2}统计显著性}{14}{subsection.7.2}%
 \contentsline {subsection}{\numberline {7.3}错误分析}{14}{subsection.7.3}%
 \contentsline {subsection}{\numberline {7.4}被否决的架构}{14}{subsection.7.4}%
 \contentsline {subsection}{\numberline {7.5}与商业训练平台的对比}{14}{subsection.7.5}%
-\contentsline {section}{\numberline {8}第二阶段：lab2000 分布外与主动学习研究}{14}{section.8}%
-\contentsline {subsection}{\numberline {8.1}暴露分布外差距}{14}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的经验观察}{15}{subsection.8.2}%
-\contentsline {paragraph}{观察一：主动学习需要锚点。}{15}{paragraph*.29}%
-\contentsline {paragraph}{观察二：领域偏移下，硬标签可能优于软蒸馏。}{16}{paragraph*.30}%
-\contentsline {paragraph}{观察三：评分恰恰在文本失效处胜出。}{16}{paragraph*.31}%
+\contentsline {section}{\numberline {8}第二阶段：lab2000 分布外与主动学习研究}{15}{section.8}%
+\contentsline {subsection}{\numberline {8.1}暴露分布外差距}{15}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}三个在 $n{=}600$ 下不可见的经验观察}{16}{subsection.8.2}%
+\contentsline {paragraph}{观察一：主动学习需要锚点。}{16}{paragraph*.30}%
+\contentsline {paragraph}{观察二：领域偏移下，硬标签可能优于软蒸馏。}{16}{paragraph*.31}%
+\contentsline {paragraph}{观察三：评分恰恰在文本失效处胜出。}{16}{paragraph*.32}%
 \contentsline {subsection}{\numberline {8.3}人类一致率：标注者一致性参照}{16}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}与前沿大模型的对比}{16}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.4}与前沿大模型的对比}{17}{subsection.8.4}%
 \contentsline {subsection}{\numberline {8.5}LLM 伪标签能否替代人工终审？}{17}{subsection.8.5}%
-\contentsline {paragraph}{规模化：1K AL $\to $ 5.9K 混合。}{17}{paragraph*.34}%
-\contentsline {paragraph}{干净人工测试（human400）。}{19}{paragraph*.36}%
-\contentsline {paragraph}{部署权衡（实测而非假设）。}{20}{paragraph*.37}%
-\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{20}{subsection.8.6}%
-\contentsline {section}{\numberline {9}局限性与效度威胁}{20}{section.9}%
+\contentsline {paragraph}{规模化：1K AL $\to $ 5.9K 混合。}{18}{paragraph*.35}%
+\contentsline {paragraph}{干净人工测试（human400）。}{20}{paragraph*.37}%
+\contentsline {paragraph}{部署权衡（实测而非假设）。}{20}{paragraph*.38}%
+\contentsline {subsection}{\numberline {8.6}lab2000 不宣称什么}{21}{subsection.8.6}%
+\contentsline {section}{\numberline {9}局限性与效度威胁}{21}{section.9}%
 \contentsline {subsection}{\numberline {9.1}伦理与数据可用性}{21}{subsection.9.1}%
-\contentsline {section}{\numberline {10}结论与未来工作}{21}{section.10}%
+\contentsline {section}{\numberline {10}结论与未来工作}{22}{section.10}%
 \contentsline {section}{可复现性}{22}{section.10}%
-\contentsline {section}{\numberline {A}训练细节与可复现性}{22}{appendix.A}%
-\contentsline {subsection}{\numberline {A.1}超参数}{22}{subsection.A.1}%
-\contentsline {subsection}{\numberline {A.2}产物清单}{22}{subsection.A.2}%
+\contentsline {section}{\numberline {A}训练细节与可复现性}{23}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}超参数}{23}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}产物清单}{23}{subsection.A.2}%
 \contentsline {subsection}{\numberline {A.3}环境}{23}{subsection.A.3}%
 \contentsline {section}{\numberline {B}附录：lab500 先导研究}{23}{appendix.B}%

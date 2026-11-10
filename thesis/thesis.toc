@@ -16,7 +16,7 @@
 \contentsline {paragraph}{Annotation protocol.}{7}{paragraph*.11}%
 \contentsline {section}{\numberline {4}Methodology}{8}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Overview}{8}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Teacher ensemble and distillation}{8}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.2}Teacher ensemble and distillation}{9}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Frozen judge}{9}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}Pseudo-label flywheel}{9}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}Neutral specialist}{9}{subsection.4.5}%
@@ -34,36 +34,37 @@
 \contentsline {subsection}{\numberline {6.2}Leakage audit of the gold-OOF numbers}{12}{subsection.6.2}%
 \contentsline {paragraph}{Leak B: second-order teacher leakage.}{12}{paragraph*.20}%
 \contentsline {paragraph}{Leak A: transitive pseudo-label contamination.}{12}{paragraph*.21}%
-\contentsline {paragraph}{Tuning on the evaluation set.}{12}{paragraph*.22}%
-\contentsline {subsection}{\numberline {6.3}Corpus-scale single models}{12}{subsection.6.3}%
+\contentsline {paragraph}{Leak C: duplicate-text fold leakage.}{12}{paragraph*.22}%
+\contentsline {paragraph}{Tuning on the evaluation set.}{12}{paragraph*.23}%
+\contentsline {subsection}{\numberline {6.3}Corpus-scale single models}{13}{subsection.6.3}%
 \contentsline {subsection}{\numberline {6.4}Pseudo-label scaling}{13}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Cross-domain silver evaluation}{13}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.5}Cross-domain rating-proxy evaluation}{14}{subsection.6.5}%
 \contentsline {section}{\numberline {7}Analysis}{14}{section.7}%
 \contentsline {subsection}{\numberline {7.1}Calibration}{14}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Statistical significance}{14}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.2}Statistical significance}{15}{subsection.7.2}%
 \contentsline {subsection}{\numberline {7.3}Error analysis}{15}{subsection.7.3}%
 \contentsline {subsection}{\numberline {7.4}Rejected architectures}{15}{subsection.7.4}%
 \contentsline {subsection}{\numberline {7.5}Comparison with a commercial training platform}{15}{subsection.7.5}%
-\contentsline {section}{\numberline {8}Stage-2: The lab2000 OOD and Active-Learning Study}{15}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Exposing the OOD gap}{15}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Three empirical observations invisible at $n{=}600$}{16}{subsection.8.2}%
-\contentsline {paragraph}{F1: Active learning needs an anchor.}{16}{paragraph*.29}%
-\contentsline {paragraph}{F2: Under domain shift, hard labels may beat soft distillation.}{17}{paragraph*.30}%
-\contentsline {paragraph}{F3: Ratings beat text exactly where text fails.}{17}{paragraph*.31}%
-\contentsline {subsection}{\numberline {8.3}Human agreement: the annotator-agreement reference}{17}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{17}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{18}{subsection.8.5}%
-\contentsline {paragraph}{Scaling: 1K AL $\to $ 5.9K hybrid.}{19}{paragraph*.34}%
-\contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{19}{paragraph*.36}%
-\contentsline {paragraph}{Clean human test (human400).}{21}{paragraph*.37}%
-\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{21}{paragraph*.38}%
-\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{22}{subsection.8.6}%
-\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{22}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Ethics and Data Availability}{23}{subsection.9.1}%
-\contentsline {section}{\numberline {10}Conclusion and Future Work}{23}{section.10}%
-\contentsline {section}{Reproducibility}{24}{section.10}%
-\contentsline {section}{\numberline {A}Training Details and Reproducibility}{24}{appendix.A}%
-\contentsline {subsection}{\numberline {A.1}Hyperparameters}{24}{subsection.A.1}%
-\contentsline {subsection}{\numberline {A.2}Artifacts}{24}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}Environment}{25}{subsection.A.3}%
-\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{25}{appendix.B}%
+\contentsline {section}{\numberline {8}Stage-2: The lab2000 OOD and Active-Learning Study}{16}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Exposing the OOD gap}{16}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Three empirical observations invisible at $n{=}600$}{17}{subsection.8.2}%
+\contentsline {paragraph}{F1: Active learning needs an anchor.}{17}{paragraph*.30}%
+\contentsline {paragraph}{F2: Under domain shift, hard labels may beat soft distillation.}{17}{paragraph*.31}%
+\contentsline {paragraph}{F3: Ratings beat text exactly where text fails.}{17}{paragraph*.32}%
+\contentsline {subsection}{\numberline {8.3}Human agreement: the annotator-agreement reference}{18}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Comparison with a frontier LLM}{18}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{19}{subsection.8.5}%
+\contentsline {paragraph}{Scaling: 1K AL $\to $ 5.9K hybrid.}{19}{paragraph*.35}%
+\contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{20}{paragraph*.37}%
+\contentsline {paragraph}{Clean human test (human400).}{22}{paragraph*.38}%
+\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{22}{paragraph*.39}%
+\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{23}{subsection.8.6}%
+\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{23}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Ethics and Data Availability}{24}{subsection.9.1}%
+\contentsline {section}{\numberline {10}Conclusion and Future Work}{24}{section.10}%
+\contentsline {section}{Reproducibility}{25}{section.10}%
+\contentsline {section}{\numberline {A}Training Details and Reproducibility}{25}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Hyperparameters}{25}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Artifacts}{25}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Environment}{26}{subsection.A.3}%
+\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{26}{appendix.B}%

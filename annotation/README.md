@@ -1,8 +1,8 @@
 # human400 blind annotation kit
 
 Materials used to produce `data/human400_labels.jsonl`, the
-contamination-free human test set reported in the paper
-(§ "The clean human test: human400").
+held-out human evaluation set reported in the paper
+(§ "Clean human test (human400)").
 
 - `ANNOTATION_GUIDELINES.md` — written labeling rules (positive /
   neutral / negative + optional flags).
@@ -13,5 +13,8 @@ contamination-free human test set reported in the paper
 
 The item set was sampled from the 911K-row corpus with length
 stratification after excluding every known training/evaluation pool
-by comment ID; a post-hoc audit verified zero identifier overlap.
+by comment ID; a post-hoc audit verified zero identifier overlap,
+and a text-level audit (exact / normalized / near-duplicate
+matching) found 0 exact overlaps and 2 normalized ultra-short
+boilerplate matches in the corpus pseudo-label pools.
 Labels are single-annotator (no human–human IAA available).

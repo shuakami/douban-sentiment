@@ -9,7 +9,7 @@ Conditions (train sets):
   al_only   - al1000 only
 
 Tasks: 3class (all rows) and binary (neutral dropped).
-Eval  : ood1000 `final` labels (clean held-out); al1000 reported for
+Eval  : ood1000 `final` labels (development/selection set); al1000 reported for
         reference only (in-train for gold_al/al_only -> inflated).
 
 Outputs: E:/GB77_data/lab2000/sft_results/{cond}_{task}_e{ep}.json

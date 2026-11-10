@@ -219,7 +219,8 @@ Measured results (gold-600 eval unless noted):
   911K corpus; confident>=0.7 subset 271,905 (pos 56.5K/neu 68.6K/neg 146.8K);
   per-class-capped 160K train -> `macbert_3c_pseudo_p55k_e2` gold600
   **0.8750/0.8463, neutral recall 0.848** (vs deployed v2 0.8900/0.8432,
-  neu recall 0.630). Single model, ZERO gold training.
+  neu recall 0.630). Single model, ZERO gold training (pseudo-labels
+  descend from gold-fitted teachers — see leakage audit in `thesis/`).
 - Binary pseudo (stu3c marginalized pos/neg, conf>=0.8, 195K):
   `macbert_bin_pseudo_p120k_e2` gold 0.9488/0.9455 — 1pp below deployed
   ensemble; adding to ensemble does NOT help (errors correlated).
@@ -391,7 +392,8 @@ Live demo: https://huggingface.co/spaces/Shuakami/douban-sentiment
 ## Stage-2 lab2000 OOD / active-learning study (2026-11-08/09)
 
 Benchmark: `E:/GB77_data/lab2000/lab2000_final.jsonl` — 2,000 corpus
-reviews, disjoint sets `ood1000` (clean held-out eval, mixed-provenance
+reviews, disjoint sets `ood1000` (development/selection set — 68.7%
+corpus-pool row overlap, 13.0% detector exposure; mixed-provenance
 labels: 200 human-adjudicated + 800 two-pass LLM consensus) and `al1000`
 (TRAINING set — never cite its numbers as generalisation). Per-row
 provenance in `final_source`; second-human IAA on 200 rows
@@ -407,8 +409,10 @@ under `E:/GB77_data/lab2000/`):
   (four e8 seeds s42/s123/s789/s999; fold weights bimodal 0.45–0.95)
 - vs v3 OOD: 0.650 3-class / 0.850 binary; vs 1K-AL mix (gold_al):
   0.720 / 0.878 — McNemar p=3.9e-4 (126v75) and p=4.8e-15 (183v62)
-- fresh500 (500 uniform corpus rows, teacher-labelled, verified zero
-  text overlap with gold + ALL AL pools): al17kds mix w=0.6 →
+- fresh500 (500 uniform corpus rows, teacher-labelled; "zero text
+  overlap" holds only vs gold-600 + AL/SFT pools — 70.2% cid overlap
+  with earlier corpus-derived pools and 13.2% detector exposure per the
+  leakage audit): al17kds mix w=0.6 →
   **77.0% 3-class** (SFT alone 78.0%) / w=0.5 → **93.7% binary**
   vs v3 58.8%/86.3%
 

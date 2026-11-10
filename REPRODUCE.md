@@ -11,7 +11,8 @@ documents the benchmark files themselves.
 cd douban-sentiment
 $env:HF_HUB_OFFLINE='1'; $env:TRANSFORMERS_OFFLINE='1'
 $env:HF_HOME='<local HF cache>'          # models are cached locally
-$env:DOUBAN_DATA_ROOT='E:/GB77_data'     # corpus + experiment artifacts (not in git)
+$env:DOUBAN_DATA_ROOT='<your-data-root>'  # corpus + experiment artifacts (not in git);
+                                         # scripts honor this env var via scripts/_paths.py
 ```
 
 - GPU jobs must be **serialized** on the ROCm/Windows box — never run
@@ -23,11 +24,13 @@ $env:DOUBAN_DATA_ROOT='E:/GB77_data'     # corpus + experiment artifacts (not in
 
 | Paper claim | Artifact | Regenerate |
 |---|---|---|
-| 3-class 89.5% acc / 85.9 macro-F1, neutral recall 70.7% | `out/ens_lite_3class_v3.json` | `python scripts/eval_lite_v3.py` |
-| Binary 95.9% / 95.6 | `out/ens_lite_binary.json` | `python scripts/eval_lite.py` |
+| 3-class 89.5% acc / 85.9 macro-F1 (pre-audit OOF), neutral recall 70.7% | `out/ens_lite_3class_v3.json` | `python scripts/eval_lite_v3.py` |
+| Binary 95.9% / 95.6 (pre-audit OOF) | `out/ens_lite_binary.json` | `python scripts/eval_lite.py` |
 | TF-IDF baseline 72.3/61.9, 84.1/82.3 | `out/tfidf_*.json` | `python scripts/tfidf_oof.py` |
 | Qwen3 zero-shot 78.3% (4B) | `out/qwen3_*_score.json` | `python scripts/eval_qwen3_score.py` |
 | Per-channel OOF probs | `out/distill_*.json`, `out/headmlp_*.json` | `scripts/distill.py`, `scripts/distill_head.py` |
+| Strict leakage-reduced OOF ≈82.6–83.1% 3-class / 91.5% binary on dedup-592 (α=1.0 hard-label rerun, single-seed, frozen weights; 600-row bounds 83.3–84.0/92.9 — gold-600 has 8 dup pairs that can cross folds; `scripts/dedup_retrain.sh` + `eval_dedup_pipeline.py`) | leakage audit, `thesis/` §Leakage | see `thesis/` |
+| human400 held-out test: al17k mix 64.8% vs v3 55.8% 3-class (identifier-disjoint, single-annotator, length-stratified; text-level audit: 0 exact overlaps, 2 normalized ultra-short boilerplate matches in corpus pseudo pools) | `data/human400_labels.jsonl`, `$DOUBAN_DATA_ROOT/human400/` | `python scripts/eval_mix_human400.py` |
 
 All gold metrics are stratified 5-fold OOF on
 `data/reviews_600_base.jsonl` (600 rows; the 648-row file adds 48 aug
@@ -37,10 +40,10 @@ rows used only by aug-specific experiments).
 
 | Paper claim | Artifact | Regenerate |
 |---|---|---|
-| Confident pool 271,905 rows (56.5K/68.6K/146.8K) | `$DATA_ROOT/pseudo/` | `scripts/pseudo_label.py` |
-| Corpus student 87.5%/84.8% (zero gold) | `$DATA_ROOT/results/` | `scripts/train_bigdata.py` |
-| Neutral detector v1 (115K, cap 60K/side) | `$DATA_ROOT/models/neu_pseudo_p60k_e2` | `scripts/train_bigdata.py --task neu` |
-| Scaling curve ~1K→160K | `$DATA_ROOT/models/stu3c_pc*_e2` | `scripts/train_bigdata.py --pseudo` |
+| Confident pool 271,905 rows (56.5K/68.6K/146.8K) | `$DOUBAN_DATA_ROOT/pseudo/` | `scripts/pseudo_label.py` |
+| Corpus student 87.5%/84.8% (no gold rows in its own training data; trained on ~160K corpus pseudo-labels emitted by the gold-trained stu3c teacher — second-order leakage, see `thesis/`) | `$DOUBAN_DATA_ROOT/results/` | `scripts/train_bigdata.py` |
+| Neutral detector v1 (115K, cap 60K/side) | `$DOUBAN_DATA_ROOT/models/neu_pseudo_p60k_e2` | `scripts/train_bigdata.py --task neu` |
+| Scaling curve ~1K→160K | `$DOUBAN_DATA_ROOT/models/stu3c_pc*_e2` | `scripts/train_bigdata.py --pseudo` |
 | Silver eval 0.837 binary agreement | `out/silver_*.json` | `scripts/silver_eval.py` |
 | Star-rating crosstab + 81.2% binary agreement on confident pool | `out/corpus_rating_crosstab.json` | `scripts/corpus_rating_analysis.py` |
 | Corpus-wide 3-class pseudo-vs-rating agreement 47.8% (54.0% on confident pool) | `out/corpus_tri_agreement.json` | `scripts/corpus_tri_agreement.py` |
@@ -48,7 +51,10 @@ rows used only by aug-specific experiments).
 ## 3. lab2000 OOD / active-learning study
 
 Working dir: `$DOUBAN_DATA_ROOT/lab2000/` (released subset in
-`data/lab2000/`).
+`data/lab2000/`). All ood1000/fresh500 numbers below are
+development/selection estimates under partial corpus-pool exposure
+(see the PAPER.md post-audit notice); human400 is the
+identifier-disjoint human check.
 
 | Paper claim | Artifact | Regenerate |
 |---|---|---|
@@ -57,14 +63,14 @@ Working dir: `$DOUBAN_DATA_ROOT/lab2000/` (released subset in
 | al6k hybrid 74.2% mix | `sft_results/gold_extra_al6kh_*.json` | `scripts/sft_lab2000.py` |
 | al11k/al14k/al17k mixes 74.9–77.1% | `sft_results/gold_extra_al*b*_*.json` | `scripts/sft_lab2000.py` |
 | **Cross-fit mix weights + all mix metrics** | `mix_crossfit_results.json`, `mix_oof_probs.npz` | `python scripts/mix_crossfit.py` |
-| McNemar p-values (0.0015, 1.7e-3, 0.041, …) | `mix_oof_probs.npz` | `python /e/GB77_data/lab2000/mix_metrics_recompute.py` |
-| Length/provenance stratification (this paper's §stratification) | `length_strat_results.json`, `stratification_extra_results.json` | `python /e/GB77_data/lab2000/length_strat_eval.py` |
+| McNemar p-values (0.0015, 1.7e-3, 0.041, …) | `mix_oof_probs.npz` | `python $DOUBAN_DATA_ROOT/lab2000/mix_metrics_recompute.py` |
+| Length/provenance stratification (this paper's §stratification) | `length_strat_results.json`, `stratification_extra_results.json` | `python $DOUBAN_DATA_ROOT/lab2000/length_strat_eval.py` |
 | Second-human IAA 71.5% / κ=0.568 | `data/lab2000/iaa_friend_user.json`, `friend_IAA_map.json` | aggregates released; protocol in `friend_IAA_README.md` |
 | LLM pass agreement 83.5% / κ=0.75 (on the 200-row IAA subset; 83.3%/0.74 on all 2000) | `lab2000_final.jsonl` (`label_a`/`label_b`) + `friend_IAA_map.json` | recompute from file |
 | DeepSeek-V4.1-Flash / V4-Pro OOD | `data/lab2000/ds_deepseek_*.jsonl` | labels released; scoring via `scripts/eval_lab2000.py` |
 | Qwen3-4B teacher ablation | `data/lab2000/qwen_*` | labels + probs released |
-| fresh500 al14k 74.6%/92.6% vs v3 58.8%/86.3% | `fresh500*.jsonl/.npy`, `fresh500_sft_probs/` | `/e/GB77_data/lab2000/eval_fresh500_mix.py` |
-| fresh500 al17kds 77.0%/93.7% vs v3 (headline mix) | `fresh500_sft_probs_al17k/` | `/e/GB77_data/lab2000/sft_fresh500_al17k.py`, `eval_fresh500_mix_al17k.py` |
+| fresh500 al14k 74.6%/92.6% vs v3 58.8%/86.3% | `fresh500*.jsonl/.npy`, `fresh500_sft_probs/` | `python $DOUBAN_DATA_ROOT/lab2000/eval_fresh500_mix.py` |
+| fresh500 al17kds 77.0%/93.7% vs v3 (headline mix) | `fresh500_sft_probs_al17k/` | `python $DOUBAN_DATA_ROOT/lab2000/sft_fresh500_al17k.py`, `python $DOUBAN_DATA_ROOT/lab2000/eval_fresh500_mix_al17k.py` |
 | gold-600 cross-fit deployment numbers | `crossfit_gold600*.json` | `scripts/crossfit_gold600.py` |
 
 ## 4. Comparisons & audits

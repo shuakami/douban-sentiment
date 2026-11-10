@@ -12,9 +12,14 @@ gold reviews and a 911K-review weakly-labelled corpus. ~80 ms per review
 on a single GPU; includes a React/Vite web UI.
 
 > **Note:** the headline metrics below predate a leakage audit.
-> Corrected strict OOF: ~83–84% (3-class) / 92.9% (binary).
-> `data/human400_labels.jsonl` is a clean held-out test — 400 human
-> annotations, disjoint from all training pools. Full audit: `thesis/`.
+> Corrected strict OOF (dedup-592): 82.6–83.1% (3-class) / 91.5%
+> (binary); 600-row bounds 83.3–84.0 / 92.9 —
+> single-seed ablation estimates with frozen fusion weights.
+> `data/human400_labels.jsonl` is a held-out set of 400
+> single-annotator, length-stratified human labels, disjoint from all
+> training pools by identifier; a text-level audit found 0 exact
+> overlaps and 2 normalized ultra-short boilerplate matches in the
+> corpus pseudo-label pools. Full audit: `thesis/`.
 
 📄 **[Paper (PDF, 29 pages EN / 27 ZH)](thesis/thesis.pdf)** — method,
 experiments, statistical tests, leakage audit, out-of-distribution
@@ -28,26 +33,36 @@ Archived on Zenodo: **[DOI 10.5281/zenodo.24072274](https://doi.org/10.5281/zeno
 We study three-class sentiment classification (positive / neutral /
 negative) of short Douban movie reviews under extreme label scarcity.
 Starting from 600 semantic labels, we show that star ratings are poor
-sentiment labels (only ~59% of 5★ reviews are semantically positive),
+sentiment labels (the student predicts only ~59% of 5★ reviews as
+positive — model predictions, not human-verified semantics; on
+human400, 62.7% of 5★ reviews carry human-positive labels),
 build a 271,905-row confident pseudo-label pool from a 910,998-review
 corpus, and distill a 7-channel teacher ensemble into a single
 MacBERT-base student. The deployed system — student + frozen
 MegatronBERT-1.3B judge + neutral specialist — reaches **89.5%
-accuracy / 85.9 macro-F1** on uncorrected 5-fold OOF (strict
-leakage-corrected rerun: ≈83–84% three-class / 92.9% binary), with
-neutral-class recall improved from 0.543 to 0.707. A 2,000-review out-of-distribution benchmark
-(`lab2000`: 1,000 random held-out + 1,000 actively-sampled reviews, two-pass
+accuracy / 85.9 macro-F1** on pre-audit (leakage-affected) 5-fold
+OOF; the strict leakage-reduced rerun gives 82.6–83.1% three-class /
+91.5% binary on deduplicated gold-600 (83.3–84.0 / 92.9 on the 600
+rows; single-seed ablation, frozen fusion weights).
+Neutral-class recall improved from 0.543 to 0.707 across expert
+iterations (pre-audit figures). A 2,000-review out-of-distribution benchmark
+(`lab2000`: 1,000 random corpus rows (development set) + 1,000 actively-sampled reviews, two-pass
 LLM blind annotation — same model, different few-shot views — with human
 adjudication of disagreements and spot
 checks — 479 rows total, mixed with LLM-consensus labels) exposes a
 65.0% three-class accuracy on wild short reviews; 1,000 actively-selected
 AL rows lift it to 72.0%, and scaling to ~17K LLM-verified AL
-rows reaches 77.1% three-class / 92.3% binary on the development set
-(fusion weights selected by 5-fold cross-validation), with diminishing
-returns beyond ~6K approaching the measured 71.5% second-annotator
-agreement reference. On the decisive clean test — human400, 400
-length-stratified blind human labels with zero known training overlap —
-the frozen-weight mixture reaches **64.8%** three-class vs.\ v3's 55.8%
+rows reaches 77.1% three-class / 92.3% binary on the ood1000
+development/selection set (fusion weights chosen by 5-fold
+cross-validation on it, so this is a selection-conditioned
+estimate), with diminishing
+returns beyond ~6K. The oft-cited 71.5% is raw agreement between
+the released labels — mostly LLM-consensus — and a single second
+annotator on a 200-row subset, i.e. annotator-vs-mixed-reference
+agreement, not a human ceiling. On human400 — 400 length-stratified
+blind single-annotator labels disjoint from all training pools by
+identifier — the frozen-weight mixture reaches **64.8%** three-class
+vs.\ v3's 55.8%
 and a trivial star-rating lookup's 55.75% (+9.0pp, McNemar
 p < 0.01).
 
@@ -56,8 +71,9 @@ p < 0.01).
 Every score below is an out-of-fold prediction on the 600 hand-labelled
 reviews: the model is scored only on reviews it never saw during training.
 These are the deployed (pre-audit) scores; the strict α=1.0 rerun that
-removes second-order teacher leakage reaches 83.3–84.0% three-class /
-92.9% binary — see `thesis/` for the full decomposition.
+removes second-order teacher leakage reaches 82.6–83.1% three-class /
+91.5% binary on deduplicated gold-600 — see `thesis/` for the full
+decomposition.
 
 | System | Task | Accuracy | Macro-F1 |
 |---|---|---|---|
@@ -105,7 +121,7 @@ graph TD
 | `data/reviews_gold_al1000.jsonl` | 1,600 rows: the 600 gold reviews + 1,000 actively-selected AL reviews (279 human-adjudicated + 721 LLM-consensus labels) used for the OOD Stage-2 SFT |
 | `data/aliyun/*.json` | upload files for the Alibaba Cloud PAI comparison (`scripts/to_aliyun_format.py`) |
 | `data/synth_*.jsonl`, `reviews_600_synth1.jsonl`, `suspect_labels.tsv`, `audit.md` | short-text-augmentation experiment artifacts (rejected approach) and the label audit |
-| `data/human400_labels.jsonl` | 400 corpus reviews, length-stratified, blind single-annotator labels — the decisive zero-overlap clean test |
+| `data/human400_labels.jsonl` | 400 corpus reviews, length-stratified, blind single-annotator labels — held-out set disjoint from all training pools by identifier |
 
 Important: `label_semantic` is the ground truth. Star ratings frequently
 contradict the text (e.g. 4★ reviews that are pure rants), so

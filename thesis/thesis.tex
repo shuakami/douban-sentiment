@@ -100,6 +100,7 @@ student, a frozen MegatronBERT-1.3B feature judge, and a
 corpus-trained neutral specialist, reaching \textbf{89.5\% accuracy /
 85.9 macro-F1} on 600-row out-of-fold evaluation --- figures we show in
 Section~\ref{sec:leakage} are inflated by second-order teacher leakage
+and duplicate-text fold leakage
 (leakage-corrected estimates: 83.3--84.0\% three-class accuracy,
 92.9\% binary) --- with neutral recall
 improved from 54.3\% to 70.7\%. Fourth, we construct \textbf{lab2000},
@@ -117,8 +118,7 @@ $\sim$17K actively-selected examples --- pushes the ensemble mix to
 estimate; 74.6--76.3\% across five seeds,
 77.1\% seed-averaged by averaging the seeds' probability outputs
 before decoding; 5-fold cross-fit validated; significantly above
-the 1K-AL mix, McNemar $p = 3.9\times10^{-4}$), above the measured 71.5\%
-second-annotator agreement reference, and lifts
+the 1K-AL mix, McNemar $p = 3.9\times10^{-4}$), and lifts
 binary OOD to \textbf{92.3\%}. We
 further report three empirical observations invisible at $n{=}600$:
 active-learning
@@ -181,20 +181,20 @@ quantify with a dedicated out-of-distribution study.
         and a single compact student (87.5\% acc / 84.8\% neutral recall)
         trained with no gold labels in its training set.
   \item A deployed hybrid ensemble (89.5\% acc / 85.9 macro-F1 on
-        gold-OOF, inflated by teacher leakage --- corrected estimates
+        gold-OOF, inflated by teacher and duplicate-text leakage ---
+        corrected estimates
         83.3--84.0\% / 76.3--77.5; Section~\ref{sec:leakage}),
         neutral recall 70.7\%, combining a distilled student, a frozen
         1.3B-parameter judge, and a corpus-trained neutral specialist.
   \item A reproducible evaluation protocol (stratified 5-fold OOF,
         cross-fit fusion-weight selection, McNemar/bootstrap
         significance tests, temperature calibration) plus a leakage
-        audit quantifying two inflation channels in the headline OOF
+        audit quantifying three inflation channels in the headline OOF
         numbers, and a 2{,}000-row cross-movie benchmark (lab2000)
         under which active-learning expansion adds +8.8pp over
         gold-only SFT ($p \approx 4\times10^{-8}$, development-set
         estimate) and scaling to 17K LLM labels reaches 77.1\%
-        three-class accuracy --- above the measured 71.5\%
-        human-vs-reference agreement.
+        three-class accuracy.
   \item A documented catalogue of more than twenty measured-but-rejected
         architectures, which we argue is itself a contribution: it maps
         the effective design space for this task.
@@ -328,7 +328,9 @@ semantic sentiment) and \code{label\_rule} (star-derived weak label).
 Class distribution: 316 positive / 92 neutral / 192 negative.
 Reviews are comparatively long (mean 110.8, median 80 characters).
 The neutral class is supported by only 92 examples --- the smallest
-and hardest class.
+and hardest class. A text-level audit finds the 600 rows contain only
+592 unique review texts (eight exact-duplicate pairs; the leakage
+audit in Section~\ref{sec:leakage} discusses the consequence).
 
 \subsection{Weakly-labelled corpus (910{,}998 reviews)}
 
@@ -368,7 +370,10 @@ Rating & Predicted positive & Predicted neutral & Predicted negative \\
 \end{table}
 
 Three patterns stand out. Only $\sim$59\% of 5-star reviews are
-semantically positive; 3-star reviews skew \emph{negative} (56.8\%)
+predicted positive by the model --- a model prediction, not verified
+semantic positivity (a later 400-row human audit finds only 62.7\% of
+5-star reviews human-positive; Section~\ref{sec:human400}); 3-star
+reviews skew \emph{negative} (56.8\%)
 rather than neutral; and even at 1--2$\star$, $\sim$8--14\% of reviews
 are predicted neutral. Rating-vs-model binary agreement on the
 confident pool is 81.2\%; corpus-wide three-class agreement between
@@ -385,8 +390,8 @@ Figure~\ref{fig:crosstab} visualises the same table.
 \centering
 \includegraphics[width=0.62\textwidth]{fig_rating_crosstab.pdf}
 \caption{Star rating versus predicted sentiment on the 272K confident
-pseudo-label pool. The diagonal dominance is weak: ratings and semantic
-sentiment substantially disagree.}
+pseudo-label pool. The diagonal dominance is weak: ratings and
+model-predicted sentiment substantially disagree.}
 \label{fig:crosstab}
 \end{figure}
 
@@ -407,9 +412,10 @@ subsets.
         (1K$\to$17K), teacher choice (DeepSeek / local Qwen / hybrid),
         epoch count, seed subsets, and the 5-fold cross-fit fusion
         weights were all selected on it. It is therefore \emph{not} an
-        untouched test set; the only zero-contamination test is the
+        untouched test set; the only identifier-disjoint test is the
         400-item blind human-annotation set human400
-        (Section~\ref{sec:human400}).
+        (Section~\ref{sec:human400}; identifier-level disjointness is
+        verified, and a text-level overlap audit is reported there).
   \item \textbf{al1000} (active-learning expansion): 1{,}000 reviews
         selected by margin/entropy sampling from the deployed student's
         predictions --- deliberately the hardest, most ambiguous rows
@@ -609,7 +615,11 @@ The raw ensemble is strongly under-confident (ECE = 0.251: predictions
 at 0.7--0.8 confidence are 98.9\% accurate). We fit a single temperature
 $T = 0.37$ by NLL on the gold-600 OOF predictions, reducing ECE to
 $\approx$0.04 without changing any predicted label or accuracy. $T$ is
-applied at inference so displayed confidence is honest. Calibration
+applied at inference so displayed confidence is honest. Because $T$ is
+both fitted and evaluated on the same gold-600 OOF predictions, this is
+in-sample calibration evidence: it does not by itself establish
+calibration on the deployment distribution, and we do not claim
+deployment-grade calibration from it alone. Calibration
 also transfers better after AL training: on ood1000 the scaled AL
 mixes reach ECE $0.027$--$0.063$ vs.\ v3's 0.159 at $T{=}1$ ---
 pseudo-labelled boundary data sharpens confidence, not just accuracy.
@@ -629,8 +639,10 @@ AMD RX 9070 GRE (ROCm); cold start $\approx$14\,s.
 \paragraph{Evaluation protocol.} All headline numbers are
 \textbf{stratified 5-fold out-of-fold} predictions on the 600-row gold
 set: every model predicts only rows it never trained on. Corpus-scale
-models are additionally evaluated on a 4{,}000-row \emph{silver} sample
-of fresh corpus reviews scored against rating-implied labels.
+models are additionally evaluated on a 4{,}000-row sample of fresh
+corpus reviews scored against rating-implied labels; we call this
+\emph{rating-proxy agreement} rather than semantic out-of-distribution
+accuracy.
 
 \paragraph{Metrics.} Accuracy and macro-F1 (3-class), per-class
 precision/recall/F1, neutral recall specifically, and ECE for
@@ -659,7 +671,8 @@ with 20 random half-splits.
 (5-fold out-of-fold); StructBERT and Qwen rows are zero-shot external
 baselines --- StructBERT is binary-only and scored on the 508
 non-neutral base rows. The deployed-v3 OOF figures are inflated by
-second-order teacher leakage and by tuning on the evaluation set;
+second-order teacher leakage, duplicate-text fold leakage, and by
+tuning on the evaluation set;
 leakage-corrected estimates are reported in
 Section~\ref{sec:leakage}. ``---'' = metric not reported.}
 \label{tab:main}
@@ -708,7 +721,7 @@ errors concentrate in neutral$\leftrightarrow$polar confusions
 A post-hoc audit of the training and evaluation chain shows that the
 89.5\%/85.9\% (three-class) and 95.87\%/95.58\% (binary) figures in
 Table~\ref{tab:main} are \emph{not} strict full-pipeline
-out-of-fold estimates. Two leakage channels inflate them, and every
+out-of-fold estimates. Three leakage channels inflate them, and every
 ensemble decision was tuned on the same 600 rows. We report the audit
 because the honest numbers are the ones a reader should quote.
 
@@ -736,14 +749,42 @@ that channel under $\alpha=1.0$ costs a further $\approx$0.7pp
 (Section~\ref{sec:limits}), which is why those benchmark numbers
 carry a row-level overlap caveat as well.
 
+\paragraph{Leak C: duplicate-text fold leakage.} A text-level audit of
+the gold set finds 600 rows but only 592 unique review texts: eight
+exact-duplicate pairs (kept$\leftrightarrow$dropped review ids
+63$\leftrightarrow$101, 64$\leftrightarrow$109, 68$\leftrightarrow$110,
+71$\leftrightarrow$115, 75$\leftrightarrow$117, 82$\leftrightarrow$118,
+99$\leftrightarrow$104, and 100$\leftrightarrow$108; seven of the eight
+pairs are neutral or negative). All reported gold-OOF numbers were
+produced on the un-deduplicated 600-row file with ungrouped stratified
+5-fold splits, so a duplicate's twin can land in a training fold while
+its copy is scored --- expected to affect $\sim$6--7 of the 8 pairs.
+This \emph{duplicate-text fold leakage} inflates the gold-OOF figures
+by an estimated $\sim$1--2pp, concentrated in the neutral/negative
+classes where the duplicates sit. A deduplicated 592-row variant was
+constructed for verification (\code{data/reviews\_600\_dedup592.jsonl})
+and the full pipeline retrained on it with dedup-aligned teacher
+targets (\code{scripts/dedup\_retrain.sh},
+\code{scripts/eval\_dedup\_pipeline.py}): the leakage-reduced
+$\alpha{=}1.0$ estimates move to \textbf{82.6--83.1\%} three-class
+accuracy / 74.8--75.9 macro-F1 (from 83.3--84.0 / 76.3--77.5 on the
+600 rows) and \textbf{91.5\%} / 90.8 binary (from 92.9 / 92.4),
+consistent with the $\sim$1pp inflation estimate; the deployed-weight
+($\alpha{=}0.5$) variant drops more (86.5\% vs.\ 89.5\%), as expected
+since teacher soft targets also encoded the duplicated rows.
+
 \paragraph{Tuning on the evaluation set.} Fusion weights, ensemble
 selection, and distillation hyperparameters were all chosen on the
 same 600 gold rows, so even the corrected numbers carry a
-best-of-$N$ optimism we do not quantify. We therefore quote the
+best-of-$N$ optimism we do not quantify. We therefore quote the deduplicated
 $\alpha{=}1.0$ rerun as the honest headline: \textbf{three-class
-$\approx$83.3--84.0\% accuracy / 76.3--77.5 macro-F1; binary
-$\approx$92.9\% / 92.4}. These are single-seed estimates
-($\alpha{=}1.0$ was not re-tuned), and the deployed system itself is
+82.6--83.1\% accuracy / 74.8--75.9 macro-F1; binary
+91.5\% / 90.8} (83.3--84.0\% / 76.3--77.5 and 92.9\% / 92.4 on the
+600 rows). These are leakage-reduced OOF ablation
+estimates: single-seed runs ($\alpha{=}1.0$ was not re-tuned) with the
+deployed fusion weights and ensemble selection kept frozen rather than
+re-selected on the corrected channels, so they are not fully
+selection-independent. The deployed system itself is
 unchanged --- this audit concerns the evaluation, not the artifact.
 Data-contamination and leakage taxonomies motivating this audit
 follow \citet{sainz2023,kapoor2023,balloccu2024}; the underlying
@@ -816,12 +857,15 @@ $\sim$160K & 0.8750 & 0.8463 & 0.848 \\
 \end{tabular}
 \end{table}
 
-\subsection{Cross-domain silver evaluation}
+\subsection{Cross-domain rating-proxy evaluation}
 
 On 4{,}000 fresh corpus reviews scored against rating-implied labels,
 the round-3 student (trained on v3-teacher pseudo-labels) reaches 0.580
 three-class / \textbf{0.837 binary} agreement versus rating, versus
-0.552/0.803 for the round-1 student. Ensemble-derived labels transfer
+0.552/0.803 for the round-1 student. These numbers measure
+\emph{rating-proxy agreement} --- agreement with star-rating-derived
+proxy labels --- not semantic out-of-distribution accuracy, and should
+not be read as the latter. Ensemble-derived labels transfer
 slightly better out-of-domain even where gold scores are equal.
 
 %=====================================================================
@@ -848,9 +892,14 @@ with $T=0.37$ reduces ECE to $\approx$0.04 (Figure~\ref{fig:calib})
 without altering any predicted label or accuracy --- it only reshapes
 the confidence distribution. One caveat: ECE averages over all bins,
 so a handful of sparse bins can still deviate noticeably even though
-the aggregate calibration improves substantially. This
+the aggregate calibration improves substantially. We stress that $T$
+was both fitted and evaluated on the same 600 gold-OOF rows, so the
+ECE reduction is in-sample calibration evidence and does not by itself
+establish calibration on the deployment distribution; the OOD ECE
+figures reported for the AL mixes in Section~\ref{sec:lab2000} provide
+the out-of-domain check. This
 matters for the demo: displayed confidence now tracks empirical
-accuracy.
+accuracy on the evaluation set.
 
 \subsection{Statistical significance}
 
@@ -863,7 +912,9 @@ differences
 inside the CI as unresolved. The point estimate
 ($+1.6$pp F1, $+7.7$pp neutral recall) is consistent across 20 random
 half-splits for every detector weight $w \in [0.3,0.6]$. We report this
-honestly: the improvement is real but modest, and at $n=600$ the gold
+honestly: specialist decomposition yielded a positive point estimate
+and improved neutral-class recall, although the overall Macro-F1
+improvement was not statistically significant; at $n=600$ the gold
 set cannot resolve differences below $\sim$1pp.
 
 \subsection{Error analysis}
@@ -899,20 +950,26 @@ through soft targets).
 
 \subsection{Comparison with a commercial training platform}
 
-For completeness we compared against a commercial NLP training platform
-(Alibaba Cloud PAI, StructBERT classifier, same 600-row task). Its
-published page reported 89.83\% accuracy, but the per-class metrics on
-the same page imply only 86.05\% accuracy / 83.23\% macro-F1 on an
-effective validation set of \textbf{43 rows} (the three headline
-numbers correspond to denominators 59/60/119 and cannot be
-mutually reconstructed; the support-weighted recomputation also fails
-to close). A Wilson interval on 43 rows spans [72.7\%, 93.4\%] --- the
-sample size cannot distinguish 86\% from 90\%. Training-set self-
-evaluation reached 99.02\% ($n=511$), a $\sim$13pp generalisation gap.
-By contrast, our 89.5\%/85.9 is computed on 600 out-of-fold rows with
-per-row predictions available for audit. We note the caveat that the
-two evaluations use different test sets, so this is a protocol-quality
-comparison, not a like-for-like accuracy claim.
+For completeness we ran a preliminary comparison against a commercial
+NLP training platform (Alibaba Cloud PAI, StructBERT classifier, same
+600-row task; our upload files are in \code{data/aliyun/}). Based only
+on the platform's published report page --- we did not retain raw
+evaluation exports, so the denominators and split cannot be
+independently verified --- the reported metrics indicate 89.83\%
+accuracy, while the per-class metrics on the same page imply only
+86.05\% accuracy / 83.23\% macro-F1 on an effective validation set of
+\textbf{43 rows} (the three headline numbers correspond to denominators
+59/60/119 and cannot be mutually reconstructed; the support-weighted
+recomputation also fails to close). A Wilson interval on 43 rows spans
+[72.7\%, 93.4\%] --- the reported sample size cannot distinguish 86\%
+from 90\%. Reported training-set self-evaluation reached 99.02\%
+($n=511$), a $\sim$13pp generalisation gap. These figures are
+indicative only and should not be treated as verified benchmark
+results. By contrast, our headline 89.5\%/85.9 (pre-audit gold-OOF
+figures; Section~\ref{sec:leakage}) is computed on 600 out-of-fold rows
+with per-row predictions available for audit, and the two evaluations
+use different test sets --- this is a protocol-quality observation,
+not a like-for-like accuracy claim.
 
 %=====================================================================
 \section{Stage-2: The lab2000 OOD and Active-Learning Study}
@@ -973,8 +1030,9 @@ SFT student (distilled)     & gold-600+al1000 & 0.710 / ---   & 0.825 / ---   \\
 \caption{(a) ood1000 accuracy by system; the first three groups are
 our local models and the last two are off-the-shelf DeepSeek LLMs
 (the local Qwen3-4B baseline from Table~\ref{tab:llm} is omitted for
-space); the dashed line marks the measured 71.5\% second-annotator
-agreement with the released labels. (b) Raw pairwise agreement on the
+space); the dashed line marks the measured 71.5\%
+second-annotator-vs-mixed-reference agreement on the 200-item subset
+(Section~\ref{sec:iaa}). (b) Raw pairwise agreement on the
 same 200-row subset: two passes of the same LLM annotator model vs.\
 a second human annotator scored against the released (mixed-provenance)
 labels. Raw agreement rate is reported here, not Cohen's $\kappa$;
@@ -1057,17 +1115,20 @@ neutral recall on disagreement rows from 0.41 to 0.77
 (Figure~\ref{fig:lab2000}).
 
 Meanwhile our best OOD system scores \textbf{77.1\%} three-class after
-AL scaling (72.0\% with al1000 labels alone) --- above the
-measured 71.5\% second-annotator agreement reference, though the two
-quantities are not strictly comparable (accuracy vs.\ pairwise
-agreement, and the reference side is majority LLM-consensus). The
-appropriate reading is not ``the model is imperfect'' but ``the model
-has reached the human consistency range; residual error is dominated
-by annotator-level ambiguity.'' For reference, the two LLM annotation
+AL scaling (72.0\% with al1000 labels alone) --- numerically above the
+71.5\% annotator-vs-mixed-reference agreement measured on the
+200-item subset described above, though the two quantities are not
+strictly comparable (accuracy vs.\ pairwise agreement, and the
+reference side is majority LLM-consensus). The
+appropriate reading is not ``the model is imperfect'' but that the
+model's OOD accuracy is numerically in the same range as measured
+annotator-vs-reference agreement, though the two metrics are not
+commensurable; residual error is plausibly dominated by
+annotator-level ambiguity. For reference, the two LLM annotation
 passes (same model, different few-shot prompts, blind to each other
 and to star ratings) agree with each other at 83.5\% raw agreement
 ($\kappa = 0.75$) on the same subset --- higher than the 71.5\%
-human reference, but this is single-model self-consistency inflated
+human annotator-vs-reference figure, but this is single-model self-consistency inflated
 by shared inductive bias and literal rubric following, not evidence of
 superior annotation quality; which is why human adjudication, not LLM
 consensus, anchors the final labels.
@@ -1116,7 +1177,7 @@ hard subset (195 ood rows jointly parseable by DeepSeek) the gap
 nearly closes: DeepSeek reaches
 59.5\% on the ood portion vs.\ 58.5\% for our al1000-era
 ensemble mix
-(parity within noise; the best al17kds mix scores 56.0\% on the full
+(comparable within noise; the best al17kds mix scores 56.0\% on the full
 200-row adjudicated subset); the subset is enriched for exactly the
 cases
 where rubric-following and world knowledge diverge. Third, the
@@ -1126,8 +1187,8 @@ per-token cost and no data leaving the machine, while the API model
 requires network access, per-call billing, and ships user text to a
 third party --- decisive constraints in privacy-sensitive deployments.
 We therefore position the contribution not as ``beats LLMs'' but as
-``task-calibrated compact model at the human-consistency range, at
-edge-deployable cost.''
+``task-calibrated compact model approaching the measured
+annotator-agreement range, at edge-deployable cost.''
 
 \subsection{Can LLM pseudo-labels replace human adjudication?}
 \label{sec:ds-teacher}
@@ -1163,8 +1224,8 @@ task (71.3\% vs.\ 71.4\%) and trail slightly on binary (86.3\% vs.\
 88.0\%). An ensemble mix at $0.5{:}0.5$ reaches 73.4\% (split-half
 $0.734 \pm 0.015$), nominally above the al1000-label mix.
 
-\paragraph{Scaling: 1K AL $\to$ 5.9K hybrid.} The parity result
-raises the obvious question --- if LLM labels substitute for the
+\paragraph{Scaling: 1K AL $\to$ 5.9K hybrid.} This near-equivalence
+(within noise; 71.3\% vs.\ 71.4\%) raises the obvious question --- if LLM labels substitute for the
 released al1000 labels at 1K, do they \emph{scale} where human
 annotation cannot? We
 sampled \textbf{al5000}: the next 5{,}000 margin/entropy-selected
@@ -1353,13 +1414,23 @@ partially realised.
 
 \paragraph{Clean human test (human400).}
 \label{sec:human400}
-To obtain a fully contamination-free evaluation we sampled 400 corpus
-reviews with length stratification (160/120/80/40 across $\le$20,
-21--50, 51--100, $>$100 characters) after excluding every known
-training and evaluation pool by comment ID, and blind-labelled them
-under written guidelines with star ratings hidden; a post-hoc audit
+We constructed human400 as an \emph{identifier-disjoint,
+single-annotator, length-stratified} human evaluation set: 400 corpus
+reviews sampled with length stratification (160/120/80/40 across $\le$20,
+21--50, 51--100, $>$100 characters --- a stratified benchmark design,
+not a corpus-proportional population sample) after excluding every known
+training and evaluation pool by comment ID, and blind-labelled under
+written guidelines with star ratings hidden; a post-hoc audit
 confirmed zero identifier overlap (protocol and guidelines released
-with the data). The set is single-annotator, so it
+with the data). Identifier disjointness alone does not prove
+text-level contamination-free status: a text-level overlap audit
+(exact, normalized, and near-duplicate Jaccard $>$ 0.8 matching)
+against all project training pools is reported for this set:
+exact and near-duplicate overlap with the pools of evaluated systems
+is 0/400, and normalized matching flags only two ultra-short
+boilerplate rows in corpus pseudo-label pools feeding the deployed
+neutral-detector channel (audit script
+\code{scripts/audit\_human400\_textlevel.py}). The set is single-annotator, so it
 supports a human-reference evaluation but yields no human--human IAA.
 On it, v3 reaches 55.8\% three-class accuracy (macro-F1 55.4) and
 76.5\% binary accuracy on the 221 non-neutral rows. A star-rating
@@ -1465,16 +1536,22 @@ sample; the released data marks per-row provenance
         therefore development estimates with an estimated
         $+0.3$--$1.0$pp best-of-$N$ optimism, and McNemar $p$-values
         computed on the same set are anti-conservative. The
-        zero-contamination check is human400
+        identifier-level disjointness check is human400
         (Section~\ref{sec:human400}): single-annotator, so it supports
-        a human-reference evaluation but yields no human--human IAA.
+        a human-reference evaluation but yields no human--human IAA;
+        its length-stratified sampling is a benchmark design rather
+        than a natural-distribution population estimate, and a
+        text-level overlap audit is reported in that section.
   \item \textbf{Row-level train/eval overlap.} 68.7\% of ood1000,
         70.2\% of fresh500, and 74.8\% of lab500 comment IDs appear in
         at least one corpus-derived training pool; the deployed corpus
         neutral detector was trained on 13.0\% of ood1000 rows and
         13.2\% of fresh500 rows. The AL/SFT training pools themselves
         have zero comment-ID overlap with the test sets, and gold-600
-        is clean apart from a handful of degenerate short texts.
+        carries no row-level overlap with them apart from eight
+        exact-duplicate text pairs (Leak C,
+        Section~\ref{sec:leakage}) and a handful of degenerate short
+        texts.
         lab500 additionally cannot be called ``never trained'': an
         earlier cross-validation script used lab500 rows as its own
         training folds.
@@ -1529,7 +1606,9 @@ On a realistic low-resource Chinese sentiment task, corpus-scale
 pseudo-labelling is the highest-leverage ingredient: it lifts neutral
 recall from 54\% to 71\% and lets a single compact student nearly match
 a multi-model ensemble. Specialist decomposition on corpus-trained
-neutral detectors adds a further validated gain. Star ratings alone are
+neutral detectors yields a positive point estimate and higher
+neutral-class recall, but the overall Macro-F1 gain is not
+statistically significant. Star ratings alone are
 insufficient supervision --- measured, not assumed.
 
 The lab2000 study then stress-tests the result honestly. The
@@ -1539,16 +1618,18 @@ reviews; 1{,}000 actively-selected boundary examples
 recover the gap to 72.0\% (the underlying SFT gain: $+8.8$pp,
 McNemar $p = 4.0\times10^{-8}$), and scaling the
 same protocol with frontier-LLM pseudo-labels reaches \textbf{77.1\%}
-three-class --- above the measured 71.5\% second-annotator agreement
-reference --- and \textbf{92.3\%} binary.
+three-class and \textbf{92.3\%} binary.
 Three empirical observations emerge: active learning requires a gold
 anchor, hard labels may outperform soft distillation once the evaluation
 domain shifts, and star ratings become the strongest available signal
 precisely where review text is most ambiguous. Against frontier LLMs
 of $\sim$763B--1.6T parameters the compact pipeline trails on raw OOD
 accuracy but
-reaches parity on human-adjudicated hard items at one-to-two
-orders of magnitude lower latency and cost, with no data egress.
+approaches frontier-LLM accuracy on human-adjudicated hard items
+within noise, at one-to-two
+orders of magnitude lower latency and cost. The deployed inference
+pipeline operates locally without external data transfer; however,
+external APIs were used during the research-stage annotation process.
 
 Future work: (i) scale the adjudicated AL set (the DS-teacher pilot in
 Section~\ref{sec:ds-teacher} tests whether frontier-LLM pseudo-labels
@@ -1908,7 +1989,8 @@ and Alexander Ratner. 2021.
 (Datasets and Benchmarks)}.
 
 \bibitem[Zhang et al.(2025)]{zhang2023shiftkd}
-Zhang, Songming, Yuxiao Luo, Ziyu Lyu, and Xiaofeng Chen. 2023.
+Zhang, Songming, Yuxiao Luo, Ziyu Lyu, and Xiaofeng Chen. 2023
+(arXiv preprint arXiv:2312.16242); published version 2025.
 \newblock ShiftKD: Benchmarking knowledge distillation under
 distribution shift.
 \newblock \emph{Neural Networks}, 192:107838, 2025.

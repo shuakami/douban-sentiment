@@ -15,8 +15,10 @@ from collections import Counter, defaultdict
 import numpy as np
 import pandas as pd
 
-REPO = Path(r"D:\Project\douban-sentiment-package\douban-sentiment")
-DATA = Path(r"E:\GB77_data")
+REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _paths import DATA_ROOT
+DATA = DATA_ROOT
 H4   = REPO / "data" / "human400_labels.jsonl"
 PKL  = DATA / "clean" / "comments.pkl"
 JTHR, NG, DF_CAP = 0.8, 3, 50000

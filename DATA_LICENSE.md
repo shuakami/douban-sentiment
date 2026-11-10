@@ -15,8 +15,10 @@ to source code only.
   the same Douban review pool; LLM-generated labels are marked as such in the
   accompanying metadata.
 - `human400_labels.jsonl` — 400 corpus reviews with blind single-annotator
-  semantic labels (no star ratings shown at annotation time); the
-  contamination-free final test set.
+  semantic labels (no star ratings shown at annotation time); held-out set
+  disjoint from all training pools by identifier (text-level audit: 0 exact
+  overlaps, 2 normalized ultra-short boilerplate matches in the corpus
+  pseudo-label pools).
 - The 910,998-row training corpus derives from **Moviedata-10M** by
   csuldw (CSU, 2019; https://github.com/csuldw/AntSpider), released for
   research use with attribution required. **The raw corpus is not

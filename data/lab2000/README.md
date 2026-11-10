@@ -8,8 +8,8 @@ Moviedata-10M license); labels are our own annotation work.
 
 | File | Contents |
 |---|---|
-| `lab2000_final.jsonl` | **The benchmark.** 2,000 reviews: `ood1000` (1,000 uniform random corpus rows, held-out test) + `al1000` (1,000 margin/entropy-selected rows, training). Fields: `text`, `rating`, `label_a`/`label_b` (two blind LLM passes), `agree`, `final` (authoritative label), `final_source` (`user` = human-adjudicated, `consensus` = LLM two-pass agreement). 479 rows are human-adjudicated. |
-| `fresh500.jsonl` | 500 uniformly-sampled corpus reviews disjoint from all training/eval texts; labels come from the DeepSeek teacher (see `ds_deepseek_flash_fresh500_labels.jsonl`). |
+| `lab2000_final.jsonl` | **The benchmark.** 2,000 reviews: `ood1000` (1,000 uniform random corpus rows, development/selection set) + `al1000` (1,000 margin/entropy-selected rows, training). Fields: `text`, `rating`, `label_a`/`label_b` (two blind LLM passes), `agree`, `final` (authoritative label), `final_source` (`user` = human-adjudicated, `consensus` = LLM two-pass agreement). 479 rows are human-adjudicated. |
+| `fresh500.jsonl` | 500 uniformly-sampled corpus reviews with zero *text* overlap vs gold-600 + AL/SFT pools; labels come from the DeepSeek teacher (see `ds_deepseek_flash_fresh500_labels.jsonl`). Caveat: 70.2% of comment IDs appear in earlier corpus-derived pseudo-label/rating/TF-IDF training pools and 13.2% of rows were in the deployed neutral detector's training data (see the leakage audit in `thesis/`). |
 | `ds_deepseek_flash_labels.jsonl` | DeepSeek-V4.1-Flash zero-shot 3-class labels for ood1000 (992/1000 parseable). |
 | `ds_deepseek_v4_pro_labels.jsonl` | DeepSeek-V4-Pro zero-shot 3-class labels for ood1000 (950/1000 parseable). |
 | `ds_deepseek_flash_bin_labels.jsonl` | DeepSeek-V4.1-Flash binary (pos/neg) labels for the 673 non-neutral ood1000 rows (661 parseable). |
@@ -45,6 +45,11 @@ the remaining 1,521 rows use two-pass consensus.
   corpus-derived pseudo-label/rating/TF-IDF training sets, and it was
   used to select AL scale/teacher/epochs/weights during the study.
   `al1000` and the `al*` files are training data.
+- `fresh500` is a replication check under partial exposure, not a
+  clean test: its texts are disjoint from gold-600 and the AL/SFT
+  pools, but 70.2% of comment IDs appear in earlier corpus-derived
+  training pools (13.2% in the deployed neutral detector's training
+  data) and its labels are teacher-generated.
 - The 479 human-adjudicated rows (`final_source == "user"`) are
   disagreement-enriched; do not treat them as a representative test
   distribution.

@@ -6,10 +6,14 @@
 > **superseded**: second-order teacher leakage inflates them by up to
 > +5.5pp, ood1000 is a development/selection set (not a held-out test),
 > and ~13% of its rows appear in a deployed channel's training data.
-> Corrected strict OOF is ≈83–84% (3-class) / 92.9% (binary), and the
-> decisive zero-contamination human test is `data/human400_labels.jsonl`
-> (400 blind single-annotator labels). See `thesis/` for the audited
-> write-up.
+> Corrected strict OOF (dedup-592) is 82.6–83.1% (3-class) / 91.5%
+> (binary); 600-row bounds 83.3–84.0 / 92.9 —
+> single-seed ablation estimates with frozen fusion weights.
+> `data/human400_labels.jsonl` is a held-out set of 400
+> single-annotator, length-stratified human labels, disjoint from all
+> training pools by identifier; a text-level audit found 0 exact
+> overlaps and 2 normalized ultra-short boilerplate matches in the
+> corpus pseudo-label pools. See `thesis/` for the audited write-up.
 
 *Course project report — Douban short-review sentiment classification.*
 
@@ -23,11 +27,17 @@ star ratings are a poor proxy for semantic sentiment (corpus-wide
 three-class agreement between pseudo-labels and ratings only ~48%), and
 that pseudo-labelling the corpus
 with a strong ensemble yields a single compact student reaching 87.5%
-accuracy with **84.8% neutral recall** — far above what 600 gold labels
+accuracy with **84.8% neutral recall** on the gold set (pre-audit
+figures; pseudo-labels inherit gold-trained teacher bias — see the
+post-audit notice) — far above what 600 gold labels
 alone can teach. Our deployed system combines a distilled MacBERT student
 with a frozen MegatronBERT-1.3B feature judge and a corpus-trained neutral
-specialist, reaching **89.5% accuracy / 85.9 macro-F1** on the gold set,
-beating both a TF-IDF baseline (+17pp) and zero-shot Qwen3-4B (+11pp).
+specialist, reaching **89.5% accuracy / 85.9 macro-F1** on the gold
+set's pre-audit out-of-fold predictions — the strict leakage-reduced
+rerun gives **82.6–83.1% three-class / 91.5% binary** on
+deduplicated gold-600 (83.3–84.0 / 92.9 on the 600 rows) — beating both a
+TF-IDF baseline (+17pp) and zero-shot Qwen3-4B (+11pp) on the same
+pre-audit protocol.
 Finally, we build **lab2000** — a 2,000-row cross-movie benchmark with
 two-pass LLM blind annotation (same annotator model, different few-shot
 views) and 479 human-adjudicated rows — and show the
@@ -35,13 +45,17 @@ gold-trained system drops to 65.0% three-class on wild short reviews,
 but that adding only 1,000 actively-selected boundary examples lifts
 the SFT student by +8.8pp (62.6%→71.4%, McNemar p = 4.0e-8), and scaling the same protocol
 with frontier-LLM pseudo-labels (up to ~17K AL rows) pushes the
-ensemble mix to **77.1% three-class** (74.6--76.3% across five
+ensemble mix to **77.1% three-class** on the ood1000
+development/selection set (74.6--76.3% across five
 seeds, 77.1% seed-averaged by averaging the seeds' probability
-outputs before decoding, 5-fold cross-fit validated), significantly
+outputs before decoding, 5-fold cross-fit weights — a
+selection-conditioned estimate, not an untouched test), significantly
 above the 1K-AL mix
 (McNemar p = 3.9e-4), and lifts
-binary OOD to **92.3%** — above the measured 71.5%
-second-annotator agreement reference. Three empirical observations
+binary OOD to **92.3%** on the same set. (The oft-cited 71.5% is raw
+agreement between the released labels — mostly LLM-consensus — and a
+single second annotator on a 200-row subset: annotator-vs-mixed-reference
+agreement, not a human ceiling.) Three empirical observations
 emerge that n=600 could
 never resolve: active learning needs a gold anchor, hard labels may beat
 soft distillation under domain shift, and star ratings become the
@@ -132,7 +146,11 @@ re-used for training corpus-scale models. Round-2 self-labelling saturates
 ## 4. Results
 
 All scores are stratified 5-fold out-of-fold predictions on the 600
-hand-labelled reviews.
+hand-labelled reviews — the original pre-audit figures, with second-order
+teacher leakage not removed. The strict leakage-reduced rerun reaches
+82.6–83.1% three-class / 91.5% binary on deduplicated gold-600
+(see the post-audit notice and
+`thesis/`).
 
 | System | Task | Acc | Macro-F1 |
 |---|---|---|---|
@@ -149,7 +167,11 @@ Per-class (3-class): pos P/R/F1 = 0.909/0.943/0.926,
 neu = 0.765/0.707/0.735, neg = 0.931/0.906/0.918.
 Neutral recall improved 0.543 → 0.707 across expert iterations.
 
-### Corpus-scale single models (zero gold training)
+### Corpus-scale single models (no gold rows in their own training data)
+
+The pseudo-labels below are outputs of gold-trained teachers, so these
+gold-set scores carry the second-order leakage described in the
+post-audit notice.
 
 | Model | Training data | Gold acc | Gold F1 | Neu recall |
 |---|---|---|---|---|
@@ -221,8 +243,13 @@ when present, and only 6/56 explicit scores contradict the semantic label.
 
 - Gold set is 600 reviews from a **single film page** — quantified by
   lab2000 (65.0% OOD three-class), partially mitigated by 1,000
-  actively-selected AL rows with mixed-provenance labels (72.0%), but ood1000 remains the only true
-  held-out cross-movie test.
+  actively-selected AL rows with mixed-provenance labels (72.0%). Note
+  that ood1000 is the development/selection set for the AL study — it
+  was used to pick AL scale, teacher, epochs, and fusion weights — not
+  a pristine held-out test; the identifier-disjoint human test is
+  `data/human400_labels.jsonl` — 400 single-annotator,
+  length-stratified labels (see the post-audit notice above and
+  `thesis/`).
 - lab2000 pre-annotations are LLM-generated; 479/2,000 rows carry human
   adjudication and a 200-row second-human IAA sample (κ=0.57).
 - Pseudo labels inherit teacher biases; the flywheel saturates after one
@@ -244,8 +271,10 @@ The lab2000 study stress-tests this honestly: the gold-trained system
 drops to 65.0% on wild reviews; 1,000 actively-selected AL examples
 (mixed provenance: 279 human-adjudicated + 721 LLM-consensus) recover
 the gap to 72.0% (p = 4.0e-8) with the released al1000 labels, and to **77.1%**
-after LLM-scaled AL expansion — above the measured 71.5%
-second-annotator agreement reference. AL needs a gold anchor, hard labels beat
+after LLM-scaled AL expansion on the ood1000 development set — a
+selection-conditioned estimate; the 71.5% second-annotator figure is
+agreement with a mixed human/LLM reference on 200 rows, not a human
+ceiling. AL needs a gold anchor, hard labels beat
 soft distillation under shift, and ratings dominate precisely where
 text is most ambiguous. Against frontier LLMs (~763B--1.6T parameters)
 we trail on raw
@@ -305,8 +334,10 @@ blind-labelled by a second human for true IAA.
 
 Mix weights are selected by stratified 5-fold cross-validation on
 ood1000 (out-of-fold predictions — no row's label influences its own
-weight), so these are honest generalisation numbers, not test-set
-tuning. Gold+AL vs gold-only: +8.8pp, McNemar p = 4.0e-8 — a gain unresolvable
+weight). However, ood1000 was also used to select AL scale, teacher,
+epochs, and seed subsets, so these are development estimates
+conditioned on that selection — not untouched-test numbers. Gold+AL vs
+gold-only: +8.8pp, McNemar p = 4.0e-8 — a gain unresolvable
 at n=600 (v2→v3 was p=0.65).
 
 ### Three empirical observations
@@ -341,10 +372,14 @@ disagreement rows (v3: 67.8% vs.
 46.6%), and AL training lifts neutral recall on disagreement rows from
 0.41 to 0.77. Its residual error mode is neutral over-prediction
 (407 predicted vs 327 true on ood1000); a small neutral-logit
-correction recovers under 1pp — within noise. Our best OOD system reaches
-77.1% with scaled AL labels — above the 71.5% second-annotator
-agreement reference:
-the model has reached the measured annotator-agreement ceiling. (As a
+correction recovers under 1pp — within noise. Our best OOD system
+reaches 77.1% with scaled AL labels on the development set —
+numerically above the 71.5% raw agreement measured between the
+released labels and one second human annotator on a 200-row subset.
+That 71.5% is agreement with a mixed human+LLM reference (47
+adjudicated + 153 consensus rows on the subset), not a
+human-performance ceiling, so we do not read 77.1% as "reaching" it.
+(As a
 reference, two independent passes of the same LLM annotator model —
 blind to each other and to star
 ratings — agree at 83.5% raw agreement/κ=0.75 on the same subset,
@@ -376,8 +411,8 @@ DeepSeek's own binary (97.6%) exceeds its three-class (82.0%) by 15.6pp;
 (ii) on the 479 human-adjudicated hard subset the gap nearly closes
 (59.5% vs 58.5% for the Stage-2 mix on the ood portion — parity within noise); (iii) the
 local system runs offline at ~0.1s/review with zero per-token cost and
-no data egress. Positioning: task-calibrated compact model at the
-human-agreement ceiling, at edge-deployable cost — not "beats LLMs".
+no data egress. Positioning: task-calibrated compact model at
+edge-deployable cost — not "beats LLMs".
 
 ### Can LLM pseudo-labels replace human adjudication?
 
@@ -493,15 +528,16 @@ on corpus uncertainty and mix weights by cross-validation on ood1000,
 we additionally sampled
 \textbf{fresh500} — 500 uniformly-random corpus reviews disjoint from
 gold-600 and every AL/SFT pool through al17k (zero text overlap
-verified against those sets; ~70% of rows do appear in earlier
-corpus-derived pseudo-label/rating train sets, same caveat as
-ood1000) — labelled by the same
+verified against those sets; 70.2% of rows share a comment ID with
+at least one earlier corpus-derived training pool, including 13.2%
+in the deployed neutral detector's training set — the same caveat
+class as ood1000) — labelled by the same
 DeepSeek teacher. With weights frozen at the ood1000 cross-fit values
 ($w_{\mathrm{SFT}}{=}0.6$ three-class, the modal fold weight; $0.5$
 binary, the fold median — the e8 binary fold weights are bimodal,
 0.45--0.95), the headline al17kds mix
 scores \textbf{77.0\%} three-class vs.\ v3's 58.8\% (McNemar $p = 9.1\times10^{-15}$)
-and \textbf{93.7\%} binary vs.\ 86.3\% ($p = 1.9\times10^{-4}$) — the AL gain replicates on unseen data
+and \textbf{93.7\%} binary vs.\ 86.3\% ($p = 1.9\times10^{-4}$) — the AL gain replicates on rows unseen by the AL/SFT pools
 and is not an artifact of benchmark-specific tuning. (The earlier al14k checkpoint scored
 74.6\% / 92.6\% under the same protocol; the standalone al17k SFT
 student reaches 78.0\% five-seed-averaged three-class on
@@ -516,7 +552,7 @@ being less ambiguous, is less affected by this alignment.)
 Should the OOD-hardened mix replace v3? Cross-fit evaluation says no:
 the SFT component reaches only 80.0%/0.730 on gold-600 (80.2%/0.737
 for the scaled al6k-hybrid variant, 81.0%/0.751 for al11k-DS, 81.5\%
-for al14k-DS, 81.0\% for al17k-DS; vs v3's
+for al14k-DS, 81.0\% for al17k-DS; vs v3's pre-audit
 89.5%/0.859), and SFT-heavy mixture weights land at 80–82%
 (lighter weights reach 85.8–88.5%; no weight exceeds v3's 89.5%) —
 training on
@@ -524,7 +560,8 @@ terse ambiguous AL examples shifts the boundary away from the longer
 single-film gold distribution. OOD-hardening and in-domain accuracy
 are in tension; v3 stays deployed, the mix is an OOD specialist.
 A length-aware router (short→mix, long→v3) traces a Pareto frontier:
-at 20 chars it gives 87.3% gold / 71.0% OOD — between v3 (89.5%/65.0%)
+at 20 chars it gives 87.3% gold / 71.0% OOD — between v3 (pre-audit
+89.5%/65.0%)
 and the pure mix (~82%/77.1%). Full frontier under fixed
 w_SFT=0.6 fusion: T=50 → 86.5%/74.2%, T=100 → 84.5%/76.0%,
 T=∞ → 82.2%/77.4% (cross-fit OOF estimate 77.1%). Length is an
