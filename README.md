@@ -1,7 +1,7 @@
 # Weakly-Supervised Chinese Review Sentiment Classification at Scale
 
 [![Paper](https://img.shields.io/badge/Paper-PDF-blue)](thesis/thesis.pdf)
-[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24072275-blue)](https://doi.org/10.5281/zenodo.24072275)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24072274-blue)](https://doi.org/10.5281/zenodo.24072274)
 [![Demo](https://img.shields.io/badge/Demo-HuggingFace%20Space-orange)](https://huggingface.co/spaces/Shuakami/douban-sentiment)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue)](requirements.txt)
 [![License](https://img.shields.io/badge/License-Research%20Only-lightgrey)](#license--data-note)
@@ -11,17 +11,16 @@ student plus a frozen 1.3B-parameter judge, trained on 600 hand-labelled
 gold reviews and a 911K-review weakly-labelled corpus. ~80 ms per review
 on a single GPU; includes a React/Vite web UI.
 
-> **Evaluation audit.** The headline numbers below predate our leakage
-> audit and are superseded: second-order teacher leakage inflates the
-> OOF scores by up to +5.5pp (strict OOF ≈83–84% 3-class / 92.9%
-> binary), and `ood1000` is a development/selection set rather than a
-> held-out test. The decisive clean test is `data/human400_labels.jsonl`
-> (400 blind human annotations, zero known training overlap). See
-> `thesis/` for the audited write-up.
+> **Audited release.** Strict leakage-corrected OOF: ≈83–84%
+> (3-class) / 92.9% (binary). The decisive clean test is
+> `data/human400_labels.jsonl` — 400 blind human annotations with
+> zero known training overlap. Full audit: `thesis/` (the NAACL SRW
+> write-up lives on the `srw-paper` branch).
 
-📄 **[Paper (PDF, 26 pages)](thesis/thesis.pdf)** — method, experiments,
-statistical tests, out-of-distribution study.
-Archived on Zenodo: **[DOI 10.5281/zenodo.24072275](https://doi.org/10.5281/zenodo.24072275)**
+📄 **[Paper (PDF, 29 pages EN / 27 ZH)](thesis/thesis.pdf)** — method,
+experiments, statistical tests, leakage audit, out-of-distribution
+study.
+Archived on Zenodo: **[DOI 10.5281/zenodo.24072274](https://doi.org/10.5281/zenodo.24072274)**
 (EN + ZH PDFs and LaTeX source).
 **[Live demo](https://huggingface.co/spaces/Shuakami/douban-sentiment)** on Hugging Face Spaces.
 
@@ -35,23 +34,31 @@ build a 271,905-row confident pseudo-label pool from a 910,998-review
 corpus, and distill a 7-channel teacher ensemble into a single
 MacBERT-base student. The deployed system — student + frozen
 MegatronBERT-1.3B judge + neutral specialist — reaches **89.5%
-accuracy / 85.9 macro-F1** (5-fold cross-validation), with neutral-class recall
-improved from 0.543 to 0.707. A 2,000-review out-of-distribution benchmark
+accuracy / 85.9 macro-F1** on uncorrected 5-fold OOF (strict
+leakage-corrected rerun: ≈83–84% three-class / 92.9% binary), with
+neutral-class recall improved from 0.543 to 0.707. A 2,000-review out-of-distribution benchmark
 (`lab2000`: 1,000 random held-out + 1,000 actively-sampled reviews, two-pass
 LLM blind annotation — same model, different few-shot views — with human
 adjudication of disagreements and spot
 checks — 479 rows total, mixed with LLM-consensus labels) exposes a
 65.0% three-class accuracy on wild short reviews; 1,000 actively-selected
 AL rows lift it to 72.0%, and scaling to ~17K LLM-verified AL
-rows reaches 77.1% three-class / 92.3% binary (fusion weights selected by
-5-fold cross-validation, no test-set tuning), with diminishing returns
-beyond ~6K approaching the measured 71.5% second-annotator agreement
-reference.
+rows reaches 77.1% three-class / 92.3% binary on the development set
+(fusion weights selected by 5-fold cross-validation), with diminishing
+returns beyond ~6K approaching the measured 71.5% second-annotator
+agreement reference. On the decisive clean test — human400, 400
+length-stratified blind human labels with zero known training overlap —
+the frozen-weight mixture reaches **64.8%** three-class vs.\ v3's 55.8%
+and a trivial star-rating lookup's 55.75% (+9.0pp, McNemar
+p < 0.01).
 
 ## Results
 
 Every score below is an out-of-fold prediction on the 600 hand-labelled
 reviews: the model is scored only on reviews it never saw during training.
+These are the deployed (pre-audit) scores; the strict α=1.0 rerun that
+removes second-order teacher leakage reaches 83.3–84.0% three-class /
+92.9% binary — see `thesis/` for the full decomposition.
 
 | System | Task | Accuracy | Macro-F1 |
 |---|---|---|---|
@@ -99,6 +106,7 @@ graph TD
 | `data/reviews_gold_al1000.jsonl` | 1,600 rows: the 600 gold reviews + 1,000 actively-selected AL reviews (279 human-adjudicated + 721 LLM-consensus labels) used for the OOD Stage-2 SFT |
 | `data/aliyun/*.json` | upload files for the Alibaba Cloud PAI comparison (`scripts/to_aliyun_format.py`) |
 | `data/synth_*.jsonl`, `reviews_600_synth1.jsonl`, `suspect_labels.tsv`, `audit.md` | short-text-augmentation experiment artifacts (rejected approach) and the label audit |
+| `data/human400_labels.jsonl` | 400 corpus reviews, length-stratified, blind single-annotator labels — the decisive zero-overlap clean test |
 
 Important: `label_semantic` is the ground truth. Star ratings frequently
 contradict the text (e.g. 4★ reviews that are pure rants), so
@@ -115,7 +123,8 @@ all 335 disagreements plus 144 spot-checked agreements (479 rows;
 Qwen teacher labels for the ~17K scaled AL rows, fresh500, and a
 per-file README. Review texts remain Douban content; the 910K corpus
 is external and stays local. Annotated subsets released under `data/`
-total ~4.6K reviews (gold-600, lab2000, fresh500, lab500, synth aug)
+total ~5.0K reviews (gold-600, lab2000, fresh500, lab500, human400,
+synth aug)
 with user identifiers (nick/ip/uid/cid/timestamps) stripped; the
 ~16K active-learning pool texts are not redistributed. These are
 research-use excerpts of Douban reviews; the platform's terms were
@@ -264,8 +273,8 @@ If you use this work, please cite the paper:
                   Pseudo-Labeling, Specialist Decomposition, and Honest
                   Out-of-Distribution Evaluation},
   year         = {2026},
-  doi          = {10.5281/zenodo.24072275},
-  url          = {https://doi.org/10.5281/zenodo.24072275},
+  doi          = {10.5281/zenodo.24072274},
+  url          = {https://doi.org/10.5281/zenodo.24072274},
   note         = {Technical report. Code: \url{https://github.com/shuakami/douban-sentiment}},
 }
 ```
