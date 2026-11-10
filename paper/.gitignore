@@ -5,3 +5,5 @@ srw.out
 srw.blg
 srw.bbl
 *.synctex.gz
+*.xml
+*.html
