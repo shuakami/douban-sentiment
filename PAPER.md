@@ -1,5 +1,16 @@
 # Weak Supervision at Scale for Chinese Review Sentiment: A Pseudo-Labeling and Specialist-Decomposition Study
 
+> **Post-audit notice (NAACL 2027 SRW).** This document is the original
+> project report and predates our evaluation audit. Headline numbers
+> below (89.5%/95.9% OOF, 77.1% OOD mix, ood1000-as-test framing) are
+> **superseded**: second-order teacher leakage inflates them by up to
+> +5.5pp, ood1000 is a development/selection set (not a held-out test),
+> and ~13% of its rows appear in a deployed channel's training data.
+> Corrected strict OOF is ≈83–84% (3-class) / 92.9% (binary), and the
+> decisive zero-contamination human test is `data/human400_labels.jsonl`
+> (400 blind single-annotator labels). See `thesis/` for the audited
+> write-up.
+
 *Course project report — Douban short-review sentiment classification.*
 
 ## Abstract
@@ -78,8 +89,9 @@ pseudo pool, the row-normalized rating→prediction crosstab shows:
 | 4★ | 38.3% | 32.7% | 29.0% |
 | 5★ | **58.8%** | 23.1% | 18.2% |
 
-Only ~59% of 5-star reviews are semantically positive; 3-star reviews skew
-negative rather than neutral. Rating-vs-model binary agreement on the
+The student predicts only 58.8% of 5-star reviews as positive (23.1%
+neutral, 18.2% negative — model predictions, not human-verified
+semantics); 3-star reviews skew negative rather than neutral. Rating-vs-model binary agreement on the
 confident pool is 81.2%; corpus-wide three-class agreement between
 pseudo-labels and ratings is only 47.8% (71.2% on the gold set) —
 consistent with the long-documented rating–sentiment gap (Pang & Lee
@@ -362,7 +374,7 @@ difference is significant (McNemar p = 1.7e-3 on the 992 jointly
 parseable rows). But: (i) the neutral wall hits everyone —
 DeepSeek's own binary (97.6%) exceeds its three-class (82.0%) by 15.6pp;
 (ii) on the 479 human-adjudicated hard subset the gap nearly closes
-(59.5% vs 59.0% for the al1000 mix on the ood portion — parity within noise); (iii) the
+(59.5% vs 58.5% for the Stage-2 mix on the ood portion — parity within noise); (iii) the
 local system runs offline at ~0.1s/review with zero per-token cost and
 no data egress. Positioning: task-calibrated compact model at the
 human-agreement ceiling, at edge-deployable cost — not "beats LLMs".

@@ -11,6 +11,14 @@ student plus a frozen 1.3B-parameter judge, trained on 600 hand-labelled
 gold reviews and a 911K-review weakly-labelled corpus. ~80 ms per review
 on a single GPU; includes a React/Vite web UI.
 
+> **Evaluation audit.** The headline numbers below predate our leakage
+> audit and are superseded: second-order teacher leakage inflates the
+> OOF scores by up to +5.5pp (strict OOF ≈83–84% 3-class / 92.9%
+> binary), and `ood1000` is a development/selection set rather than a
+> held-out test. The decisive clean test is `data/human400_labels.jsonl`
+> (400 blind human annotations, zero known training overlap). See
+> `thesis/` for the audited write-up.
+
 📄 **[Paper (PDF, 26 pages)](thesis/thesis.pdf)** — method, experiments,
 statistical tests, out-of-distribution study.
 Archived on Zenodo: **[DOI 10.5281/zenodo.24072275](https://doi.org/10.5281/zenodo.24072275)**
