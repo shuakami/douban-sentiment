@@ -19,7 +19,7 @@ plt.rcParams.update({
 
 # ---------------- Figure 1: pipeline (horizontal) ----------------
 fig, ax = plt.subplots(figsize=(6.9, 2.9))
-ax.set_xlim(0, 14); ax.set_ylim(0, 6); ax.axis("off")
+ax.set_xlim(0, 14); ax.set_ylim(-1.0, 6); ax.axis("off")
 
 def box(x, y, w, h, text, fc="#dbeafe", ec="#1d4ed8", fs=6.8):
     ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.05",
@@ -60,13 +60,11 @@ arr(2.6, 1.35, 3.6, 4.45, ls="--"); arr(2.6, 1.35, 6.9, 3.6, ls="--")
 arr(6.0, 4.45, 6.9, 3.85); arr(6.0, 2.9, 6.9, 3.6, ls=":")
 arr(9.3, 3.6, 10.2, 2.7); arr(9.3, 1.85, 10.2, 2.4, ls=":")
 
-# leak annotations
-ax.text(5.0, 0.15, "Leak B: soft targets (α=0.5) carry val-fold info → α=1.0 removes",
-        ha="center", fontsize=6.3, color="#dc2626")
-ax.text(8.1, 0.15, "Leak A: corpus detector labels ← stu3c ← all 600 gold",
-        ha="center", fontsize=6.3, color="#dc2626")
-ax.plot([4.8,4.8],[0.35,0.5],color="#dc2626",lw=0.5)
-ax.plot([8.1,8.1],[0.35,0.5],color="#dc2626",lw=0.5)
+# leak annotations (two lines — single line overlapped horizontally)
+ax.text(5.0, -0.15, "Leak B: soft targets (α=0.5) carry val-fold info → α=1.0 removes",
+        ha="center", va="center", fontsize=6.3, color="#dc2626")
+ax.text(8.1, -0.68, "Leak A: corpus detector labels ← stu3c ← all 600 gold",
+        ha="center", va="center", fontsize=6.3, color="#dc2626")
 
 fig.tight_layout(pad=0.3)
 fig.savefig(f"{OUT}/fig1_pipeline.pdf")
