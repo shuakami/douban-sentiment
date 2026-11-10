@@ -38,8 +38,10 @@ three-star reviews. A second-order teacher-leakage
 channel inflated the original three-class out-of-fold
 accuracy by about 5.5 percentage points. Leakage-reduced
 hard-label reruns on deduplicated labels yielded $\approx$83\%
-three-class and 91.5\% binary accuracy; these are single-seed
-ablation bounds with previously tuned fusion weights frozen.
+three-class and 91.5\% binary accuracy; these leakage-reduced
+OOF estimates are single-seed ablation bounds with frozen,
+previously tuned fusion weights, not fully
+selection-independent final-system scores.
 We also find that ood1000 was reused for model selection
 and that 13.0\% of its rows and 13.2\% of fresh500 rows
 overlapped a deployed channel's training data. Accuracy
@@ -83,8 +85,10 @@ benchmark-specific rather than population estimates; its text-level
 overlap audit against all training pools is reported in
 Appendix~\ref{app:human400}. The 479 adjudicated rows were labelled
 with student predictions visible, likely anchoring labels toward
-model outputs; ood1000 was used for model selection with substantial
-identifier overlap; and our human--reference agreement
+model outputs; ood1000 was used for model selection and has
+substantial identifier overlap, so its OOD numbers are
+selection-conditioned development estimates; and our
+human--reference agreement
 ($\kappa{=}0.57$) blends human and same-LLM-consensus references.
 Finally, the corrected OOF figures (83.3--84.0\% three-class /
 92.9\% binary on the 600 rows; 82.6--83.1\% / 91.5\% after
@@ -94,18 +98,25 @@ subject to fusion-weight selection bias, not fully
 selection-independent final-system scores.
 
 \section{Ethical Considerations}
+\label{sec:ethics}
 
 All review texts are Douban user comments used without platform
 authorization: the gold-600 set was scraped from a single film page
-and the corpus derives from the Moviedata-10M release. We release
-only $\approx$5.0K evaluation reviews with user identifiers stripped,
-for research purposes. Roughly 18.5K unique texts were transmitted to
-the DeepSeek API for teacher labeling, and all 600 gold texts were
-processed on Alibaba Cloud PAI; only review text and star ratings
-were sent. Users were not contacted; we judge privacy risk low
-because only public short reviews are involved, but acknowledge this
-limitation. A fuller ethics statement and data-availability details
-appear in Appendix~\ref{app:ethics}.
+and the corpus derives from the Moviedata-10M release, whose terms
+prohibit redistribution of raw texts. We therefore release labels,
+identifiers and SHA-256 text hashes rather than review text; users
+may re-join source texts under the upstream license. Roughly 18.5K
+unique texts were transmitted to the DeepSeek API for teacher
+labelling and all 600 gold texts were processed on Alibaba Cloud
+PAI; only review text and star ratings were sent, with no direct
+identifiers. DeepSeek's published privacy policy permits the
+provider to use de-identified inputs and outputs for service
+improvement; no zero-retention agreement was in place, and API
+data is stored in the People's Republic of China. Annotation was
+performed by the authors and one additional annotator on publicly
+posted, non-sensitive film reviews; users were not contacted.
+A fuller ethics statement and data-availability details appear in
+Appendix~\ref{app:ethics}.
 
 \bibliography{refs}
 

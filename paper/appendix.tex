@@ -368,14 +368,16 @@ Review texts are Douban user comments. The gold set derives from a
 single public film page; the corpus derives from the Moviedata-10M
 release (research-use dataset, attribution required, raw data not
 redistributed by us). We did not obtain platform authorization; the
-release is limited to $\approx$5.0K evaluation/benchmark reviews with
-user identifiers removed, for research purposes. Approximately 18.5K
-unique review texts were sent to the DeepSeek API for teacher
-labelling; all 600 gold texts were processed on Alibaba Cloud PAI.
-No review text is redistributed beyond the released benchmark files.
-Users were not contacted; we judge privacy risk low because only
-public short reviews are involved, but acknowledge this is a
-limitation of the study design.
+release is limited to labels, identifiers and SHA-256 text hashes for
+$\approx$5.0K evaluation/benchmark reviews --- raw review texts are
+not redistributed. Approximately 18.5K unique review texts were sent
+to the DeepSeek API for teacher labelling; all 600 gold texts were
+processed on Alibaba Cloud PAI. DeepSeek's published privacy policy
+permits the provider to use de-identified inputs and outputs for
+service improvement; no zero-retention agreement was in place.
+Annotation was performed by the authors and one additional annotator
+on publicly posted, non-sensitive film reviews; users were not
+contacted.
 
 \paragraph{Artifacts.}
 Code, audit scripts, per-row provenance fields, OOF probability
