@@ -7,9 +7,13 @@ held-out human evaluation set reported in the paper
 - `ANNOTATION_GUIDELINES.md` — written labeling rules (positive /
   neutral / negative + optional flags).
 - `annotation.html` — self-contained offline annotation page; the 400
-  items are embedded, star ratings are hidden, progress persists in
+  items are embedded **as `cid` + `text_sha256` + length only** (raw
+  Douban texts are not redistributed — see `../DATA_LICENSE.md`),
+  star ratings are hidden, progress persists in
   `localStorage` (`ood_annot_v1`), and results export as
-  `ood_human_labels.jsonl`.
+  `ood_human_labels.jsonl`. To re-run annotation, restore texts first
+  (`python scripts/restore_texts.py` on the authors' machine, or
+  re-embed from Moviedata-10M via `cid`).
 
 The item set was sampled from the 911K-row corpus with length
 stratification after excluding every known training/evaluation pool

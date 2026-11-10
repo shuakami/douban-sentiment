@@ -462,3 +462,17 @@ glob fixed (`out/qwen3_*_score.json`). All other table rows re-verified
 against `*_goldprobs.npy` / `mix_crossfit_results.json` /
 `stage2_results.json` — binary pseudo 0.9488/0.9455, TF-IDF pseudo
 0.8117/0.7766, TF-IDF rating 0.6183/0.5369, neu recall 0.848 all match.
+
+## Data de-identification (2026-11)
+
+Raw Douban review texts are NOT redistributable (Moviedata-10M terms +
+Douban ToS). Tracked files under `data/` and `annotation/` ship labels +
+identifiers + `text_sha256`/`content_sha256` hashes only; `data/synth_*`
+are model-generated and keep full text. Authors' full-text originals
+live in git-ignored `data/_fulltext/` + `annotation/_fulltext/`.
+
+- Local experiments needing texts: `python scripts/restore_texts.py`
+- Before EVERY commit after a restore: `python scripts/deidentify_public_texts.py`
+- Never `git add` a file containing a `"text"`/`"content"` field with
+  real Douban content; `git grep -l '"text"' -- data/ annotation/`
+  should only hit `synth_*` files.

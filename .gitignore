@@ -19,3 +19,7 @@ venv/
 .DS_Store
 Thumbs.db
 HANDOFF.md
+
+# Local full-text mirror (never commit raw Douban texts)
+data/_fulltext/
+annotation/_fulltext/

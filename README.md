@@ -123,6 +123,14 @@ graph TD
 | `data/synth_*.jsonl`, `reviews_600_synth1.jsonl`, `suspect_labels.tsv`, `audit.md` | short-text-augmentation experiment artifacts (rejected approach) and the label audit |
 | `data/human400_labels.jsonl` | 400 corpus reviews, length-stratified, blind single-annotator labels — held-out set disjoint from all training pools by identifier |
 
+> **De-identified release**: raw Douban review texts are *not*
+> redistributed (Moviedata-10M terms + Douban ToS). Every `text`/`content`
+> field above is replaced by a `text_sha256`/`content_sha256` hash;
+> `cid`/pool-index fields are preserved for re-joining source data.
+> `data/synth_*.jsonl` are model-generated and keep full text.
+> See [DATA_LICENSE.md](DATA_LICENSE.md) for provenance and how to
+> obtain texts.
+
 Important: `label_semantic` is the ground truth. Star ratings frequently
 contradict the text (e.g. 4★ reviews that are pure rants), so
 `label_rule` must not be used for training or evaluation.
@@ -136,14 +144,13 @@ The full `lab2000` OOD/AL benchmark ships in `data/lab2000/`:
 all 335 disagreements plus 144 spot-checked agreements (479 rows;
 `final_source` provenance per row), DeepSeek and
 Qwen teacher labels for the ~17K scaled AL rows, fresh500, and a
-per-file README. Review texts remain Douban content; the 910K corpus
-is external and stays local. Annotated subsets released under `data/`
-total ~5.0K reviews (gold-600, lab2000, fresh500, lab500, human400,
-synth aug)
-with user identifiers (nick/ip/uid/cid/timestamps) stripped; the
-~16K active-learning pool texts are not redistributed. These are
-research-use excerpts of Douban reviews; the platform's terms were
-not licensed for this use — see the paper's Ethics section.
+per-file README. Review texts remain Douban content and are **not
+redistributed**: every released subset ships as labels + identifiers +
+SHA-256 text hashes (~5.0K annotated rows: gold-600, lab2000, fresh500,
+lab500, human400, plus synthetic augmentation which keeps full text).
+Join back to source texts via `cid`/pool index against Moviedata-10M —
+see [DATA_LICENSE.md](DATA_LICENSE.md). The platform's terms were not
+licensed for this use — see the paper's Ethics section.
 
 ### Large weakly-labelled corpus
 
@@ -298,4 +305,5 @@ If you use this work, please cite the paper:
 
 Code is provided for coursework. The gold labels are hand-annotated for
 this project; the external Douban corpus is research-use only and is not
-redistributed here.
+redistributed here — released data files contain labels, identifiers and
+text hashes only (see DATA_LICENSE.md).

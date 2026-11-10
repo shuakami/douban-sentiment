@@ -2,14 +2,17 @@
 
 Data for the OOD / active-learning study in `PAPER.md` and `thesis/`.
 Review texts are Douban content (research use only, per the upstream
-Moviedata-10M license); labels are our own annotation work.
+Moviedata-10M license) and are **not redistributed**: `text` fields are
+replaced by `text_sha256` hashes. Re-join via `cid` (human400) or pool
+index `i`/`n` against Moviedata-10M — see `../../DATA_LICENSE.md`.
+Labels are our own annotation work.
 
 ## Files
 
 | File | Contents |
 |---|---|
-| `lab2000_final.jsonl` | **The benchmark.** 2,000 reviews: `ood1000` (1,000 uniform random corpus rows, development/selection set) + `al1000` (1,000 margin/entropy-selected rows, training). Fields: `text`, `rating`, `label_a`/`label_b` (two blind LLM passes), `agree`, `final` (authoritative label), `final_source` (`user` = human-adjudicated, `consensus` = LLM two-pass agreement). 479 rows are human-adjudicated. |
-| `fresh500.jsonl` | 500 uniformly-sampled corpus reviews with zero *text* overlap vs gold-600 + AL/SFT pools; labels come from the DeepSeek teacher (see `ds_deepseek_flash_fresh500_labels.jsonl`). Caveat: 70.2% of comment IDs appear in earlier corpus-derived pseudo-label/rating/TF-IDF training pools and 13.2% of rows were in the deployed neutral detector's training data (see the leakage audit in `thesis/`). |
+| `lab2000_final.jsonl` | **The benchmark.** 2,000 reviews: `ood1000` (1,000 uniform random corpus rows, development/selection set) + `al1000` (1,000 margin/entropy-selected rows, training). Fields: `text_sha256` (raw text withheld — join via `i`), `rating`, `label_a`/`label_b` (two blind LLM passes), `agree`, `final` (authoritative label), `final_source` (`user` = human-adjudicated, `consensus` = LLM two-pass agreement). 479 rows are human-adjudicated. |
+| `fresh500.jsonl` | 500 uniformly-sampled corpus reviews with zero *text* overlap vs gold-600 + AL/SFT pools (`text_sha256`; join via `i`); labels come from the DeepSeek teacher (see `ds_deepseek_flash_fresh500_labels.jsonl`). Caveat: 70.2% of comment IDs appear in earlier corpus-derived pseudo-label/rating/TF-IDF training pools and 13.2% of rows were in the deployed neutral detector's training data (see the leakage audit in `thesis/`). |
 | `ds_deepseek_flash_labels.jsonl` | DeepSeek-V4.1-Flash zero-shot 3-class labels for ood1000 (992/1000 parseable). |
 | `ds_deepseek_v4_pro_labels.jsonl` | DeepSeek-V4-Pro zero-shot 3-class labels for ood1000 (950/1000 parseable). |
 | `ds_deepseek_flash_bin_labels.jsonl` | DeepSeek-V4.1-Flash binary (pos/neg) labels for the 673 non-neutral ood1000 rows (661 parseable). |
@@ -20,7 +23,7 @@ Moviedata-10M license); labels are our own annotation work.
 | `ds_deepseek_flash_fresh500_labels.jsonl` | DeepSeek labels for fresh500. |
 | `qwen_ood1000_labels.jsonl` / `qwen_al5000b_labels.jsonl` | Local Qwen3-4B teacher labels (label-logprob scoring) for ood1000 and the second AL batch — the open-teacher ablation. |
 | `qwen3_4b_ood1000_probs.npy` / `qwen3_4b_al5000b_probs.npy` | Raw 3-class probability arrays for the Qwen runs. |
-| `friend_IAA_200.jsonl` / `friend_IAA_map.json` | The 200-row second-human IAA subset: texts given to the second annotator and the `n → (set, i)` mapping back to `lab2000_final.jsonl`. |
+| `friend_IAA_200.jsonl` / `friend_IAA_map.json` | The 200-row second-human IAA subset: `text_sha256` (raw text withheld) and the `n → (set, i)` mapping back to `lab2000_final.jsonl`. |
 | `friend_IAA_README.md` | The annotation instructions given to the second human annotator. |
 | `iaa_friend_user.json` | Aggregate IAA statistics: second-human vs released labels 71.5% / κ=0.568 (95% CI [0.47, 0.66]); passA-vs-passB 83.5% / κ=0.75. Per-row second-human labels were collected via the README protocol; aggregates are released here. |
 

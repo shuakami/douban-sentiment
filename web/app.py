@@ -208,19 +208,23 @@ def to_display(task, probs, threshold=0.5):
 
 
 def load_examples():
-    rows = gf.load_rows("label_semantic")
-    ex = {"3class": [], "binary": []}
-    # deterministic, diverse picks
+    # Demo samples come from data/synth_kept.jsonl (model-generated texts) so
+    # the public UI never redistributes raw Douban comment text.
+    path = WEB.parent / "data" / "synth_kept.jsonl"
     picks = {"正面": [], "中性": [], "负面": []}
-    for r in rows:
-        lab = r["label_semantic"]
-        if len(picks[lab]) < 3:
+    for line in path.read_text(encoding="utf-8").splitlines():
+        r = json.loads(line)
+        lab = r.get("label_semantic")
+        if lab in picks and len(picks[lab]) < 3:
             picks[lab].append(r)
+    ex = {"3class": [], "binary": []}
     for lab in ["正面", "中性", "负面"]:
-        for r in picks[lab]:
-            ex["3class"].append({"id": r["id"], "label": lab, "star": r["star"], "text": r["text"]})
+        for j, r in enumerate(picks[lab]):
+            item = {"id": f"synth-{lab}-{j}", "label": lab, "star": "—",
+                    "text": r["text"]}
+            ex["3class"].append(item)
             if lab != "中性":
-                ex["binary"].append({"id": r["id"], "label": lab, "star": r["star"], "text": r["text"]})
+                ex["binary"].append(item)
     STATE["examples"] = ex
 
 

@@ -94,8 +94,13 @@ identifier-disjoint human check.
 ## 6. What is NOT reproducible from the repo alone
 
 - Raw Moviedata-10M corpus (research use only, not redistributed;
-  ~4.6K annotated subset reviews ARE released under `data/` with
-  identifiers stripped)
+  ~4.6K annotated subset reviews are released under `data/` as
+  **labels + identifiers + `text_sha256` hashes** — raw texts withheld
+  per upstream terms; see DATA_LICENSE.md for re-join instructions)
+- Full-text working copies for local training: authors keep a
+  git-ignored mirror in `data/_fulltext/` — run
+  `python scripts/restore_texts.py` before experiments and
+  `python scripts/deidentify_public_texts.py` before committing
 - SFT experiment checkpoints on ood1000/al* (GPU-trained; prob
   outputs are released in `sft_results/` + `mix_oof_probs.npz`)
 - DeepSeek API labels (released as jsonl; regenerating costs API tokens)
