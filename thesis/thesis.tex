@@ -1377,7 +1377,13 @@ label-convention alignment; the adjudicated-subset pattern
 (teacher $>$ local mix) does not replicate on clean labels. Residual
 weaknesses: annotator-flagged mixed reviews drop to 40.0\% (vs.\
 v3's 53.3\%, $n{=}30$), and absolute accuracy remains modest under a
-single-annotator reference.
+single-annotator reference. On the binary subset the frozen mixture
+($w{=}0.5$, four seeds) reaches 83.7\% accuracy and 81.3 macro-F1 ---
+matching the rating rule's accuracy with better class balance and
+significantly above v3 (McNemar $p{=}0.02$). Qwen3-4B zero-shot
+label-logprob scoring reaches 61.5\%/59.0 three-class
+accuracy/macro-F1, between v3 and the mixture (McNemar
+$p{=}0.26$).
 
 \paragraph{Deployment trade-off (measured, not assumed).} A natural
 question is whether the OOD-hardened mix should replace v3 in the
