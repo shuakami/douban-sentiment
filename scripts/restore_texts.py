@@ -1,7 +1,8 @@
 """Restore full-text data files for local experiments.
 
-Copies the git-ignored originals from ``data/_fulltext/`` and
-``annotation/_fulltext/`` back over the de-identified tracked files.
+The git-ignored mirror lives at ``data/_fulltext/`` and mirrors the
+repo layout (``data/_fulltext/data/...``, ``data/_fulltext/annotation/...``).
+This script copies them back over the de-identified tracked files.
 
     python scripts/restore_texts.py            # restore
     python scripts/deidentify_public_texts.py  # re-strip before committing
@@ -15,16 +16,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 FULL = ROOT / "data" / "_fulltext"
-AFULL = ROOT / "annotation" / "_fulltext"
 
 
-def restore(src_root: Path, dst_root: Path) -> int:
+def restore() -> int:
     n = 0
-    for src in src_root.rglob("*"):
+    for src in FULL.rglob("*"):
         if not src.is_file():
             continue
-        rel = src.relative_to(src_root)
-        dst = dst_root / rel
+        rel = src.relative_to(FULL)          # e.g. data/foo.jsonl
+        parts = rel.parts
+        if parts[0] not in ("data", "annotation") or len(parts) < 2:
+            continue
+        dst = ROOT.joinpath(*parts)          # data/foo.jsonl
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
         n += 1
@@ -32,10 +35,9 @@ def restore(src_root: Path, dst_root: Path) -> int:
 
 
 def main() -> None:
-    n = restore(FULL, ROOT / "data") if FULL.exists() else 0
-    m = restore(AFULL, ROOT / "annotation") if AFULL.exists() else 0
-    print(f"restored {n} data files, {m} annotation files")
-    if n + m == 0:
+    n = restore() if FULL.exists() else 0
+    print(f"restored {n} files")
+    if n == 0:
         print("no _fulltext mirror found; see DATA_LICENSE.md for data access")
 
 
