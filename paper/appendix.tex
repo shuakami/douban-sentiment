@@ -14,7 +14,9 @@ from the training fold of every channel that scored it;
 construction consumed the evaluation row's label may feed the channel;
 (iii) \emph{selection independence}---no hyperparameter, ensemble
 weight, or checkpoint was chosen using the evaluation set.
-Our headline score satisfied (i) but failed (ii) and (iii).
+Our headline score satisfied (i) only approximately---eight
+gold-600 texts are exact duplicates that can cross folds---and failed
+(ii) and (iii).
 
 \paragraph{Leak A (transitive pseudo-label contamination).}
 The deployed neutral-expert channel combines a frozen-feature MLP
@@ -51,6 +53,26 @@ rebuilding the full pipeline: three-class OOF drops from 89.5\% to
 deployed fusion weights were not re-tuned on the clean channels, so
 these corrected numbers are conservative lower bounds on the honest
 OOF rather than re-optimised estimates.
+
+\paragraph{Duplicate-text leakage (fold-isolation violation).}
+Audit of \texttt{reviews\_600\_base.jsonl} shows gold-600 contains 600
+rows but only 592 unique texts: 8 exact-duplicate pairs (ids
+\{63,101\}, \{64,109\}, \{68,110\}, \{71,115\}, \{75,117\}, \{82,118\},
+\{99,104\}, \{100,108\}). The duplicates were \emph{not} removed
+before training or evaluation, and every OOF script uses
+\texttt{StratifiedKFold} without \texttt{groups=}, so duplicate texts
+can land in different folds---with 5 folds we expect
+$\approx$6--7 of the 8 pairs to be split. This violates level-(i)
+per-row fold isolation at the text level even though the CV
+machinery itself is correct. We estimate the resulting accuracy
+inflation at roughly 1--2pp, concentrated in the neutral and negative
+classes. The deduplicated rerun on the 592 unique texts
+(\texttt{scripts/dedup\_retrain.sh},
+\texttt{scripts/eval\_dedup\_pipeline.py}) moves the $\alpha{=}1.0$
+estimates to 82.6--83.1\% three-class / 74.8--75.9 macro-F1 and
+91.5\% / 90.8 binary (from 83.3--84.0 / 76.3--77.5 and 92.9 / 92.4 on
+the 600 rows), consistent with the $\sim$1pp estimate
+(\S\ref{sec:results}).
 
 \paragraph{Selection bias (ood1000 as development set).}
 Git history shows the active-learning study iterated headline
@@ -159,8 +181,9 @@ star-rating lookup) are in \S\ref{sec:res-human400}.}
 (reproduced from \S\ref{sec:res-ood}). Only gold-600 is fully
 human-labelled; ood1000's ``human'' share is 20\% and
 anchoring-exposed; fresh500 and lab500 carry LLM-teacher labels
-throughout; human400 is fully human-labelled with zero known pool
-overlap.}
+throughout; human400 is fully human-labelled on an
+identifier-disjoint, length-stratified sample (text-level audit in
+progress).}
 \label{fig:provenance}
 \end{figure}
 
@@ -234,12 +257,40 @@ positive/neutral/negative): above v3 but below the mixture
 highest of any system here, consistent with the gold-600 finding
 that general LLMs handle the neutral class better but lag overall.
 
+\paragraph{Text-level overlap audit.}
+Identifier-disjointness does not rule out text-level exposure through
+re-crawled, reconstructed, or derivative training pools. We audited
+all 400 human400 texts against every project training pool with three
+checks: (i) exact text match; (ii) normalized text match (lowercased,
+punctuation stripped); and (iii) near-duplicate detection via
+character 3-gram Jaccard similarity $>0.8$ over 462{,}879 unique pool
+texts. Targets included gold-600, all lab2000 pools (ood1000, al1000),
+all AL expansion pools, the pseudo-label and feature manifests, and
+the reconstructed corpus training sets.
+
+Against the training pools of the systems evaluated on human400 (the
+v3 ensemble channels, the al17k mixture, Qwen3-4B, and the
+star-rating lookup), exact overlap is 0/400 and near-duplicate overlap
+($J{>}0.8$) is 0/400. Normalized matching flags two rows---both under
+12 normalized characters of boilerplate text---that also occur in
+corpus pseudo-label pools feeding the deployed neutral-detector
+channel, and three rows occur in the full 910{,}998-review corpus
+under different comment identifiers. Text-level exposure is therefore
+bounded to two ultra-short boilerplate rows in one ensemble channel.
+Pools with substantial exact overlap (46--145 rows) exist only in
+rating-derived TF-IDF and corpus-scale MacBERT experiments that were
+not among the systems evaluated on human400, so they do not affect
+the reported comparison.
+
 \section{Annotation Protocol and Guidelines}
 \label{app:annotation}
 
 \subsection{Gold-600}
 Reviews were scraped from the Douban page of a single film (first
-30 comment pages; 592 unique reviews after deduplication). Two label
+30 comment pages; 600 rows covering 592 unique texts, including 8
+exact-duplicate pairs that were \emph{not} removed before training or
+evaluation---see the duplicate-text leakage analysis in
+Appendix~\ref{app:audit}). Two label
 systems were recorded: a \emph{star-rule} label derived from the
 reviewer's star rating and a \emph{semantic} label assigned by the
 authors under written guidelines. The semantic label is authoritative
@@ -256,14 +307,19 @@ were visible in the interface, which may anchor human labels toward
 model outputs; we flag this wherever adjudicated rows are reported
 separately.
 
-\subsection{New 400-item held-out set}
-To obtain a contamination-free evaluation we sampled 400 reviews from
+\subsection{New 400-item human test set}
+To obtain an identifier-disjoint evaluation we sampled 400 reviews from
 the 911K corpus with length stratification (160 short $\le$20 chars,
 120 medium 21--50, 80 long 51--100, 40 extra-long $>$100) and
 \emph{excluded every comment ID} appearing in gold-600, lab2000,
 lab500, fresh500, the AL pools, or the confident pseudo-label pools
 ($\approx$270K rows). A post-hoc audit re-verified zero identifier
-overlap against every corpus-side training-pool manifest. Items were
+overlap against every corpus-side training-pool manifest; a
+text-level overlap audit (exact, normalized, near-duplicate) against
+all project training pools is reported in
+Appendix~\ref{app:human400}. Because the sample is length-stratified,
+it is benchmark-specific rather than a population sample of the
+natural corpus distribution. Items were
 labelled blind (no model predictions shown) under the written semantic
 guidelines by a single author; optional flags marked mixed, off-topic,
 spoiler, and uncertain rows. The written guidelines and the self-contained

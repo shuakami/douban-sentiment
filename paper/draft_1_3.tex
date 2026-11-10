@@ -32,8 +32,8 @@ assumed: they agree with human semantic labels on only 71.3\% of gold
 reviews, collapsing to 30.6\% on three-star reviews. Our headline
 out-of-fold accuracy was inflated by a second-order teacher-leakage
 channel that we measure at up to $+5.5$ percentage points. Our
-``held-out'' OOD benchmark had in fact been used repeatedly for model
-selection, and a row-level audit shows that about 69\% of its texts
+OOD benchmark, treated as held-out, had in fact been used repeatedly
+for model selection, and a row-level audit shows that about 69\% of its texts
 already appeared in earlier corpus-derived training sets. Finally, our
 LLM-consensus labels overstate measured accuracy by roughly 26 points
 relative to the human-adjudicated subset of the same benchmark
@@ -48,7 +48,8 @@ We make four contributions:
         (51.3\%), not neutral.
   \item A leakage decomposition for distilled weakly-supervised
         pipelines (transitive corpus exposure vs.\ second-order teacher
-        leakage) and corrected strict out-of-fold numbers.
+        leakage) and corrected leakage-reduced out-of-fold ablation
+        estimates (still subject to fusion-weight selection bias).
   \item A row-level identifier-overlap audit protocol for OOD evaluation
         sets, plus a quantification of model-selection bias from
         best-of-$N$ configuration search.
@@ -139,8 +140,8 @@ polarity, so the neutral class is both frequent and ambiguous.
 Table~\ref{tab:datasets} summarises every dataset used in this paper,
 its annotation source, and its role. Two properties of this table are
 unusual and deliberate: several ``test'' sets carry LLM-generated
-labels, and one of them (ood1000) is a \emph{development} set, not a
-held-out test.
+labels, and one of them (ood1000) is a \emph{development/selection}
+set, not a held-out test.
 
 \begin{table}[t]
 \centering
@@ -149,7 +150,11 @@ held-out test.
 \caption{Datasets and annotation sources. ``Consensus'' = agreement of
 two blind LLM passes; ``adjudicated'' = human resolution of pass
 disagreements plus spot-checked agreements. Roles reflect the audited,
-corrected evaluation protocol, not the original study design.}
+corrected evaluation protocol, not the original study design. The
+$\sim$17K AL pools are mixed-provenance: 279 human-adjudicated rows,
+721 same-LLM-agent consensus rows, and $\sim$15.9K DeepSeek-V4.1-Flash
+teacher labels. human-400 is identifier-disjoint; its text-level
+overlap audit is reported in Appendix~\ref{app:human400}.}
 \label{tab:datasets}
 \begin{tabular}{@{}p{1.5cm}r p{2.9cm} p{1.6cm}@{}}
 \toprule
@@ -157,12 +162,12 @@ Dataset & Rows & Annotation source & Role \\
 \midrule
 gold-600 & 600 & Human semantic labels; star-rule weak labels & Train anchor; OOF eval \\
 pseudo pools & 910{,}998 & Star-rating rule; student pseudo-labels & Weak supervision \\
-ood1000 & 1{,}000 & LLM consensus + 200 human-adjudicated & Dev (model selection) \\
-al1000 & 1{,}000 & LLM consensus + 279 human-adjudicated & AL training \\
-AL expansions (al5000--al17k) & $\sim$17{,}000 & Frontier-LLM teacher labels & AL training \\
-fresh500 & 500 & DeepSeek teacher labels & Dev replication check \\
-lab500 & 500 & Two LLM annotators; 331 consensus rows & Superseded pilot \\
-human-400 & 400 & Blind single-annotator labels; length-stratified & Final held-out test \\
+ood1000 & 1{,}000 & 800 LLM consensus + 200 human-adjudicated & Dev/selection set \\
+al1000 & 1{,}000 & 721 LLM consensus + 279 human-adjudicated & AL training \\
+AL expansions (al5000--al17k) & $\sim$17{,}000 & 279 human-adj.; 721 consensus; $\sim$15.9K DS-Flash teacher & AL training \\
+fresh500 & 500 & DeepSeek-V4.1-Flash zero-shot labels & Dev replication check (partially exposed) \\
+lab500 & 500 & Two LLM annotators; 331 consensus rows & Superseded pilot; partially exposed \\
+human-400 & 400 & Blind single-annotator labels; length-stratified & Identifier-disjoint, single-annotator, length-stratified human test \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -171,7 +176,11 @@ human-400 & 400 & Blind single-annotator labels; length-stratified & Final held-
 
 The gold set was scraped from the first 30 pages of a single Douban
 movie page, yielding 600 rows covering 592 unique reviews
-(class distribution 316 positive / 92 neutral / 192 negative). Each
+(class distribution 316 positive / 92 neutral / 192 negative). Eight
+exact-duplicate text pairs were \emph{not} removed before training or
+evaluation, so duplicates can land in different cross-validation
+folds---a residual fold-isolation violation analysed in
+Appendix~\ref{app:audit}. Each
 row carries two labels: \texttt{label\_rule}, a star-derived three-class
 weak label, and \texttt{label\_semantic}, a human-verified semantic
 label. Reviews here are longer than corpus reviews on average
@@ -214,9 +223,10 @@ samples 1{,}000 reviews by margin/entropy sampling from the deployed
 student's predictions---deliberately the hardest rows---and is a
 training set, not a test set. Active-learning expansion continued this
 protocol through al5000, al5000b, and disagreement-mined al3k rounds,
-producing pools up to $\sim$17K rows labelled by frontier-LLM teachers
-(DeepSeek-V4.1-Flash and, for one ablation, Qwen3-4B); all AL pools are
-verified text-disjoint from every evaluation set.
+producing pools up to $\sim$17K rows of mixed provenance---279
+human-adjudicated, 721 same-LLM-agent consensus, and $\sim$15.9K
+DeepSeek-V4.1-Flash teacher labels (with a Qwen3-4B ablation); all AL
+pools are verified text-disjoint from every evaluation set.
 
 \paragraph{Annotation protocol.} Each lab2000 row was labelled twice by
 two independent inference passes of the \emph{same} LLM annotator model
@@ -233,29 +243,34 @@ the remaining rows take two-pass consensus. Final provenance: ood1000 =
 279 human-adjudicated.
 
 \paragraph{fresh500.} A second OOD check: 500 uniformly sampled corpus
-reviews labelled by DeepSeek-V4.1-Flash. Our row-level audit
-(Section~\ref{sec:method}) finds that 70.2\% of its rows share a corpus
-identifier with at least one earlier corpus-derived training set, so
-fresh500 is a replication check on a partially exposed distribution,
-not a clean test.
+reviews labelled zero-shot by DeepSeek-V4.1-Flash. Our row-level audit
+(Section~\ref{sec:method}) finds zero text overlap with the gold/AL
+pools but 70.2\% of its rows share a corpus identifier with at least
+one earlier corpus-derived training set, so fresh500 is a replication
+check on a partially exposed distribution, not a clean test.
 
 \paragraph{lab500 (superseded pilot).} 500 corpus reviews labelled
 independently by two LLM annotators (a general-purpose assistant and
 Qwen3-4B zero-shot), with 331 rows reaching consensus. Superseded by
 lab2000; additionally, a pilot cross-validation script used lab500
-itself as a training set, so it cannot be treated as unseen data.
+itself as a training set, so it is a partially exposed pilot that
+cannot be treated as unseen data.
 
-\paragraph{human-400.} The only zero-contamination test: 400 corpus
+\paragraph{human-400.} Our identifier-disjoint final test: 400 corpus
 reviews sampled with length stratification (160/120/80/40 across
 $\le$20, 21--50, 51--100, and $>$100 characters; corpus median is 24)
-after excluding every previously used text or identifier pool. One
+after excluding every previously used identifier pool. One
 author blind-annotated all rows under written guidelines
 (Appendix~\ref{app:annotation}), with optional flags for mixed,
 off-topic, spoiler, and uncertain cases. We verify post-hoc that all
 400 content IDs have \emph{zero} overlap with every training pool of
 every evaluated system (gold-600, all lab2000/AL pools, the 271{,}905-row
 confident pseudo pool underlying the corpus neutral detector, and the
-mb13b feature pools). Label distribution is positive 156 / neutral 179
+mb13b feature pools); a text-level overlap audit is reported in
+Appendix~\ref{app:human400}. Because the sample is length-stratified
+rather than drawn from the natural corpus distribution, results on
+this set are benchmark-specific, not population estimates. Label
+distribution is positive 156 / neutral 179
 / negative 65---neutral-heavy relative to gold-600 (15.3\%), as expected
 for a random short-review sample. As an independent check on the
 rating--sentiment gap, star-implied labels agree with these human
@@ -303,12 +318,16 @@ adjudicated subset is unbiased.
 
 \paragraph{Summary of known weaknesses.}
 Before any model result is reported, the audit-relevant weaknesses of
-this data are: (i) gold-600 covers a single film page, so in-domain
-numbers have limited external validity; (ii) ood1000 is a development
+this data are: (i) gold-600 covers a single film page and retains eight
+exact-duplicate text pairs that can cross CV folds, so in-domain
+numbers have limited external validity and residual fold-isolation
+violations; (ii) ood1000 is a development
 set---used for AL scale, teacher, epoch, and weight selection---with
 $\sim$69\% of its rows exposed to earlier corpus-derived training, and
 its adjudicated subset is anchoring-exposed; (iii) most benchmark labels
 are LLM consensus, whose inflation over adjudicated labels we quantify
-in Section~\ref{sec:results}; and (iv) the only clean test, human-400,
-carries single-annotator labels with no measurable IAA. Sections
+in Section~\ref{sec:results}; and (iv) the only identifier-disjoint
+test, human-400, carries single-annotator, length-stratified labels
+with no measurable IAA and bounded text-level exposure (two
+ultra-short boilerplate matches; Appendix~\ref{app:human400}). Sections
 \ref{sec:method}--\ref{sec:results} quantify each of these.

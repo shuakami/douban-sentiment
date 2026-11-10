@@ -18,9 +18,8 @@
 \usepackage{enumitem}
 \usepackage{url}
 
-\title{Auditing Weak Supervision at Scale:\\
-Leakage, Label Provenance, and Honest Evaluation in\\
-Chinese Review Sentiment Classification}
+\title{Auditing Weak Supervision at Scale: Leakage, Label\\
+Provenance, and Honest Evaluation in Chinese Review Sentiment}
 
 \author{Anonymous SRW Submission}
 
@@ -28,40 +27,74 @@ Chinese Review Sentiment Classification}
 \maketitle
 
 \begin{abstract}
-Weakly supervised sentiment classifiers are typically reported with a
-single in-domain accuracy and little scrutiny of what the evaluation
-measures. We present a case study that calls this practice into
-question. Building a Chinese review-sentiment system on 600
-human-verified labels and a 910{,}998-row weakly labelled Douban
-corpus, we \emph{audit our own pipeline} before reporting results.
-The audit uncovers three systematic problems: (i) star ratings are a
-poor proxy for semantic sentiment---71.3\% agreement, with 3-star
-reviews more often negative than neutral; (ii) our headline
-out-of-fold score was inflated by \emph{second-order teacher leakage}
-through distillation soft targets, worth $\approx$5.5 points on the
-three-class task; and (iii) our OOD benchmark was simultaneously
-row-level contaminated (13.0--13.2\% of evaluation rows appear in a
-deployed channel's training set) and repurposed as a model-selection
-set across dozens of configurations. Corrected numbers are lower but
-defensible: 83--84\% three-class and 92.9\% binary strict OOF, with
-OOD gains that replicate on a cleaner sample yet shrink by half on a
-human-adjudicated subset where an LLM teacher matches our best local
-model. On a contamination-free 400-item human test the audited
-al17k mixture still beats the unaugmented v3 system by $\approx$9
-points---while a star-rating lookup merely ties v3---so the scaling
-gains are real generalization, not label-convention matching. We release the audit
-scripts, provenance fields, and all negative results, and argue that
-leakage-aware evaluation should be a prerequisite for weakly
-supervised NLP claims.
+Evaluation claims in weakly supervised NLP can be
+misleading when training signals and test labels share
+hidden dependencies. We audit a Chinese Douban
+review-sentiment system trained from 600 human-verified
+labels and a 910{,}998-review corpus with star ratings.
+Star ratings agree with semantic labels on 71.3\% of the
+586 reviews with known ratings, falling to 30.6\% for
+three-star reviews. A second-order teacher-leakage
+channel inflated the original three-class out-of-fold
+accuracy by about 5.5 percentage points. Leakage-reduced
+hard-label reruns on deduplicated labels yielded $\approx$83\%
+three-class and 91.5\% binary accuracy; these are single-seed
+ablation bounds with previously tuned fusion weights frozen.
+We also find that ood1000 was reused for model selection
+and that 13.0\% of its rows and 13.2\% of fresh500 rows
+overlapped a deployed channel's training data. Accuracy
+was 82.4\% on LLM-consensus rows and 56.0\% on
+human-adjudicated rows, a disagreement-enriched subset.
+On a length-stratified, single-annotator human set of
+400 reviews with no known identifier overlap, the
+17K-label mixture outperformed v3 by 9.0 points,
+while a star-rating lookup matched v3. We release audit
+scripts and provenance artifacts to support leakage-aware
+evaluation.
 \end{abstract}
 
 \input{draft_1_3}
 \input{draft_4_6}
 
-\section{Limitations and Ethical Considerations}
+\section{Conclusion}
+\label{sec:conclusion}
+
+Building a weakly supervised Chinese review-sentiment classifier led
+us to audit the evaluation itself. Three findings survived
+verification: star ratings are a weak semantic proxy, distillation
+soft targets inflated our OOF headline by $\approx$5.5 points, and our
+OOD benchmark was both contaminated and repurposed as a selection
+set. The corrected system remains practical
+(91.5\% binary, $\approx$83\% three-class leakage-reduced OOF ablation
+estimates); on 400 identifier-disjoint human annotations the
+mixture's +9.0pp advantage over v3 shows the gains generalize, while
+matching a star-rating lookup exposes a remaining gap. Audit artifacts
+and negative results are released.
+
+\section{Limitations}
 \label{sec:limitations}
 
-\paragraph{Data provenance and terms of use.}
+Several limitations bound our claims. gold-600 comes from a single
+film page, so absolute numbers are not cross-domain estimates, and it
+retains eight exact-duplicate text pairs that can cross CV folds
+(Appendix~\ref{app:audit}). human400 is length-stratified
+(160/120/80/40) and single-annotator, so its results are
+benchmark-specific rather than population estimates; its text-level
+overlap audit against all training pools is reported in
+Appendix~\ref{app:human400}. The 479 adjudicated rows were labelled
+with student predictions visible, likely anchoring labels toward
+model outputs; ood1000 was used for model selection with substantial
+identifier overlap; and our human--reference agreement
+($\kappa{=}0.57$) blends human and same-LLM-consensus references.
+Finally, the corrected OOF figures (83.3--84.0\% three-class /
+92.9\% binary on the 600 rows; 82.6--83.1\% / 91.5\% after
+deduplication) are
+single-seed, frozen-weight leakage-channel ablation estimates still
+subject to fusion-weight selection bias, not fully
+selection-independent final-system scores.
+
+\section{Ethical Considerations}
+
 All review texts are Douban user comments used without platform
 authorization: the gold-600 set was scraped from a single film page
 and the corpus derives from the Moviedata-10M release. We release
@@ -71,39 +104,8 @@ the DeepSeek API for teacher labeling, and all 600 gold texts were
 processed on Alibaba Cloud PAI; only review text and star ratings
 were sent. Users were not contacted; we judge privacy risk low
 because only public short reviews are involved, but acknowledge this
-limitation.
-
-\paragraph{Annotation quality.}
-The 479 ``human-adjudicated'' rows were labeled by the authors with
-model predictions visible, which likely anchors labels toward student
-outputs; ood1000 consensus labels come from two passes of the
-\emph{same} LLM annotator, and per-row second-human labels were not
-preserved, so our human--reference agreement ($\kappa{=}0.57$) blends
-human and LLM references. Our 400-item blind human set
-(\S\ref{sec:res-human400}) has zero known training overlap but is
-single-annotator, yielding no human--human agreement estimate.
-
-\paragraph{Evaluation caveats that remain.}
-The $\alpha{=}1.0$ rerun uses a single configuration; deployed fusion
-weights were tuned on the same gold-600 rows and not re-tuned on
-clean channels. The gold set covers a single film, so absolute
-numbers are not cross-domain estimates, and headline OOD numbers
-remain selection-conditioned maxima (Appendix~\ref{app:configs}).
-
-\section{Conclusion}
-\label{sec:conclusion}
-
-We set out to build a weakly supervised Chinese review-sentiment
-classifier and ended up auditing the evaluation itself. Three findings
-survived verification: star ratings are a weak semantic proxy,
-distillation soft targets inflated our OOF headline by $\approx$5.5
-points, and our OOD benchmark was both row-level contaminated and
-repurposed as a selection set. The corrected system remains
-practical---92.9\% binary and $\approx$84\% three-class strict OOF at
-edge-deployable size. On 400 blind human annotations the mixture's
-+9.0pp advantage over v3 and a star-rating lookup shows the gains
-generalize, while the star tie exposes a gap our audit makes
-visible. All audit artifacts and negative results are released.
+limitation. A fuller ethics statement and data-availability details
+appear in Appendix~\ref{app:ethics}.
 
 \bibliography{refs}
 
