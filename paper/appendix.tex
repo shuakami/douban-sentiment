@@ -124,9 +124,9 @@ split-half stability checks---an explicit best-of-N decision.}
 \section{Audit Diagnostics and Ablations}
 \label{app:ablations}
 
-\begin{table}[h]
+\begin{table*}[h]
 \centering\small
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}p{5.2cm}p{2.6cm}p{4.2cm}@{}}
 \toprule
 Quantity & Estimate & Statistical test \\
@@ -147,7 +147,7 @@ Near-duplicate (Jaccard $>0.8$) exposure adds 220 ood1000 and 107 fresh500
 rows beyond exact cid hits. human400 diagnostics (v3 vs.\ al17k mix vs.\
 star-rating lookup) are in \S\ref{sec:res-human400}.}
 \label{tab:ablations}
-\end{table}
+\end{table*}
 
 \section{Supplementary Figure}
 \label{app:figs}
@@ -168,17 +168,17 @@ overlap.}
 \label{app:human400}
 
 \begin{table}[h]
-\centering\small
-\setlength{\tabcolsep}{4pt}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 System & 3c acc & 3c mac-F1 & bin acc & bin mac-F1 \\
 \midrule
 v3 (deployed) & 55.8 & 55.4 & 76.5 & 75.3 \\
 al17k SFT mean & 64.3 & 62.1 & 83.7 & 81.3 \\
-al17k mix (frozen $w$) & \textbf{64.8} & \textbf{63.5} & 83.7 & \textbf{81.3} \\
+al17k mix (frozen) & \textbf{64.8} & \textbf{63.5} & 83.7 & \textbf{81.3} \\
 star-rating lookup & 55.75 & --- & 83.7 & 77.9 \\
-Qwen3-4B zero-shot & 61.5 & 59.0 & --- & --- \\
+Qwen3-4B & 61.5 & 59.0 & --- & --- \\
 \bottomrule
 \end{tabular}
 \caption{human400 headline metrics. Binary columns use the 221

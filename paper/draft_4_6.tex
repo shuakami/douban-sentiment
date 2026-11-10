@@ -182,22 +182,22 @@ edge-deployable size---but the honest numbers are the contribution.
 
 \begin{table}[t]
 \centering
-\small
-\begin{tabular}{llcc}
+\footnotesize
+\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lp{3.5cm}cc@{}}
 \toprule
 Task & Pipeline variant & Acc & Macro-F1 \\
 \midrule
 \multirow{4}{*}{3-class}
  & deployed, uncorrected ($\alpha{=}0.5$) & 89.5 & 85.9 \\
- & $\alpha{=}1.0$, corpus channel kept & 84.0 & 77.5 \\
- & $\alpha{=}1.0$, corpus channel removed & 83.3 & 76.3 \\
- & $\alpha{=}0.5$, corpus channel removed & 87.5 & 81.3 \\
+ & $\alpha{=}1.0$, corpus kept & 84.0 & 77.5 \\
+ & $\alpha{=}1.0$, corpus removed & 83.3 & 76.3 \\
+ & $\alpha{=}0.5$, corpus removed & 87.5 & 81.3 \\
 \midrule
 \multirow{2}{*}{binary}
  & deployed, uncorrected ($\alpha{=}0.5$) & 95.9 & 95.6 \\
- & $\alpha{=}1.0$ (no corpus channel exists) & 92.9 & 92.4 \\
+ & $\alpha{=}1.0$ (no corpus channel) & 92.9 & 92.4 \\
 \bottomrule
-\end{tabular}
+\end{tabular*}
 \caption{Gold-600 out-of-fold results (\%). ``Uncorrected'' rows are the
 previously reported deployed scores; $\alpha{=}1.0$ rows remove second-order
 teacher leakage (Leak~B). The corpus-channel toggle bounds Leak~A.
