@@ -407,9 +407,9 @@ subsets.
         (1K$\to$17K), teacher choice (DeepSeek / local Qwen / hybrid),
         epoch count, seed subsets, and the 5-fold cross-fit fusion
         weights were all selected on it. It is therefore \emph{not} an
-        untouched test set; the only planned zero-contamination test
-        is a new 400-item blind human-annotation set (in progress,
-        Section~\ref{sec:limits}).
+        untouched test set; the only zero-contamination test is the
+        400-item blind human-annotation set human400
+        (Section~\ref{sec:human400}).
   \item \textbf{al1000} (active-learning expansion): 1{,}000 reviews
         selected by margin/entropy sampling from the deployed student's
         predictions --- deliberately the hardest, most ambiguous rows
@@ -1351,6 +1351,34 @@ itself used: \emph{LLM-label at scale, human-adjudicate a verification
 core}. Future work (ii) of Section~\ref{sec:conclusion} is thereby
 partially realised.
 
+\paragraph{Clean human test (human400).}
+\label{sec:human400}
+To obtain a fully contamination-free evaluation we sampled 400 corpus
+reviews with length stratification (160/120/80/40 across $\le$20,
+21--50, 51--100, $>$100 characters) after excluding every known
+training and evaluation pool by comment ID, and blind-labelled them
+under written guidelines with star ratings hidden; a post-hoc audit
+confirmed zero identifier overlap (protocol and guidelines released
+with the data). The set is single-annotator, so it
+supports a human-reference evaluation but yields no human--human IAA.
+On it, v3 reaches 55.8\% three-class accuracy (macro-F1 55.4) and
+76.5\% binary accuracy on the 221 non-neutral rows. A star-rating
+lookup (4--5$\to$positive, 3$\to$neutral, 1--2$\to$negative)
+achieves \emph{exactly} the same 223/400 correct (55.75\%), and a
+trivial binary rating rule reaches 83.7\%, exceeding v3's 76.5\%:
+per-rating, only 62.7\% of 5-star and 50.7\% of 4-star reviews are
+human-positive --- stars encode recommendation intent, not semantic
+stance. The frozen-weight al17k mixture reaches \textbf{64.8\%}
+three-class (macro-F1 63.5), $+9.0$pp over both v3 and the star
+lookup (McNemar $p{=}1.3{\times}10^{-3}$ and $7.4{\times}10^{-3}$),
+with per-seed mixes stable at 63.5--66.0\%. The AL gains therefore
+reflect genuine generalisation to human labels rather than
+label-convention alignment; the adjudicated-subset pattern
+(teacher $>$ local mix) does not replicate on clean labels. Residual
+weaknesses: annotator-flagged mixed reviews drop to 40.0\% (vs.\
+v3's 53.3\%, $n{=}30$), and absolute accuracy remains modest under a
+single-annotator reference.
+
 \paragraph{Deployment trade-off (measured, not assumed).} A natural
 question is whether the OOD-hardened mix should replace v3 in the
 demo. We tested this honestly: the SFT component was cross-fit on
@@ -1430,9 +1458,10 @@ sample; the released data marks per-row provenance
         was made on ood1000 itself. Reported ood1000 numbers are
         therefore development estimates with an estimated
         $+0.3$--$1.0$pp best-of-$N$ optimism, and McNemar $p$-values
-        computed on the same set are anti-conservative. The only
-        planned zero-contamination test is a new 400-item blind
-        human-annotation set (in progress).
+        computed on the same set are anti-conservative. The
+        zero-contamination check is human400
+        (Section~\ref{sec:human400}): single-annotator, so it supports
+        a human-reference evaluation but yields no human--human IAA.
   \item \textbf{Row-level train/eval overlap.} 68.7\% of ood1000,
         70.2\% of fresh500, and 74.8\% of lab500 comment IDs appear in
         at least one corpus-derived training pool; the deployed corpus

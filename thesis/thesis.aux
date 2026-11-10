@@ -154,42 +154,44 @@
 \@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces AL-scaling on ood1000 (mixed-provenance labels: 479 human-adjudicated + two-pass LLM consensus; per-set split in Section~\ref {sec:lab2000-data}). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability averages of v3 and the SFT model; the fusion weight is selected by stratified 5-fold cross-validation (out-of-fold predictions, no row's label influences its own weight). Ranges denote spread across random seeds (five for three-class, four for binary). Binary evaluation excludes neutral examples; ``---'' = not reported.}}{19}{table.caption.35}\protected@file@percent }
 \newlabel{tab:al-scaling}{{9}{19}{AL-scaling on ood1000 (mixed-provenance labels: 479 human-adjudicated + two-pass LLM consensus; per-set split in Section~\ref {sec:lab2000-data}). All rows are gold-600 + listed AL data, MacBERT SFT. ``mix'' rows are probability averages of v3 and the SFT model; the fusion weight is selected by stratified 5-fold cross-validation (out-of-fold predictions, no row's label influences its own weight). Ranges denote spread across random seeds (five for three-class, four for binary). Binary evaluation excludes neutral examples; ``---'' = not reported}{table.caption.35}{}}
 \@writefile{toc}{\contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{19}{paragraph*.36}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{21}{paragraph*.37}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Length-router frontier: reviews $\le T$ chars routed to the AL mix, longer ones to v3 (fixed $w_{\mathrm  {SFT}}{=}0.6$ fusion). Gold-600 and ood1000 three-class accuracy; the pure-mix endpoint's cross-fit OOF estimate is 0.771 (Table~\ref {tab:al-scaling}).}}{21}{table.caption.38}\protected@file@percent }
-\newlabel{tab:router}{{10}{21}{Length-router frontier: reviews $\le T$ chars routed to the AL mix, longer ones to v3 (fixed $w_{\mathrm {SFT}}{=}0.6$ fusion). Gold-600 and ood1000 three-class accuracy; the pure-mix endpoint's cross-fit OOF estimate is 0.771 (Table~\ref {tab:al-scaling})}{table.caption.38}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{21}{subsection.8.6}\protected@file@percent }
-\newlabel{sec:lab2000-caveats}{{8.6}{21}{What lab2000 does not claim}{subsection.8.6}{}}
-\citation{bender2018}
-\citation{gebru2021}
+\@writefile{toc}{\contentsline {paragraph}{Clean human test (human400).}{21}{paragraph*.37}\protected@file@percent }
+\newlabel{sec:human400}{{8.5}{21}{Clean human test (human400)}{paragraph*.37}{}}
+\@writefile{toc}{\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{21}{paragraph*.38}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Length-router frontier: reviews $\le T$ chars routed to the AL mix, longer ones to v3 (fixed $w_{\mathrm  {SFT}}{=}0.6$ fusion). Gold-600 and ood1000 three-class accuracy; the pure-mix endpoint's cross-fit OOF estimate is 0.771 (Table~\ref {tab:al-scaling}).}}{22}{table.caption.39}\protected@file@percent }
+\newlabel{tab:router}{{10}{22}{Length-router frontier: reviews $\le T$ chars routed to the AL mix, longer ones to v3 (fixed $w_{\mathrm {SFT}}{=}0.6$ fusion). Gold-600 and ood1000 three-class accuracy; the pure-mix endpoint's cross-fit OOF estimate is 0.771 (Table~\ref {tab:al-scaling})}{table.caption.39}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{22}{subsection.8.6}\protected@file@percent }
+\newlabel{sec:lab2000-caveats}{{8.6}{22}{What lab2000 does not claim}{subsection.8.6}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {9}Limitations and Threats to Validity}{22}{section.9}\protected@file@percent }
 \newlabel{sec:limits}{{9}{22}{Limitations and Threats to Validity}{section.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Ethics and Data Availability}{22}{subsection.9.1}\protected@file@percent }
-\newlabel{sec:ethics}{{9.1}{22}{Ethics and Data Availability}{subsection.9.1}{}}
+\citation{bender2018}
+\citation{gebru2021}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Ethics and Data Availability}{23}{subsection.9.1}\protected@file@percent }
+\newlabel{sec:ethics}{{9.1}{23}{Ethics and Data Availability}{subsection.9.1}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {10}Conclusion and Future Work}{23}{section.10}\protected@file@percent }
 \newlabel{sec:conclusion}{{10}{23}{Conclusion and Future Work}{section.10}{}}
-\@writefile{toc}{\contentsline {section}{Reproducibility}{23}{section.10}\protected@file@percent }
-\citation{qwen2025}
+\@writefile{toc}{\contentsline {section}{Reproducibility}{24}{section.10}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {A}Training Details and Reproducibility}{24}{appendix.A}\protected@file@percent }
 \newlabel{app:repro}{{A}{24}{Training Details and Reproducibility}{appendix.A}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Hyperparameters}{24}{subsection.A.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Key hyperparameters of the deployed pipeline.}}{24}{table.caption.39}\protected@file@percent }
-\newlabel{tab:hparams}{{11}{24}{Key hyperparameters of the deployed pipeline}{table.caption.39}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Key hyperparameters of the deployed pipeline.}}{24}{table.caption.40}\protected@file@percent }
+\newlabel{tab:hparams}{{11}{24}{Key hyperparameters of the deployed pipeline}{table.caption.40}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Artifacts}{24}{subsection.A.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Environment}{24}{subsection.A.3}\protected@file@percent }
+\citation{qwen2025}
 \bibcite{devlin2019}{{1}{2019}{{Devlin et al.}}{{}}}
 \bibcite{liu2019}{{2}{2019}{{Liu et al.}}{{}}}
 \bibcite{cui2020}{{3}{2020}{{Cui et al.}}{{}}}
 \bibcite{wang2020}{{4}{2020}{{Wang et al.}}{{}}}
 \bibcite{sun2019}{{5}{2019}{{Sun et al.}}{{}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Environment}{25}{subsection.A.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{25}{appendix.B}\protected@file@percent }
+\newlabel{app:lab500}{{B}{25}{Appendix: The lab500 Pilot Study}{appendix.B}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces lab500 pilot results (superseded by lab2000). ``---'' = metric not reported.}}{25}{table.caption.41}\protected@file@percent }
+\newlabel{tab:lab500-app}{{12}{25}{lab500 pilot results (superseded by lab2000). ``---'' = metric not reported}{table.caption.41}{}}
 \bibcite{idea2023}{{6}{2023}{{IDEA-CCNL}}{{}}}
 \bibcite{kim2014}{{7}{2014}{{Kim}}{{}}}
 \bibcite{socher2013}{{8}{2013}{{Socher et al.}}{{}}}
 \bibcite{pang2008}{{9}{2008}{{Pang and Lee}}{{}}}
 \bibcite{tan2008}{{10}{2008}{{Tan and Zhang}}{{}}}
-\@writefile{toc}{\contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{25}{appendix.B}\protected@file@percent }
-\newlabel{app:lab500}{{B}{25}{Appendix: The lab500 Pilot Study}{appendix.B}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces lab500 pilot results (superseded by lab2000). ``---'' = metric not reported.}}{25}{table.caption.40}\protected@file@percent }
-\newlabel{tab:lab500-app}{{12}{25}{lab500 pilot results (superseded by lab2000). ``---'' = metric not reported}{table.caption.40}{}}
 \bibcite{yarowsky1995}{{11}{1995}{{Yarowsky}}{{}}}
 \bibcite{lee2013}{{12}{2013}{{Lee}}{{}}}
 \bibcite{arazo2020}{{13}{2020}{{Arazo et al.}}{{}}}

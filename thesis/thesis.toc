@@ -55,14 +55,15 @@
 \contentsline {subsection}{\numberline {8.5}Can LLM pseudo-labels replace human adjudication?}{18}{subsection.8.5}%
 \contentsline {paragraph}{Scaling: 1K AL $\to $ 5.9K hybrid.}{19}{paragraph*.34}%
 \contentsline {paragraph}{Diminishing returns and teacher quality at scale.}{19}{paragraph*.36}%
-\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{21}{paragraph*.37}%
-\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{21}{subsection.8.6}%
+\contentsline {paragraph}{Clean human test (human400).}{21}{paragraph*.37}%
+\contentsline {paragraph}{Deployment trade-off (measured, not assumed).}{21}{paragraph*.38}%
+\contentsline {subsection}{\numberline {8.6}What lab2000 does not claim}{22}{subsection.8.6}%
 \contentsline {section}{\numberline {9}Limitations and Threats to Validity}{22}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Ethics and Data Availability}{22}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.1}Ethics and Data Availability}{23}{subsection.9.1}%
 \contentsline {section}{\numberline {10}Conclusion and Future Work}{23}{section.10}%
-\contentsline {section}{Reproducibility}{23}{section.10}%
+\contentsline {section}{Reproducibility}{24}{section.10}%
 \contentsline {section}{\numberline {A}Training Details and Reproducibility}{24}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}Hyperparameters}{24}{subsection.A.1}%
 \contentsline {subsection}{\numberline {A.2}Artifacts}{24}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}Environment}{24}{subsection.A.3}%
+\contentsline {subsection}{\numberline {A.3}Environment}{25}{subsection.A.3}%
 \contentsline {section}{\numberline {B}Appendix: The lab500 Pilot Study}{25}{appendix.B}%
