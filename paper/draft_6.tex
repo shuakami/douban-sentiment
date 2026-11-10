@@ -63,8 +63,12 @@ reaches 72.4\% versus 74.9\% for DeepSeek, while an all-DeepSeek 11K
 variant dropping the adjudicated core (al11kds0) is statistically
 indistinguishable (75.2\% vs.\ 74.9\%, McNemar $p{=}0.81$), consistent
 with the label-convention alignment of \S\ref{sec:res-provenance}.
-Binary mixtures follow the same trend, peaking at 92.3\%/92.0\%
-(accuracy/macro-F1, $n{=}673$ non-neutral).
+A budget-matched human400 control makes the scale reading direct:
+gold$+$500 uniformly random versus gold$+$500 margin/entropy-selected
+DeepSeek-labelled rows (identical seeds and recipe) are statistically
+indistinguishable (60.5\% vs.\ 61.3\% three-class accuracy, McNemar
+$p{=}0.83$; binary 79.2\% vs.\ 77.4\%)---at this budget the benefit is
+labelled volume, not selection strategy.
 
 All of these are development-set estimates subject to the selection
 accounting of \S\ref{sec:res-provenance}; the decisive test is
