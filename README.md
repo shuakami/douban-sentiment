@@ -11,11 +11,10 @@ student plus a frozen 1.3B-parameter judge, trained on 600 hand-labelled
 gold reviews and a 911K-review weakly-labelled corpus. ~80 ms per review
 on a single GPU; includes a React/Vite web UI.
 
-> **Audited release.** Strict leakage-corrected OOF: ≈83–84%
-> (3-class) / 92.9% (binary). The decisive clean test is
-> `data/human400_labels.jsonl` — 400 blind human annotations with
-> zero known training overlap. Full audit: `thesis/` (the NAACL SRW
-> write-up lives on the `srw-paper` branch).
+> **Note:** the headline metrics below predate a leakage audit.
+> Corrected strict OOF: ~83–84% (3-class) / 92.9% (binary).
+> `data/human400_labels.jsonl` is a clean held-out test — 400 human
+> annotations, disjoint from all training pools. Full audit: `thesis/`.
 
 📄 **[Paper (PDF, 29 pages EN / 27 ZH)](thesis/thesis.pdf)** — method,
 experiments, statistical tests, leakage audit, out-of-distribution
