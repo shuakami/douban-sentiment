@@ -18,8 +18,20 @@
 \usepackage{enumitem}
 \usepackage{url}
 
-\title{Auditing Weak Supervision at Scale: Leakage, Label\\
-Provenance, and Honest Evaluation in Chinese Review Sentiment}
+% Compact leading, float and display spacing to fit the 8-page
+% main-body limit.
+\linespread{0.885}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovedisplayskip}{7pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{7pt plus 2pt minus 2pt}
+\setlength{\abovedisplayshortskip}{4pt plus 2pt minus 1pt}
+\setlength{\belowdisplayshortskip}{4pt plus 2pt minus 1pt}
+
+\title{Beyond Star Ratings: Weak Supervision and LLM-Assisted\\
+Data Expansion for Chinese Review Sentiment Classification}
 
 \author{Anonymous SRW Submission}
 
@@ -27,75 +39,84 @@ Provenance, and Honest Evaluation in Chinese Review Sentiment}
 \maketitle
 
 \begin{abstract}
-Evaluation claims in weakly supervised NLP can be
-misleading when training signals and test labels share
-hidden dependencies. We audit a Chinese Douban
-review-sentiment system trained from 600 human-verified
-labels and a 910{,}998-review corpus with star ratings.
-Star ratings agree with semantic labels on 71.3\% of the
-586 reviews with known ratings, falling to 30.6\% for
-three-star reviews. A second-order teacher-leakage
-channel inflated the original three-class out-of-fold
-accuracy by about 5.5 percentage points. Leakage-reduced
-hard-label reruns on deduplicated labels yielded $\approx$83\%
-three-class and 91.5\% binary accuracy; these leakage-reduced
-OOF estimates are single-seed ablation bounds with frozen,
-previously tuned fusion weights, not fully
-selection-independent final-system scores.
-We also find that ood1000 was reused for model selection
-and that 13.0\% of its rows and 13.2\% of fresh500 rows
-overlapped a deployed channel's training data. Accuracy
-was 82.4\% on LLM-consensus rows and 56.0\% on
-human-adjudicated rows, a disagreement-enriched subset.
-On a length-stratified, single-annotator human set of
-400 reviews with no known identifier overlap, the
-17K-label mixture outperformed v3 by 9.0 points,
-while a star-rating lookup matched v3. We release audit
-scripts and provenance artifacts to support leakage-aware
-evaluation.
+Chinese movie-review corpora provide abundant star ratings but few
+semantic sentiment labels. Because ratings encode overall evaluation
+rather than the polarity expressed in review text, they are an
+imperfect supervision source for three-way sentiment classification.
+We study how supervision source and data scale shape measured
+performance through a weak-supervision pipeline seeded by 600
+human-verified labels over a 910{,}998-review Douban corpus,
+combining rating-derived signals, student pseudo-labels, and
+uncertainty-sampled LLM annotations. On a 400-review,
+identifier-disjoint human evaluation set, the 17K-label mixture
+reaches 64.8\% accuracy versus 55.8\% for the deployed baseline and
+55.75\% for a star-rating lookup (McNemar $p{<}0.01$). Star--text
+agreement differs across review populations: 71.3\% on the
+single-film seed set versus 55.8\% on the broader sample, and
+three-star reviews are semantically neutral 30.6\% versus 56.8\% of
+the time. Leakage ablations show that teacher-derived distillation
+targets can materially affect fold-based performance estimates.
 \end{abstract}
 
 \input{draft_1_3}
-\input{draft_4_6}
+\input{draft_4_5}
+\input{draft_6}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-Building a weakly supervised Chinese review-sentiment classifier led
-us to audit the evaluation itself. Three findings survived
-verification: star ratings are a weak semantic proxy, distillation
-soft targets inflated our OOF headline by $\approx$5.5 points, and our
-OOD benchmark was both contaminated and repurposed as a selection
-set. The corrected system remains practical
-(91.5\% binary, $\approx$83\% three-class leakage-reduced OOF ablation
-estimates); on 400 identifier-disjoint human annotations the
-mixture's +9.0pp advantage over v3 shows the gains generalize, while
-matching a star-rating lookup exposes a remaining gap. Audit artifacts
-and negative results are released.
+We set out to scale semantic sentiment classification for Chinese
+Douban reviews under weak supervision, and the empirical picture that
+emerged is threefold. First, star ratings are an informative but
+unreliable semantic proxy whose meaning shifts across populations:
+rating--text agreement is 71.3\% on the single-film gold-600 seed set
+but only 55.8\% on the broader human400 sample, and the three-star
+band flips from majority negative (30.6\% neutral) on gold-600 to
+majority neutral (56.8\%) on human400. Second, uncertainty-guided LLM
+data expansion yields genuine generalization: on the
+identifier-disjoint human400 test the frozen-weight 17K mixture
+reaches 64.8\% three-class accuracy, $+9.0$pp over deployed v3
+(McNemar $p{=}1.3{\times}10^{-3}$), while a star-rating lookup
+matching v3 shows how little signal the ratings alone carry. Third,
+supervision provenance shapes measured performance: teacher-derived
+distillation targets inflated fold-based OOF estimates by
+$\approx$5.5pp, ood1000 functioned as a development set rather than a
+held-out test, and LLM-consensus labels overstated accuracy by
+$\approx$26 points relative to human-adjudicated rows. These results
+argue for provenance-aware evaluation whenever weak or
+model-generated labels feed either training or benchmarking. Future
+work includes fold-isolated corpus channels, fusion weights re-tuned
+on leakage-free signals, a second annotator for human400, and
+multi-annotator protocols for LLM-assisted benchmark construction.
 
 \section{Limitations}
 \label{sec:limitations}
 
-Several limitations bound our claims. gold-600 comes from a single
-film page, so absolute numbers are not cross-domain estimates, and it
-retains eight exact-duplicate text pairs that can cross CV folds
-(Appendix~\ref{app:audit}). human400 is length-stratified
-(160/120/80/40) and single-annotator, so its results are
-benchmark-specific rather than population estimates; its text-level
-overlap audit against all training pools is reported in
-Appendix~\ref{app:human400}. The 479 adjudicated rows were labelled
-with student predictions visible, likely anchoring labels toward
-model outputs; ood1000 was used for model selection and has
-substantial identifier overlap, so its OOD numbers are
-selection-conditioned development estimates; and our
-human--reference agreement
-($\kappa{=}0.57$) blends human and same-LLM-consensus references.
-Finally, the corrected OOF figures (83.3--84.0\% three-class /
-92.9\% binary on the 600 rows; 82.6--83.1\% / 91.5\% after
-deduplication) are
-single-seed, frozen-weight leakage-channel ablation estimates still
-subject to fusion-weight selection bias, not fully
-selection-independent final-system scores.
+Several boundary conditions scope our claims. gold-600 is drawn from
+a single film page, so in-domain numbers are not cross-domain
+estimates, and its 600 rows retain eight exact-duplicate text pairs
+that can cross CV folds (Appendix~\ref{app:audit}). human400 is
+length-stratified (160/120/80/40) and single-annotator, so its
+results are benchmark-specific rather than population estimates; its
+text-level overlap audit against all training pools is reported in
+Appendix~\ref{app:human400}. Identifier-disjointness removes known
+training-pool exposure but does not prove contamination-free text:
+the audit found two ultra-short boilerplate normalized matches in
+corpus pseudo-label pools feeding one ensemble channel.
+The 479 adjudicated rows were labelled with student predictions
+visible, likely anchoring labels toward model outputs; ood1000 was
+used for model selection and has substantial identifier overlap, so
+its figures are selection-conditioned development estimates and its
+McNemar tests are anti-conservative; and our human--reference
+agreement ($\kappa{=}0.57$) blends human and same-LLM-consensus
+references, so it is not a pure human--human IAA. The corrected OOF
+figures (83.3--84.0\% three-class / 92.9\% binary on the 600 rows;
+82.6--83.1\% / 91.5\% after deduplication) are single-seed,
+frozen-weight leakage-channel ablation estimates still subject to
+fusion-weight selection bias, not fully selection-independent
+final-system scores. Finally, all 600 gold texts were processed on a
+commercial training platform (Alibaba Cloud PAI) for a baseline
+comparison; this egress is disclosed in Section~\ref{sec:ethics}.
 
 \section{Ethical Considerations}
 \label{sec:ethics}

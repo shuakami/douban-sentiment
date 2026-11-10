@@ -3,8 +3,14 @@
 
 \appendix
 
-\section{Audit Methodology Details}
+\section{Evaluation Provenance and Leakage Analysis}
 \label{app:audit}
+
+This appendix details the evaluation-methodology analyses summarized in
+\S\ref{sec:res-provenance} (RQ3): the evaluation-independence taxonomy,
+the leakage channels that inflate naive out-of-fold estimates, the
+deduplicated rerun, and the row-level overlap audit. They are a
+component of the evaluation protocol, not the paper's primary claim.
 
 \subsection{OOF independence taxonomy}
 We distinguish three levels of evaluation independence:
@@ -70,7 +76,7 @@ classes. The deduplicated rerun on the 592 unique texts
 (\texttt{scripts/dedup\_retrain.sh},
 \texttt{scripts/eval\_dedup\_pipeline.py}) moves the $\alpha{=}1.0$
 estimates to 82.6--83.1\% three-class / 74.8--75.9 macro-F1 and
-91.5\% / 90.8 binary (from 83.3--84.0 / 76.3--77.5 and 92.9 / 92.4 on
+91.5\% / 90.8 binary (from 83.3--84.0 / 76.3--77.8 and 92.9 / 92.4 on
 the 600 rows), consistent with the $\sim$1pp estimate
 (\S\ref{sec:results}).
 
@@ -82,8 +88,8 @@ reported configuration changing four times. The final
 each fold's weights are honest, but every one of the 1{,}000 labels
 influenced the selection. Beyond weights, the AL scale ladder
 (1K$\to$17K), teacher provenance (DeepSeek/Qwen/hybrid), epoch
-count (e4 vs.\ e8), seed subsets (avg4 vs.\ avg5), and specialist
-mixes were all compared on ood1000. The reported 77.1\% three-class /
+count (e4 vs.\ e8), seed subsets (avg4 vs.\ avg5), and neutral-
+correction mixes were all compared on ood1000. The reported 77.1\% three-class /
 92.3\% binary numbers are therefore best-of-$N$ maxima over
 $\approx$26 mix configurations and $\approx$73 SFT runs; we estimate
 the selection optimism at $+0.3$ to $+1.0$pp by comparing the chosen
@@ -94,7 +100,7 @@ We matched evaluation rows to every upstream training pool by Douban
 comment ID (\texttt{cid}). Table~\ref{tab:overlap} reports the union of
 overlapping rows across all corpus-derived models and the specific
 overlap for the deployed neutral detector. The AL/SFT training pools
-itself has \emph{zero} row-level overlap with any evaluation set;
+have \emph{zero} row-level overlap with any evaluation set;
 all contamination enters through the corpus pseudo-label chain.
 
 \begin{table}[t]
@@ -115,7 +121,7 @@ fresh500.}
 \label{tab:overlap}
 \end{table}
 
-\section{Full Configuration Pool}
+\section{Configuration Pool and Provenance Diagnostics}
 \label{app:configs}
 
 The active-learning study evaluated 26 mix configurations and 73 SFT
@@ -130,20 +136,20 @@ the complete log is released with the code
 Config & Teacher & Epoch & ood1000 acc \\
 \midrule
 al17kds\_avg5  & DS+Qwen & e8 & \textbf{0.771} \\
-al17kds\_avg4  & DS+Qwen & e8 & 0.7727$^\dagger$ \\
-al14kds\_avg5  & DS+Qwen & e8 & 0.769 \\
-al17kq\_avg5   & Qwen    & e8 & 0.756 \\
-al17kds\_e4    & DS+Qwen & e4 & 0.748 \\
+al17kds\_avg4  & DS+Qwen & e8 & 0.769$^\dagger$ \\
+al14kds\_avg   & DS+Qwen & e8 & 0.755 \\
 v3 (no AL)     & ---     & ---& 0.650 \\
 \bottomrule
 \end{tabular}
 \caption{Top of the mix-configuration pool on ood1000 (dev set).
-$^\dagger$avg4 was evaluated but not adopted; avg5 retained after
-split-half stability checks---an explicit best-of-N decision.}
+$^\dagger$avg4 (seeds 42/123/456/789) was evaluated but not adopted;
+avg5 (adding seed 999) retained after split-half stability
+checks---an explicit best-of-N decision. al14kds has only three SFT
+seeds, hence ``avg'' rather than ``avg5''.}
 \label{tab:mixpool}
 \end{table}
 
-\section{Audit Diagnostics and Ablations}
+\section{Provenance and Ablation Diagnostics}
 \label{app:ablations}
 
 \begin{table*}[h]
@@ -153,9 +159,9 @@ split-half stability checks---an explicit best-of-N decision.}
 \toprule
 Quantity & Estimate & Statistical test \\
 \midrule
-AL scale: al17k vs.\ al14k (3c, ood dev) & $+1.6$pp acc & McNemar $p{=}0.064$; Holm $p{\approx}0.45$ \\
+AL scale: al17kds\_avg5 vs.\ al14kds\_avg (3c, ood dev) & $+1.6$pp acc & McNemar $p{=}0.064$; Holm $p{\approx}0.45$ \\
 AL scale: al17k vs.\ 1K-human mix & --- & McNemar $p{=}3.9{\times}10^{-4}$; Holm $p{=}5.9{\times}10^{-3}$ \\
-v2$\to$v3 specialist $\Delta$macro-F1 & $+1.6$pp & McNemar $p{=}0.65$; boot.\ CI $[-0.4,+3.8]$pp \\
+v2$\to$v3 neutral-correction $\Delta$macro-F1 & $+1.6$pp & McNemar $p{=}0.65$; boot.\ CI $[-0.4,+3.8]$pp \\
 v3 neutral recall, OOD $\le$20ch$\to$$>$100ch & 51.1$\to$33.3\% & --- \\
 v3 neutral recall, gold $>$100ch & 88.0$\to$44.0\% & --- \\
 Deployed corpus detector, cid overlap & 13.0\% ood / 13.2\% fresh & --- \\
@@ -163,11 +169,11 @@ Union, any corpus-trained model & 68.7\% ood / 70.2\% fresh / 74.8\% lab500 & --
 IAA vs.\ blended reference & $\kappa{=}0.568$ & not pure human--human \\
 \bottomrule
 \end{tabular}
-\caption{Audit diagnostics and ablations. ood1000 figures are
-development-set estimates; Holm correction is over the 22-test family.
-Near-duplicate (Jaccard $>0.8$) exposure adds 220 ood1000 and 107 fresh500
-rows beyond exact cid hits. human400 diagnostics (v3 vs.\ al17k mix vs.\
-star-rating lookup) are in \S\ref{sec:res-human400}.}
+\caption{Provenance and ablation diagnostics. ood1000 figures are
+development-set estimates; Holm correction is over the 22-test dev
+family. human400 pairwise comparisons form a separate 16-test family
+(Table~\ref{tab:human400-stats}). Near-duplicate (Jaccard $>0.8$)
+exposure adds 220 ood1000 and 107 fresh500 rows beyond exact cid hits.}
 \label{tab:ablations}
 \end{table*}
 
@@ -178,12 +184,12 @@ star-rating lookup) are in \S\ref{sec:res-human400}.}
 \centering
 \includegraphics[width=\columnwidth]{fig2_provenance.pdf}
 \caption{Annotation-source composition of each evaluation split
-(reproduced from \S\ref{sec:res-ood}). Only gold-600 is fully
+(reproduced from \S\ref{sec:res-provenance}). Only gold-600 is fully
 human-labelled; ood1000's ``human'' share is 20\% and
 anchoring-exposed; fresh500 and lab500 carry LLM-teacher labels
 throughout; human400 is fully human-labelled on an
-identifier-disjoint, length-stratified sample (text-level audit in
-progress).}
+identifier-disjoint, length-stratified sample (text-level audit:
+Appendix~\ref{app:human400}).}
 \label{fig:provenance}
 \end{figure}
 
@@ -213,6 +219,49 @@ weights $w{=}0.6$/$0.5$); values match \S\ref{sec:res-human400}.}
 \label{tab:human400}
 \end{table}
 
+\begin{table}[h]
+\centering\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+System & Class & Prec. & Rec. & F1 \\
+\midrule
+\multirow{3}{*}{v3 (deployed)}
+ & positive & 74.8 & 51.3 & 60.8 \\
+ & neutral  & 62.9 & 50.3 & 55.9 \\
+ & negative & 35.3 & 81.5 & 49.3 \\
+\midrule
+\multirow{3}{*}{al17k SFT (5-seed mean)}
+ & positive & 75.5 & 53.2 & 62.4 \\
+ & neutral  & 62.4 & 76.0 & 68.5 \\
+ & negative & 52.8 & 58.5 & 55.5 \\
+\midrule
+\multirow{3}{*}{al17k mix (frozen)}
+ & positive & 75.0 & 53.8 & 62.7 \\
+ & neutral  & 63.2 & 73.7 & 68.0 \\
+ & negative & 54.4 & 66.2 & 59.7 \\
+\midrule
+\multirow{3}{*}{Qwen3-4B}
+ & positive & 69.0 & 57.1 & 62.5 \\
+ & neutral  & 59.4 & 70.4 & 64.5 \\
+ & negative & 52.5 & 47.7 & 50.0 \\
+\midrule
+\multirow{3}{*}{star lookup}
+ & positive & 54.6 & 71.8 & 62.0 \\
+ & neutral  & 56.8 & 41.9 & 48.2 \\
+ & negative & 57.1 & 55.4 & 56.2 \\
+\bottomrule
+\end{tabular}
+\caption{human400 three-class per-class precision/recall/F1 (\%),
+computed from the released prediction files
+(\texttt{human400\_v3\_probs.npz}, \texttt{human400\_sft\_probs\_al17k/},
+\texttt{qwen3\_4b\_human400\_probs.npy}) against the blind human
+labels; the star lookup predicts the rating-implied class directly.
+The mixture's gain over v3 is concentrated in neutral recall
+(50.3$\to$73.7) at the cost of negative recall (81.5$\to$66.2).}
+\label{tab:human400-perclass}
+\end{table}
+
 \paragraph{v3 diagnostics.} Per-class recall: positive 51.3\%,
 neutral 50.3\%, negative 81.5\%; dominant confusion cells are
 neutral$\to$negative (66) and positive$\to$neutral (45). Accuracy by
@@ -220,7 +269,8 @@ design stratum: 56.2\% ($\le$20ch, $n{=}160$), 56.7\% (21--50,
 $n{=}120$), 53.7\% (51--100, $n{=}80$), 55.0\% ($>$100, $n{=}40$).
 By model confidence: 43.9\% ($<0.5$, $n{=}41$), 43.1\% (0.5--0.7,
 $n{=}123$), 61.3\% (0.7--0.9, $n{=}124$), 67.9\% ($\ge$0.9, $n{=}112$).
-By flag: mixed 51.6\% ($n{=}31$), off-topic 65.5\% ($n{=}29$),
+By flag (exact match; one row carries combined mixed|off-topic flags):
+mixed 53.3\% ($n{=}30$), off-topic 67.9\% ($n{=}28$),
 spoiler 50.0\% ($n{=}2$).
 
 \paragraph{Per-rating human-label distribution.} Among human400 rows,
@@ -241,13 +291,50 @@ mixed reviews the mix scores 40.0\% vs.\ v3's 53.3\% ($n{=}30$);
 off-topic rows 71.4\% vs.\ 67.9\% ($n{=}28$). Mix accuracy by length:
 67.5\% ($\le$20ch), 65.0\% (21--50), 58.8\% (51--100), 65.0\%
 ($>$100ch); by confidence 42.9\% ($<0.5$) to 78.8\% ($\ge$0.9).
-McNemar: mix vs.\ v3 $p{=}1.3{\times}10^{-3}$; mix vs.\ star lookup
-$p{=}7.4{\times}10^{-3}$. Binary ($n{=}221$): v3 76.5/75.3; star
+McNemar (raw): mix vs.\ v3 $p{=}1.3{\times}10^{-3}$; mix vs.\ star lookup
+$p{=}7.4{\times}10^{-3}$; Holm-adjusted values in
+Table~\ref{tab:human400-stats}. Binary ($n{=}221$): v3 76.5/75.3; star
 rule 83.7/77.9; al17k SFT (4 seeds) 83.7/81.3; frozen mix
-($w{=}0.5$) 83.7/81.3. McNemar: mix vs.\ v3 $p{=}0.019$; mix vs.\
+($w{=}0.5$) 83.7/81.3. McNemar: mix vs.\ v3 $p{=}0.020$; mix vs.\
 star $p{=}1.0$ (28/28 symmetric discordance---same accuracy,
 different errors); SFT vs.\ v3 $p{=}0.026$. Per-seed binary mixes:
 s42 82.8, s123 83.7, s789 83.7, s999 84.2 accuracy.
+
+\begin{table*}[h]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llcrrr@{}}
+\toprule
+Comparison & Task & $n$ & Discordant (1st/2nd) & Raw $p$ & Holm $p$ \\
+\midrule
+mix vs.\ v3   & 3c & 400 & 78/42  & $1.3{\times}10^{-3}$ & \textbf{0.021} \\
+SFT vs.\ v3   & 3c & 400 & 91/57  & $6.5{\times}10^{-3}$ & 0.097 \\
+mix vs.\ star & 3c & 400 & 104/68 & $7.4{\times}10^{-3}$ & 0.104 \\
+SFT vs.\ star & 3c & 400 & 101/67 & $1.1{\times}10^{-2}$ & 0.139 \\
+Qwen vs.\ v3  & 3c & 400 & 90/67  & $7.9{\times}10^{-2}$ & 0.788 \\
+Qwen vs.\ star& 3c & 400 & 97/74  & $9.2{\times}10^{-2}$ & 0.788 \\
+mix vs.\ Qwen & 3c & 400 & 64/51  & 0.263 & 1.000 \\
+SFT vs.\ Qwen & 3c & 400 & 63/52  & 0.351 & 1.000 \\
+mix vs.\ SFT  & 3c & 400 & 15/13  & 0.851 & 1.000 \\
+v3 vs.\ star  & 3c & 400 & 94/94  & 1.000 & 1.000 \\
+\midrule
+mix vs.\ v3   & bin & 221 & 29/13  & 0.020 & 0.234 \\
+SFT vs.\ v3   & bin & 221 & 31/15  & 0.026 & 0.285 \\
+star vs.\ v3  & bin & 221 & 46/30  & 0.085 & 0.788 \\
+mix vs.\ SFT  & bin & 221 & 2/2    & 1.000 & 1.000 \\
+SFT vs.\ star & bin & 221 & 28/28  & 1.000 & 1.000 \\
+mix vs.\ star & bin & 221 & 28/28  & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\caption{All pairwise McNemar exact tests on human400 among the
+evaluated systems (five systems for 3-class, four for binary;
+discordant counts are rows where only the first- or only the
+second-named system is correct). Holm adjustment is over this
+16-test human400 family, separate from the 22-test development-set
+family of \S\ref{sec:setup}; all raw $p$-values are unadjusted. Only
+the three-class mix-vs-v3 comparison survives correction.}
+\label{tab:human400-stats}
+\end{table*}
 
 \paragraph{Qwen3-4B.} Zero-shot label-logprob scoring
 (\texttt{eval\_human400\_qwen.py}) gives 61.5\%/59.0 three-class
@@ -284,6 +371,45 @@ the reported comparison.
 
 \section{Annotation Protocol and Guidelines}
 \label{app:annotation}
+
+\subsection{Shared guidelines: the neutral-class boundary}
+The same written guidelines (released under \texttt{annotation/})
+governed gold-600, adjudication, and human400 labelling. They are
+three-way: \emph{positive} for overall endorsement, \emph{negative}
+for overall rejection, and \emph{neutral} for everything else. Because
+the neutral class carries most of the ambiguity, Table~\ref{tab:neutral-rules}
+summarizes the decision rules; annotators also saw no star rating and
+could attach optional flags (\texttt{[mixed]}, \texttt{[off-topic]},
+\texttt{[spoiler]}, \texttt{[uncertain]}; original Chinese flag names
+in the released kit) that do not change the main label.
+
+\begin{table}[h]
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{4.6cm}p{1.4cm}p{1.5cm}@{}}
+\toprule
+Situation (rule) & Label & Note \\
+\midrule
+Overall positive, minor flaws allowed & Positive & endorsement dominates \\
+Overall negative, partial praise allowed & Negative & criticism dominates \\
+\midrule
+Mixed praise and blame at parity & Neutral & whichever side dominates / where the verdict lands; even$\to$neutral \\
+Mediocre / ``just okay'' / passable & Neutral & no clear stance \\
+Purely objective description or information & Neutral & e.g., ``went with friends'' \\
+Comments only on actors, music, or showtimes, not the film & Neutral & but praise that amounts to endorsing the film $\to$ positive \\
+Jokes/memes with no clear evaluative stance & Neutral & --- \\
+Questions, pure spoilers, pure information & Neutral & questions with a clear emotional lean are labelled by that lean \\
+Ultra-short text ($<$10 chars) with no emotional cue & Neutral & clear emotion words still decide by sentiment \\
+Sarcasm or backhanded remarks & by intent & infer the real attitude from context \\
+\midrule
+Any discernible lean, however weak & Pos/Neg & neutral is not ``don't know''; flag \texttt{[uncertain]} when unsure \\
+\bottomrule
+\end{tabular}
+\caption{Neutral-class decision rules from the written annotation
+guidelines (translated from the Chinese original, released under
+\texttt{annotation/}). Optional flags never override the main label.}
+\label{tab:neutral-rules}
+\end{table}
 
 \subsection{Gold-600}
 Reviews were scraped from the Douban page of a single film (first
@@ -332,7 +458,8 @@ no inter-annotator agreement is computable on this set.
 
 Over twenty architecture and data variants were evaluated and
 rejected during the project; the deployed configuration is the
-measured optimum. Selected rejections most relevant to the audit:
+measured optimum. Selected rejections most relevant to the
+evaluation protocol:
 
 \begin{itemize}[leftmargin=*,itemsep=1pt]
   \item LoRA fine-tuning of the MegatronBERT backbone: binary
