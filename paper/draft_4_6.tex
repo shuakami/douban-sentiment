@@ -267,7 +267,7 @@ ood1000, all (dev) & 1000 & 65.0 & 77.1 & 82.0 & 70.6 \\
 \midrule
 fresh500 (DS labels) & 500 & 58.8 & 77.0 & --- & --- \\
 \midrule
-human400 (blind human) & 400 & 55.8 & 64.8 & --- & --- \\
+human400 (blind human) & 400 & 55.8 & 64.8 & --- & 61.5 \\
 \bottomrule
 \end{tabular}
 \caption{3-class accuracy (\%) by evaluation set and label provenance.
@@ -291,8 +291,8 @@ every known training and evaluation pool excluded by identifier, and
 blind-labelled by a single author under written guidelines
 (Appendix~\ref{app:annotation}; detailed stratifications in
 Appendix~\ref{app:human400}). Labels: 156~positive / 179~neutral /
-65~negative (31 mixed, 29 off-topic, 2 spoiler flags); single-annotator,
-so no human--human IAA is available.
+65~negative (flags in Appendix~\ref{app:human400});
+single-annotator, so no human--human IAA is available.
 
 On it, deployed v3 reaches 55.8\% three-class accuracy (macro-F1
 55.4) and 76.5\% binary accuracy on the 221 non-neutral rows---far
@@ -306,15 +306,16 @@ semantic stance.
 
 The frozen-weight al17k mixture reaches \textbf{64.8\%} three-class
 accuracy (macro-F1 63.5), $+9.0$pp over both v3 and the star lookup
-(McNemar $p{=}1.3{\times}10^{-3}$ and $7.4{\times}10^{-3}$);
-per-seed mixes are stable (63.5--66.0\%) and the frozen weight lies
-within noise of the sweep optimum (63.3--65.0\%). This
-\emph{reverses} the teacher-alignment worry from the adjudicated
-subset: on uncontaminated human labels the AL gains are genuine
-generalization. Caveats: accuracy on annotator-flagged \emph{mixed}
-reviews drops below v3 (40.0\% vs.\ 53.3\%, $n{=}30$), and the
-absolute level is modest under a single-annotator reference.
-%% BIN_PENDING %%
+(McNemar $p{=}1.3{\times}10^{-3}$ and $7.4{\times}10^{-3}$); per-seed
+and weight-sweep results are stable (Appendix~\ref{app:human400}). This
+\emph{reverses} the teacher-alignment worry: on uncontaminated
+human labels the AL gains are genuine generalization. Caveats:
+accuracy on annotator-flagged \emph{mixed} reviews drops below
+v3 (40.0\% vs.\ 53.3\%, $n{=}30$).
+
+Binary ($n{=}221$): v3 reaches 76.5\%, below the rating rule
+(83.7\%); the frozen mixture matches it (83.7\%, macro-F1 81.3
+vs.\ 77.9) and beats v3 (McNemar $p{=}0.02$).
 
 \subsection{Ablations and diagnostics}
 \label{sec:res-ablations}

@@ -175,18 +175,18 @@ overlap.}
 System & 3c acc & 3c mac-F1 & bin acc & bin mac-F1 \\
 \midrule
 v3 (deployed) & 55.8 & 55.4 & 76.5 & 75.3 \\
-al17k SFT mean (5 seeds) & 64.3 & 62.1 & --- & --- \\
-al17k mix $w{=}0.6$ (frozen) & \textbf{64.8} & \textbf{63.5} & --- & --- \\
-star-rating lookup & 55.75 & --- & 83.7 & --- \\
-Qwen3-4B zero-shot & --- & --- & --- & --- \\
+al17k SFT mean & 64.3 & 62.1 & 83.7 & 81.3 \\
+al17k mix (frozen $w$) & \textbf{64.8} & \textbf{63.5} & 83.7 & \textbf{81.3} \\
+star-rating lookup & 55.75 & --- & 83.7 & 77.9 \\
+Qwen3-4B zero-shot & 61.5 & 59.0 & --- & --- \\
 \bottomrule
 \end{tabular}
 \caption{human400 headline metrics. Binary columns use the 221
 non-neutral rows. Star lookup: 4--5$\to$positive, 3$\to$neutral,
 1--2$\to$negative; binary variant maps 1--2$\to$negative, else
 positive. al17k rows use the frozen ood1000-selected recipe
-(5 seeds, seed-averaged probabilities); values match
-\S\ref{sec:res-human400}.}
+(5 seeds 3-class / 4 seeds binary, seed-averaged probabilities,
+weights $w{=}0.6$/$0.5$); values match \S\ref{sec:res-human400}.}
 \label{tab:human400}
 \end{table}
 
@@ -219,8 +219,20 @@ off-topic rows 71.4\% vs.\ 67.9\% ($n{=}28$). Mix accuracy by length:
 67.5\% ($\le$20ch), 65.0\% (21--50), 58.8\% (51--100), 65.0\%
 ($>$100ch); by confidence 42.9\% ($<0.5$) to 78.8\% ($\ge$0.9).
 McNemar: mix vs.\ v3 $p{=}1.3{\times}10^{-3}$; mix vs.\ star lookup
-$p{=}7.4{\times}10^{-3}$. Binary mixture results accompany the final
-seed run.
+$p{=}7.4{\times}10^{-3}$. Binary ($n{=}221$): v3 76.5/75.3; star
+rule 83.7/77.9; al17k SFT (4 seeds) 83.7/81.3; frozen mix
+($w{=}0.5$) 83.7/81.3. McNemar: mix vs.\ v3 $p{=}0.019$; mix vs.\
+star $p{=}1.0$ (28/28 symmetric discordance---same accuracy,
+different errors); SFT vs.\ v3 $p{=}0.026$. Per-seed binary mixes:
+s42 82.8, s123 83.7, s789 83.7, s999 84.2 accuracy.
+
+\paragraph{Qwen3-4B.} Zero-shot label-logprob scoring
+(\texttt{eval\_human400\_qwen.py}) gives 61.5\%/59.0 three-class
+accuracy/macro-F1 on human400 (per-class recall 57.1/70.4/47.7 for
+positive/neutral/negative): above v3 but below the mixture
+(McNemar $p{=}0.26$, not significant). Its neutral recall is the
+highest of any system here, consistent with the gold-600 finding
+that general LLMs handle the neutral class better but lag overall.
 
 \section{Annotation Protocol and Guidelines}
 \label{app:annotation}
@@ -254,7 +266,9 @@ lab500, fresh500, the AL pools, or the confident pseudo-label pools
 overlap against every corpus-side training-pool manifest. Items were
 labelled blind (no model predictions shown) under the written semantic
 guidelines by a single author; optional flags marked mixed, off-topic,
-spoiler, and uncertain rows. Because only one annotator was available,
+spoiler, and uncertain rows. The written guidelines and the self-contained
+offline annotation page used for labelling are released under
+\texttt{annotation/}. Because only one annotator was available,
 no inter-annotator agreement is computable on this set.
 
 \section{Complete Negative-Results List}
