@@ -27,6 +27,8 @@ def restore() -> int:
         parts = rel.parts
         if parts[0] not in ("data", "annotation") or len(parts) < 2:
             continue
+        if parts == ("annotation", "annotation.html"):
+            continue  # tracked file with its own de-identification pass
         dst = ROOT.joinpath(*parts)          # data/foo.jsonl
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
