@@ -38,8 +38,9 @@ corrected distribution and final blend are
   \label{eq:spec}
 \end{equation}
 We adopt this targeted correction rather than simpler alternatives:
-class weighting and decision-threshold adjustment were evaluated and
-rejected (Appendix~\ref{app:negative}). Its macro-F1 gain over the
+class weighting, decision-threshold adjustment, focal loss, and
+class-balanced oversampling were evaluated and rejected
+(Appendix~\ref{app:negative}). Its macro-F1 gain over the
 uncorrected blend is positive but not statistically significant
 (McNemar $p{=}0.65$; bootstrap 95\% CI $[-0.4,+3.8]$pp;
 \S\ref{sec:res-ablations}), so we treat the module as a neutral-recall

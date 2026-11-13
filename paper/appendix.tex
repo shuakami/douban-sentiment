@@ -485,6 +485,13 @@ evaluation protocol:
   \item Stacked logistic-regression meta-learner on channel
         log-probabilities: 0.8367/0.7936, far below the deployed
         blend; channels too correlated for 600 samples.
+  \item Focal loss ($\gamma{=}2$) and class-balanced oversampling on
+        the 3-class student (gold-600 OOF, deployed recipe otherwise
+        unchanged): both improved the in-domain student OOF
+        (0.8017/0.7418 $\to$ 0.8100/0.7512 and 0.8083/0.7457
+        acc/macro-F1) but \emph{degraded} human400
+        (52.8\% $\to$ 50.0\% / 48.8\% acc)---in-domain gains did not
+        transfer out-of-domain, so neither was adopted.
 \end{itemize}
 
 \section{Ethics Statement and Data Availability}

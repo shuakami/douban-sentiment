@@ -133,7 +133,40 @@ never two jobs at once; kill the demo first, it holds ~5 GB VRAM; set
 - **Full-scale version (17K random vs 17K uncertainty): `NEEDS-API`** —
   would require ~17K new DeepSeek labels at the original cost.
 
-### E. Neutral specialist vs class-weighting / focal / oversampling / threshold — `FEASIBLE-NOW` (partially evidenced)
+### E. Neutral specialist vs class-weighting / focal / oversampling / threshold — `FEASIBLE-NOW` — **DONE (2026-11-13)**
+
+**New compute completed (agent, GPU-serialized):** focal loss
+($\gamma{=}2$ on the hard-CE term) and deterministic class-balanced
+over-sampling (minority classes repeated round-robin to the majority
+count inside each train fold) were added as optional flags to
+`scripts/distill.py` and `scripts/train_final_distill.py`
+(`--focal_gamma`, `--balance_classes`; defaults off, deployed recipe
+unchanged: $\alpha{=}0.5$, $\tau{=}2$, e8, m256, seed 42,
+class\_weight=1). 3-class student only, gold-600.
+
+Results (gold-600 5-fold OOF / human400 3-class acc, gold-only
+student):
+
+| variant | OOF acc | OOF macroF1 | human400 acc | human400 macroF1 |
+|---|---|---|---|---|
+| base (deployed recipe) | 0.8017 | 0.7418 | 0.5275 | 0.4928 |
+| focal $\gamma{=}2$ | 0.8100 | 0.7512 | 0.5000 | 0.4705 |
+| balance\_classes | 0.8083 | 0.7457 | 0.4875 | 0.4676 |
+
+Marginalized binary on human400 (pos/(pos+neg) on 221 non-neutral
+rows): base 0.6923, focal 0.6787, bal 0.7014 acc.
+
+Artifacts: `out/distill_macbert_3c_a50_t2_e8_m256_{focal2,bal}.json`;
+`E:/GB77_data/human400/human400_sft_probs_eexp/{base,focal,bal}.npy`;
+models `models/eexp_{base,focal,bal}`; driver
+`scripts/e_focal_oversample.sh`; log
+`E:/GB77_data/human400/e_focal_oversample.log`.
+
+**Verdict:** both variants improve in-domain OOF (+0.4--0.9pp) but
+degrade identifier-disjoint human400 (−1.4 to −4.0pp acc) — another
+instance of the paper's central theme that in-domain gains need not
+transfer. Written into `appendix.tex` negative-results list and the
+`draft_4_5.tex` rejection sentence.
 
 Already-run evidence (no new compute):
 - **Class weighting:** `distill_macbert_3c_a50_t2_e8_m256_cw` and the
@@ -147,18 +180,6 @@ Already-run evidence (no new compute):
 - **Neutral specialist:** extensively tested and rejected —
   `eval_neu_decomp.py`, corpus detector, TF-IDF specialist, frozen-MacBERT
   neu head, all in the appendix negative list.
-
-New compute needed (agent-doable, GPU-serialized):
-- **Focal loss:** not implemented anywhere (grep: zero hits). Needs a
-  loss term in `distill.py`/`train_final*.py` + 5-fold OOF runs
-  (~tens of minutes per config on RX 9070 GRE).
-- **Oversampling:** not implemented for this purpose
-  (`mix_gold_into_pool.py` oversamples gold rows for a different
-  experiment). Same cost class as focal.
-- **Recommendation:** run focal + oversampling on the 3-class student
-  only (the neutral-collapse locus), evaluate on gold OOF *and*
-  human400, and add the results to the negative-results list either way.
-  ~half a day serialized GPU at most.
 
 ### G. Full fold-isolated pipeline re-run — `FEASIBLE-NOW` (compute-bound)
 
