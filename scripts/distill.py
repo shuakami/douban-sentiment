@@ -118,6 +118,31 @@ def class_weights(y, n_classes, device):
     return torch.tensor(w, dtype=torch.float32, device=device)
 
 
+def focal_ce(logits, labels, weight, gamma):
+    ce = F.cross_entropy(logits, labels, weight=weight, reduction="none")
+    if gamma and gamma > 0:
+        p_t = F.softmax(logits, dim=-1).gather(1, labels.unsqueeze(1)).squeeze(1)
+        ce = ce * (1.0 - p_t) ** gamma
+    return ce
+
+
+def oversample_tr_indices(y_tr, tr):
+    """Return tr plus deterministic round-robin repeats so every class in the
+    train split reaches the majority class count."""
+    y_tr = np.asarray(y_tr)
+    counts = np.bincount(y_tr)
+    n_max = int(counts.max())
+    extra = []
+    for c in range(len(counts)):
+        pos = np.where(y_tr == c)[0]
+        need = n_max - len(pos)
+        if need > 0 and len(pos):
+            extra.append(tr[pos[np.arange(need) % len(pos)]])
+    if not extra:
+        return tr
+    return np.concatenate([tr] + extra)
+
+
 def autocast_ctx(device, amp):
     enabled = device.type == "cuda" and amp in ("bf16", "fp16")
     dtype = {"bf16": torch.bfloat16, "fp16": torch.float16}.get(amp)
@@ -147,7 +172,8 @@ def train_fold(model_name, tok, texts, y, soft, alpha_vec, tr, va, args, n_class
         attn_implementation=attn).to(device)
     model.train()
 
-    ds = TokenizedDS(texts, y, soft, alpha_vec, tr, tok, args.max_len)
+    tr_fit = oversample_tr_indices(y[tr], tr) if args.balance_classes else tr
+    ds = TokenizedDS(texts, y, soft, alpha_vec, tr_fit, tok, args.max_len)
     dl = DataLoader(ds, batch_size=args.batch, shuffle=True, num_workers=0,
                     collate_fn=collate, generator=torch.Generator().manual_seed(seed))
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
@@ -172,7 +198,7 @@ def train_fold(model_name, tok, texts, y, soft, alpha_vec, tr, va, args, n_class
             opt.zero_grad(set_to_none=True)
             with autocast_ctx(device, args.amp):
                 logits = model(**batch).logits.float()
-            ce = F.cross_entropy(logits, labels, weight=cw, reduction="none")
+            ce = focal_ce(logits, labels, cw, args.focal_gamma)
             logp = F.log_softmax(logits / args.tau, dim=-1)
             target = F.softmax(soft_t / args.tau, dim=-1)
             kl = F.kl_div(logp, target, reduction="none").sum(-1) * args.tau * args.tau
@@ -226,6 +252,10 @@ def main():
     ap.add_argument("--max_len", type=int, default=256)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--class_weight", type=int, default=1)
+    ap.add_argument("--focal_gamma", type=float, default=0.0,
+                    help="focal-loss gamma on the hard-label CE term (0=off)")
+    ap.add_argument("--balance_classes", type=int, default=0,
+                    help="1 = oversample minority classes to majority count per fold")
     ap.add_argument("--attn_implementation", choices=["sdpa", "eager", "none"], default="sdpa")
     ap.add_argument("--amp", choices=["bf16", "fp16", "none"], default="bf16")
     ap.add_argument("--tag", default="")

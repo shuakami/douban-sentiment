@@ -23,3 +23,8 @@ HANDOFF.md
 # Local full-text mirror (never commit raw Douban texts)
 data/_fulltext/
 annotation/_fulltext/
+
+# raw-text working dumps (local only)
+out/lab500.tsv
+out/lab500_disagree.txt
+out/label_ref.txt

@@ -37,6 +37,9 @@ def train_full(model_name, tok, texts, y, soft, alpha_vec, args, n_classes, seed
     model.train()
 
     idx = list(range(len(texts)))
+    if args.balance_classes:
+        tr_idx = ds.oversample_tr_indices(y, np.array(idx))
+        idx = list(tr_idx)
     data = ds.TokenizedDS(texts, y, soft, alpha_vec, idx, tok, args.max_len)
     dl = DataLoader(data, batch_size=args.batch, shuffle=True, num_workers=0,
                     collate_fn=ds.collate, generator=torch.Generator().manual_seed(seed))
@@ -63,7 +66,7 @@ def train_full(model_name, tok, texts, y, soft, alpha_vec, args, n_classes, seed
             opt.zero_grad(set_to_none=True)
             with ds.autocast_ctx(device, args.amp):
                 logits = model(**batch).logits.float()
-            ce = F.cross_entropy(logits, labels, weight=cw, reduction="none")
+            ce = ds.focal_ce(logits, labels, cw, args.focal_gamma)
             logp = F.log_softmax(logits / args.tau, dim=-1)
             target = F.softmax(soft_t / args.tau, dim=-1)
             kl = F.kl_div(logp, target, reduction="none").sum(-1) * args.tau * args.tau
@@ -104,6 +107,8 @@ def main():
     ap.add_argument("--max_len", type=int, default=256)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--class_weight", type=int, default=1)
+    ap.add_argument("--focal_gamma", type=float, default=0.0)
+    ap.add_argument("--balance_classes", type=int, default=0)
     ap.add_argument("--attn_implementation", choices=["sdpa", "eager", "none"], default="sdpa")
     ap.add_argument("--amp", choices=["bf16", "fp16", "none"], default="bf16")
     ap.add_argument("--data", default="reviews_600_base.jsonl")
