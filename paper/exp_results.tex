@@ -40,8 +40,8 @@
 %% ---- S3: Human-400 learning curve (GPU, ~1.5 h) ------------------------------
 %% When true, Figure 3 uses fig_h400_curve.pdf (made by scripts/make_fig_h400_curve.py)
 %% instead of the development-set curve.
-\newif\ifSthree \Sthreefalse
-\newcommand{\CurveSentence}{\pending} % one sentence with the measured points, template in INTEGRATION.md
+\newif\ifSthree \Sthreetrue
+\newcommand{\CurveSentence}{On Human-400, accuracy of the seed-averaged student rises from 60.3\% with 500 random LLM-labelled reviews to 64.5\% with 4K and 64.3\% with 16.9K, and is flat within seed variation beyond 2K (Figure~\ref{fig:al-scaling}).} % one sentence with the measured points, template in INTEGRATION.md
 
 %% ---- S5: second annotator on Human-400 (HUMAN, 2-3 h) ------------------------
 \newif\ifSfive \Sfivefalse
