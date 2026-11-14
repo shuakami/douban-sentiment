@@ -7,3 +7,5 @@ srw.bbl
 *.synctex.gz
 *.xml
 *.html
+*.fdb_latexmk
+*.fls
