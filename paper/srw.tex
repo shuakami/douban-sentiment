@@ -44,7 +44,8 @@ falls as reviews get shorter. On the human test, an ensemble built
 from gold labels and its own pseudo-labels scores 55.8\%, no better
 than a rating lookup, while a compact encoder fine-tuned on 17K
 LLM-assisted reviews reaches 64.3\% (64.8\% when fused with the
-ensemble; McNemar $p{=}0.001$). At a matched 500-label budget, random
+ensemble; McNemar $p{=}0.001$), and the LLM teacher itself scores
+65.3\% on the same human labels. At a matched 500-label budget, random
 and uncertainty-based selection are indistinguishable, and
 text classifiers score 23--28 points higher on LLM-consensus benchmark
 labels than on human-adjudicated ones.

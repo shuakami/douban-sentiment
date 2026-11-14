@@ -14,20 +14,16 @@
 \newcommand{\HconfShare}{0\%}
 
 %% ---- S1: LLM zero-shot teachers on Human-400 (API, 2 x 400 calls) -----------
-\newif\ifSone \Sonefalse
-\newcommand{\DSFlashAcc}{\pending}   % 3-class acc, e.g. 66.3
-\newcommand{\DSFlashCI}{\pending}    % e.g. [61.5, 70.8]
-\newcommand{\DSFlashF}{\pending}     % macro-F1
-\newcommand{\DSFlashNeuR}{\pending}  % neutral recall
-\newcommand{\DSFlashBin}{\pending}   % binary acc on 221 non-neutral rows (3-way label mapped; unparseable/neutral = error)
-\newcommand{\DSProAcc}{\pending}
-\newcommand{\DSProCI}{\pending}
-\newcommand{\DSProF}{\pending}
-\newcommand{\DSProNeuR}{\pending}
-\newcommand{\DSProBin}{\pending}
-\newcommand{\DSFlashVsMixP}{\pending} % McNemar exact p, DS-Flash vs Mix
+\newif\ifSone \Sonetrue
+\newcommand{\DSFlashAcc}{65.3}   % 3-class acc, e.g. 66.3
+\newcommand{\DSFlashCI}{[60.5, 69.8]}    % e.g. [61.5, 70.8]
+\newcommand{\DSFlashF}{64.2}     % macro-F1
+\newcommand{\DSFlashNeuR}{72.1}  % neutral recall
+\newcommand{\DSFlashBin}{59.7}   % binary acc on 221 non-neutral rows (3-way label mapped; unparseable/neutral = error)
+% DeepSeek-V4-Pro unavailable (API HTTP 402 on both keys, 2026-11-14); Flash-only per spec fallback.
+\newcommand{\DSFlashVsMixP}{0.91} % McNemar exact p, DS-Flash vs Mix
 %% One interpretive sentence; pick the variant given in INTEGRATION.md for the observed outcome.
-\newcommand{\SoneInterp}{\pending}
+\newcommand{\SoneInterp}{The student matches its teacher on blind human labels, so distillation into a 110M-parameter encoder loses little.}
 
 %% ---- S2: label-source swap on the same 16.9K texts (GPU, ~2 h) ---------------
 \newif\ifStwo \Stwofalse

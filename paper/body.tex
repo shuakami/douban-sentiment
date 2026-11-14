@@ -221,8 +221,8 @@ chosen on Dev-1000 and then frozen.
 
 \paragraph{Zero-shot LLMs.} Qwen3-4B \citep{qwen2025} scores the three
 labels by log-probability, run locally.
-\ifSone DeepSeek-V4.1-Flash, the teacher that labelled LLM-17K, and
-DeepSeek-V4-Pro are run with the labelling prompt.\fi
+\ifSone DeepSeek-V4.1-Flash, the teacher that labelled LLM-17K, is
+run with the labelling prompt.\fi
 
 \ifStwo
 \paragraph{Label-source swap.} To separate the label source from the
@@ -377,7 +377,6 @@ $+$student pseudo-labels & \SwapPseudoAcc\ {\scriptsize\SwapPseudoCI} & \SwapPse
 Qwen3-4B & 61.5 {\scriptsize[56.6, 66.1]} & 59.0 & 70.4 & -- \\
 \ifSone
 DeepSeek-V4.1-Flash & \DSFlashAcc\ {\scriptsize\DSFlashCI} & \DSFlashF & \DSFlashNeuR & \DSFlashBin \\
-DeepSeek-V4-Pro & \DSProAcc\ {\scriptsize\DSProCI} & \DSProF & \DSProNeuR & \DSProBin \\
 \fi
 \bottomrule
 \end{tabular}
@@ -432,9 +431,9 @@ $p{=}\SwapStarVsLLMP$ and $p{=}\SwapPseudoVsLLMP$). \StwoInterp
 Qwen3-4B, with no task training, reaches 61.5\%, above GoldEns and
 below Mix; neither difference is significant after correction (raw
 $p{=}0.079$ and $0.26$).
-\ifSone DeepSeek-V4.1-Flash, the model that produced the training
-labels, scores \DSFlashAcc\% and DeepSeek-V4-Pro \DSProAcc\%
-(Flash against Mix: McNemar $p{=}\DSFlashVsMixP$). \SoneInterp
+\ifSone DeepSeek-V4.1-Flash, the model that produced most of the
+training labels, scores \DSFlashAcc\% (against Mix: McNemar
+$p{=}\DSFlashVsMixP$). \SoneInterp
 \else We did not run the commercial teacher on Human-400, so we
 cannot say how much of the teacher's accuracy the student
 retains.\fi
