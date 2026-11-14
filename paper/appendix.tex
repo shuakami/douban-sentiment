@@ -287,20 +287,26 @@ Mix vs.\ rating         & binary & 221 & 28/28  & 1.000 & 1.000 \\
 \midrule
 \multicolumn{6}{@{}l}{\emph{Systems added after the first analysis (separate Holm family)}}\\
 Flash vs.\ Mix          & 3-way & 400 & 40/42  & 0.912 & 1.000 \\
-Flash vs.\ GoldEns      & 3-way & 400 & 56/94  & $2.4{\times}10^{-3}$ & \textbf{0.029} \\
-Flash vs.\ rating       & 3-way & 400 & 61/99  & $3.3{\times}10^{-3}$ & \textbf{0.036} \\
+Flash vs.\ GoldEns      & 3-way & 400 & 56/94  & $2.4{\times}10^{-3}$ & \textbf{0.043} \\
+Flash vs.\ rating       & 3-way & 400 & 61/99  & $3.3{\times}10^{-3}$ & 0.056 \\
 Rating-label vs.\ Mix   & 3-way & 400 & 60/69  & 0.481 & 1.000 \\
-Rating-label vs.\ GoldEns & 3-way & 400 & 69/96 & 0.043 & 0.383 \\
-Rating-label vs.\ rating & 3-way & 400 & 59/86  & 0.031 & 0.305 \\
-Pseudo-label vs.\ Mix   & 3-way & 400 & 56/97  & $1.2{\times}10^{-3}$ & \textbf{0.017} \\
+Rating-label vs.\ GoldEns & 3-way & 400 & 69/96 & 0.043 & 0.596 \\
+Rating-label vs.\ rating & 3-way & 400 & 59/86  & 0.031 & 0.488 \\
+Pseudo-label vs.\ Mix   & 3-way & 400 & 56/97  & $1.2{\times}10^{-3}$ & \textbf{0.024} \\
 Pseudo-label vs.\ GoldEns & 3-way & 400 & 72/67 & 0.735 & 1.000 \\
 Pseudo-label vs.\ rating & 3-way & 400 & 107/102 & 0.782 & 1.000 \\
 LLM-17K w/o Gold vs.\ Mix & 3-way & 400 & 20/15 & 0.500 & 1.000 \\
-LLM-17K w/o Gold vs.\ GoldEns & 3-way & 400 & 55/96 & $1.1{\times}10^{-3}$ & \textbf{0.017} \\
-LLM-17K w/o Gold vs.\ rating & 3-way & 400 & 62/103 & $1.8{\times}10^{-3}$ & \textbf{0.023} \\
+LLM-17K w/o Gold vs.\ GoldEns & 3-way & 400 & 55/96 & $1.1{\times}10^{-3}$ & \textbf{0.023} \\
+LLM-17K w/o Gold vs.\ rating & 3-way & 400 & 62/103 & $1.8{\times}10^{-3}$ & \textbf{0.034} \\
 TF-IDF vs.\ Mix           & 3-way & 400 & 62/79  & 0.178 & 1.000 \\
 TF-IDF vs.\ GoldEns       & 3-way & 400 & 104/85 & 0.190 & 1.000 \\
 TF-IDF vs.\ rating        & 3-way & 400 & 119/100 & 0.224 & 1.000 \\
++5K random vs.\ Mix       & 3-way & 400 & 52/61  & 0.452 & 1.000 \\
++5K random vs.\ GoldEns   & 3-way & 400 & 64/91  & 0.036 & 0.546 \\
++5K random vs.\ rating    & 3-way & 400 & 79/106 & 0.056 & 0.723 \\
++5K uncertain vs.\ Mix    & 3-way & 400 & 47/63  & 0.152 & 1.000 \\
++5K uncertain vs.\ GoldEns & 3-way & 400 & 62/82 & 0.113 & 1.000 \\
++5K uncertain vs.\ rating & 3-way & 400 & 79/99  & 0.154 & 1.000 \\
 \bottomrule
 \end{tabular}
 \caption{Exact McNemar tests on Human-400 (discordant counts: rows

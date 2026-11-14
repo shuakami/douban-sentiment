@@ -368,6 +368,8 @@ $+$500 random & 60.5 {\scriptsize[55.6, 65.2]} & 56.9 & -- & 79.2 \\
 $+$500 uncertain & 61.3 {\scriptsize[56.4, 65.9]} & 55.3 & -- & 77.4 \\
 $+$LLM-17K (student) & 64.3 {\scriptsize[59.4, 68.8]} & 62.1 & \textbf{76.0} & 83.7 \\
 Mix & \textbf{64.8} {\scriptsize[59.9, 69.3]} & \textbf{63.5} & 73.7 & 83.7 \\
+$+$5K random (Qwen) & 62.5 {\scriptsize[57.7, 67.1]} & 58.0 & 76.0 & -- \\
+$+$5K uncertain (Qwen) & 60.8 {\scriptsize[55.9, 65.4]} & 57.0 & 69.8 & -- \\
 \ifStwo
 \midrule
 \multicolumn{5}{@{}l}{\emph{Same 16.9K texts, other labels}} \\
@@ -453,15 +455,19 @@ to the items rather than the model class.
 \paragraph{Scale, not selection.}
 LLM-17K was chosen by uncertainty, which raises the question of
 whether the gain comes from the selection rule or from the volume.
-We can test this at one budget. Adding 500 uniformly sampled
+We test this at two budgets. Adding 500 uniformly sampled
 DeepSeek-labelled reviews (Fresh-500) to Gold-600 gives 60.5\%;
 adding the first 500 uncertainty-selected reviews gives 61.3\%
 (McNemar $p{=}0.83$; bootstrap 95\% CI for the difference
-$[-3.8, +5.3]$ points), in line with reports that active learning
-does not reliably beat random sampling
-\citep{lowell2019}. Five hundred LLM labels of either kind recover
-more than half of the gain that 17K give over either gold-only
-system.
+$[-3.8, +5.3]$ points). At 5K labels the same comparison on
+Qwen3-4B-labelled reviews (used because the DeepSeek API was
+unavailable) gives 62.5\% for a uniform draw against 60.8\% for the
+uncertainty-selected draw (McNemar $p{=}0.46$; CI $[-2.2, +5.8]$).
+In line with reports that active learning does not reliably beat
+random sampling \citep{lowell2019}, selection does not beat random
+at either budget: the gain is volume, not the selection rule. Five
+hundred LLM labels of either kind recover more than half of the gain
+that 17K give over either gold-only system.
 \ifSthree \CurveSentence
 \else On Dev-1000 accuracy rises with pool size, from 72.0\% at 1K to
 77.1\% at 17K against 65.0\% for GoldEns
