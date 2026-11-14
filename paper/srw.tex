@@ -43,7 +43,7 @@ four rating-blind annotators (one human, three LLMs), and agreement
 falls as reviews get shorter. On the human test, an ensemble built
 from gold labels and its own pseudo-labels scores 55.8\%, no better
 than a rating lookup, while a compact encoder fine-tuned on 17K
-LLM-labelled reviews reaches 64.3\% (64.8\% when fused with the
+LLM-assisted reviews reaches 64.3\% (64.8\% when fused with the
 ensemble; McNemar $p{=}0.001$). At a matched 500-label budget, random
 and uncertainty-based selection are indistinguishable, and
 text classifiers score 23--28 points higher on LLM-consensus benchmark
@@ -63,7 +63,7 @@ rating-blind annotator supplies the labels, and least often on the
 short reviews that dominate the corpus. A gold-only ensemble that
 reaches 82.6--84.0\% in leakage-corrected cross-validation scores
 55.8\% on Human-400, no better than reading the star rating, whereas
-a plain encoder fine-tuned on 17K LLM-labelled reviews reaches
+a plain encoder fine-tuned on 17K LLM-assisted reviews reaches
 64.3\% (64.8\% fused), a gain carried by the neutral class. The
 measured benefit of LLM annotation depended on volume rather than on
 uncertainty-based selection at the one budget where we could compare

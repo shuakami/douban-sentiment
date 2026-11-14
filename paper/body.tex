@@ -66,7 +66,8 @@ Our findings are as follows.
         texts stop leaking across folds (\S\ref{sec:res-provenance}).
 \end{itemize}
 We release labels, identifiers, text hashes, prediction files and
-analysis scripts for every table.
+analysis scripts for every table, with a datasheet-style description
+of each artifact \citep{gebru2021,bender2018}.
 
 \section{Related Work}
 \label{sec:related}
@@ -158,9 +159,10 @@ labels.
 \paragraph{LLM-17K.} We selected 16{,}906 corpus reviews on which a
 MacBERT student trained on Gold-600 was uncertain (top-two margin
 band, entropy, and disagreement between students) and labelled
-15{,}906 of them zero-shot with DeepSeek-V4.1-Flash. The remaining 1{,}000 carry labels from the two-pass
-procedure described next. All LLM-17K rows are text-disjoint from
-every evaluation set.
+15{,}906 of them zero-shot with DeepSeek-V4.1-Flash. The remaining 1{,}000 carry labels from the same two-pass
+procedure described next, including author adjudication under the
+same interface that showed ratings and a model prediction. All
+LLM-17K rows are text-disjoint from every evaluation set.
 
 \paragraph{Dev-1000.} One thousand corpus reviews sampled uniformly
 at random were labelled twice by one LLM annotator with different
@@ -235,8 +237,9 @@ recall for the three-way task, and accuracy on the non-neutral rows
 for the binary task (dedicated binary models where available).
 Intervals are 95\% Wilson intervals; paired comparisons use exact
 McNemar tests with Holm correction over the pairwise Human-400
-comparisons tabulated in Appendix~\ref{app:human400}. No configuration
-was tuned on Human-400.
+comparisons tabulated in Appendix~\ref{app:human400}. Intervals are
+conditional on the released seed ensembles; per-seed spreads are in
+Appendix~\ref{app:human400}. No configuration was tuned on Human-400.
 
 \section{Results}
 \label{sec:results}
@@ -275,8 +278,8 @@ returned a parseable label for 992 of the 1{,}000 Dev-1000 rows.}
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.92\columnwidth]{fig_star_length.pdf}
-\caption{Rating-rule agreement by review length. The dashed line is
-Gold-600, whose reviews average 111 characters.}
+\caption{Rating-rule agreement by review length. The solid grey line
+is Gold-600, whose reviews average 111 characters.}
 \label{fig:star-length}
 \end{figure}
 

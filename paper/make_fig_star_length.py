@@ -27,7 +27,7 @@ for key, lab, c, m, ls in series:
     y = [d[key]["by_len"][b]["agree_pct"] for b in bins]
     ax.plot(range(4), y, marker=m, ms=3.5, lw=1.1, color=c, ls=ls, label=lab)
 g = d["gold600 (single film, human)"]["agree_pct"]
-ax.axhline(g, color="#374151", lw=0.8, ls=(0, (4, 2)))
+ax.axhline(g, color="#374151", lw=0.9, ls="-")
 ax.text(-0.12, g + 0.8, f"Gold-600 (single film): {g:.1f}%", fontsize=6.3, color="#374151")
 ax.set_xticks(range(4)); ax.set_xticklabels(["$\\leq$20", "21\u201350", "51\u2013100", "$>$100"])
 ax.set_xlabel("Review length (characters)"); ax.set_ylabel("Star-rule agreement (%)")
