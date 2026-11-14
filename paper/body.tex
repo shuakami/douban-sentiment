@@ -378,6 +378,9 @@ Qwen3-4B & 61.5 {\scriptsize[56.6, 66.1]} & 59.0 & 70.4 & -- \\
 \ifSone
 DeepSeek-V4.1-Flash & \DSFlashAcc\ {\scriptsize\DSFlashCI} & \DSFlashF & \DSFlashNeuR & \DSFlashBin \\
 \fi
+\midrule
+\multicolumn{5}{@{}l}{\emph{Feature baseline}} \\
+TF-IDF$+$LR & 60.5 {\scriptsize[55.6, 65.2]} & 58.7 & 79.3 & 45.3 \\
 \bottomrule
 \end{tabular}
 \caption{Human-400 results (\%). F1 is macro-F1; Neu.R is neutral
@@ -437,6 +440,13 @@ $p{=}\DSFlashVsMixP$). \SoneInterp
 \else We did not run the commercial teacher on Human-400, so we
 cannot say how much of the teacher's accuracy the student
 retains.\fi
+
+\paragraph{Feature baseline.}
+A TF-IDF character n-gram logistic regression trained on the same
+Gold-600\,+\,LLM-17K labels reaches 60.5\% (macro-F1 58.7), below
+every neural system but not significantly different from Mix after
+correction ($p{=}0.18$): part of Human-400's difficulty is intrinsic
+to the items rather than the model class.
 
 \paragraph{Scale, not selection.}
 LLM-17K was chosen by uncertainty, which raises the question of
