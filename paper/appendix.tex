@@ -1,223 +1,202 @@
-% Appendix for the NAACL SRW submission.
-% Unlimited page budget; \appendix switches numbering.
+% Appendix (unlimited pages). Terminology matches body.tex:
+%   GoldEns = gold-only ensemble; Gold-600 student = its MacBERT component fitted on
+%   all 600 rows; LLM-17K = 16,906 LLM-labelled corpus reviews; Dev-1000 = uniform
+%   development sample; Human-400 = blind human test; Fresh-500 = uniform sample with
+%   DeepSeek labels. File and script names in \texttt keep their repository spelling.
 
 \appendix
 
-\section{Evaluation Provenance and Leakage Analysis}
+\section{GoldEns: Architecture and Training}
+\label{app:goldens}
+
+GoldEns is a two-channel ensemble. The \emph{student} channel is a
+\emph{hfl/chinese-macbert-base} classifier \citep{cui2020macbert}; the
+\emph{judge} channel is an MLP head on frozen features of
+Erlangshen-MegatronBERT-1.3B-Sentiment \citep{fengshenbang2022}. With
+class-probability vectors $P_s$ and $P_j$,
+\begin{equation}
+  \mathrm{dep} \;=\; \tfrac{1}{3}\,P_s \;+\; \tfrac{2}{3}\,P_j .
+  \label{eq:dep}
+\end{equation}
+For the three-way task a neutral-probability correction refines
+$\mathrm{dep}$. It estimates only $P(\text{neutral})$ and leaves the
+positive/negative split to $\mathrm{dep}$. Two estimators, a
+frozen-feature MLP head and a MacBERT neutral detector trained on
+115{,}000 corpus pseudo-labels from the Gold-600 student, are mixed
+as $p_n = 0.6\,P_{\mathrm{neu}}^{\mathrm{head}} +
+0.4\,P_{\mathrm{neu}}^{\mathrm{corpus}}$. Writing $r_{+}, r_{-}$ for
+the positive and negative masses of $\mathrm{dep}$ renormalised to
+sum to one,
+\begin{equation}
+  \begin{aligned}
+    \mathrm{corr} &= \big[(1-p_n)\,r_{+},\; p_n,\; (1-p_n)\,r_{-}\big],\\
+    \mathrm{final} &= \frac{\mathrm{dep} + 0.5\,\mathrm{corr}}{1.5}.
+  \end{aligned}
+  \label{eq:spec}
+\end{equation}
+On Gold-600 the correction raises out-of-fold macro-F1 by 1.6 points
+over the uncorrected blend, a gain that is not significant (McNemar
+$p{=}0.65$; bootstrap 95\% CI $[-0.4,+3.8]$ points). The binary task
+uses the blend of Eq.~\ref{eq:dep} with dedicated binary models and a
+0.5 threshold. A post-hoc temperature ($T{=}0.37$, fitted on the same
+out-of-fold predictions) reduces expected calibration error from
+0.251 to about 0.04 in-sample and does not change any prediction.
+
+\paragraph{Distillation objective.}
+The gold-trained student and judge heads are trained with a mixed
+hard/soft objective \citep{hinton2015distilling}. For a training row
+$i$ with hard label $y_i$, student logits $z_i$ and a teacher
+probability vector $q_i$ (the stored out-of-fold prediction of a
+larger gold-trained ensemble),
+{\small
+\begin{equation}
+  \begin{aligned}
+  \ell_i = {}& \alpha\,\mathrm{CE}(z_i, y_i) \\
+             & +\; (1-\alpha)\,\tau^{2}\,
+  \mathrm{KL}\!\Big(\mathrm{softmax}\big(q_i/\tau\big)\,\Big\|\,
+  \mathrm{softmax}\big(z_i/\tau\big)\Big),
+  \end{aligned}
+  \label{eq:kd}
+\end{equation}
+}%
+with $\tau{=}2$. The weight $\alpha$ applies to the hard-label term:
+$\alpha{=}0.5$ is the configuration first evaluated, and
+$\alpha{=}1.0$ removes the teacher term entirely.
+
+\paragraph{Hyperparameters.}
+Students: 8 epochs, maximum length 256, seed 42. MLP heads: 300
+epochs. Cross-validation: five-fold \texttt{StratifiedKFold} (seed
+42, no group constraint), reapplied to the 592 unique texts for the
+deduplicated rerun. LLM-label student: seeds \{42, 123, 456, 789,
+999\} for the three-way model (4 epochs) and \{42, 123, 789, 999\} for
+the binary model (8 epochs). At inference GoldEns needs the frozen
+1.3B-parameter backbone; the LLM-label student is a single
+MacBERT-base model.
+
+\section{Evaluation Provenance and Leakage}
 \label{app:audit}
 
-This appendix details the evaluation-methodology analyses summarized in
-\S\ref{sec:res-provenance} (RQ3): the evaluation-independence taxonomy,
-the leakage channels that inflate naive out-of-fold estimates, the
-deduplicated rerun, and the row-level overlap audit. They are a
-component of the evaluation protocol, not the paper's primary claim.
+This appendix supports \S\ref{sec:res-provenance}.
 
-\subsection{OOF independence taxonomy}
-We distinguish three levels of evaluation independence:
-(i) \emph{per-row fold isolation}---each evaluation row was absent
-from the training fold of every channel that scored it;
-(ii) \emph{upstream signal isolation}---no upstream artifact whose
-construction consumed the evaluation row's label may feed the channel;
-(iii) \emph{selection independence}---no hyperparameter, ensemble
-weight, or checkpoint was chosen using the evaluation set.
-Our headline score satisfied (i) only approximately---eight
-gold-600 texts are exact duplicates that can cross folds---and failed
-(ii) and (iii).
+\subsection{Three levels of independence}
+We distinguish (i) \emph{per-row fold isolation}: each evaluation row
+was absent from the training fold of every model that scored it;
+(ii) \emph{upstream signal isolation}: no artifact whose construction
+used the evaluation row's label feeds a model that scores it; and
+(iii) \emph{selection independence}: no hyperparameter, weight or
+checkpoint was chosen on the evaluation set. The 89.5\% figure for
+GoldEns satisfied (i) only approximately and failed (ii) and (iii).
 
-\paragraph{Leak A (transitive pseudo-label contamination).}
-The deployed neutral-expert channel combines a frozen-feature MLP
-head with a corpus-trained neutral detector
-(\texttt{neu\_pseudo\_p60k\_e2}). That detector was trained on
-115{,}000 pseudo-labelled corpus rows produced by \texttt{stu3c}, the
-full-fit three-class student. \texttt{stu3c}'s training meta records
-confirm all 600 gold rows were used
-(\texttt{distill\_meta.json}, n=600). Because the pseudo-labels are a
-deterministic function of \texttt{stu3c} outputs on corpus text, and
-\texttt{stu3c} memorized gold labels, the detector's scores on gold
-rows carry information about \emph{all} gold labels---not just its own
-fold. We verified this numerically: the detector's stored gold
-probabilities equal the \texttt{stu3c} gold probabilities elementwise
-(max $|\Delta|=0.0$). In the deployed blend the corpus channel
-contributes $0.4$ of the neutral-expert probability, which itself is
-weighted $0.5$ in the final three-class mixture---an effective
-$\approx$13\% of the output mass. Removing the channel
-(\texttt{eval\_a100\_pipeline.py}, \texttt{w\_corpus=0}) changes the
-three-class score by $\approx$0.7pp (84.0\% $\to$ 83.3\%), bounding
-Leak A's contribution.
+\paragraph{Teacher targets (Leak B).}
+Every distilled model was trained with soft targets
+($\alpha{=}0.5$) from teacher ensembles whose predictions on the
+student's validation fold came from models trained on that fold;
+teacher and student share one fold assignment. Retraining all three
+tasks with $\alpha{=}1.0$ and rebuilding the pipeline with folds,
+hyperparameters and fusion weights fixed lowers three-way accuracy
+from 89.5\% to 84.0\% (macro-F1 85.9 to 77.8) and binary accuracy
+from 95.9\% to 92.9\% (macro-F1 95.6 to 92.4). Fusion weights were
+not re-tuned, so the corrected figures are conservative.
 
-\paragraph{Leak B (second-order teacher leakage).}
-Every distillation channel was trained with soft targets
-$\alpha{=}0.5$ produced by teacher ensembles whose own predictions on
-the student's validation fold were generated by models trained on
-that same fold (the teacher fold assignment is identical by
-construction). The student therefore received, through the soft
-targets, information about its validation labels beyond what the
-hard-label loss permits. We bound this by retraining all three tasks
-(3-class, binary, neutral) with $\alpha{=}1.0$ (hard labels only) and
-rebuilding the full pipeline: three-class OOF drops from 89.5\% to
-84.0\% ($-5.5$pp) and binary from 95.9\% to 92.9\% ($-3.0$pp). The
-deployed fusion weights were not re-tuned on the clean channels, so
-these corrected numbers are conservative lower bounds on the honest
-OOF rather than re-optimised estimates.
+\paragraph{Pseudo-label detector (Leak A).}
+The neutral detector was trained on 115{,}000 corpus pseudo-labels
+produced by the Gold-600 student, a model fitted to all 600 gold
+rows. Its scores on gold rows therefore carry information about every
+gold label, not only those of its own fold; its stored gold
+probabilities equal that student's elementwise. The detector
+contributes about 13\% of the output mass ($0.4 \times 0.5/1.5$).
+Removing it changes three-way accuracy from 84.0\% to 83.3\%
+(macro-F1 77.8 to 76.3).
 
-\paragraph{Duplicate-text leakage (fold-isolation violation).}
-Audit of \texttt{reviews\_600\_base.jsonl} shows gold-600 contains 600
-rows but only 592 unique texts: 8 exact-duplicate pairs (ids
-\{63,101\}, \{64,109\}, \{68,110\}, \{71,115\}, \{75,117\}, \{82,118\},
-\{99,104\}, \{100,108\}). The duplicates were \emph{not} removed
-before training or evaluation, and every OOF script uses
-\texttt{StratifiedKFold} without \texttt{groups=}, so duplicate texts
-can land in different folds---with 5 folds we expect
-$\approx$6--7 of the 8 pairs to be split. This violates level-(i)
-per-row fold isolation at the text level even though the CV
-machinery itself is correct. We estimate the resulting accuracy
-inflation at roughly 1--2pp, concentrated in the neutral and negative
-classes. The deduplicated rerun on the 592 unique texts
-(\texttt{scripts/dedup\_retrain.sh},
-\texttt{scripts/eval\_dedup\_pipeline.py}) moves the $\alpha{=}1.0$
-estimates to 82.6--83.1\% three-class / 74.8--75.9 macro-F1 and
-91.5\% / 90.8 binary (from 83.3--84.0 / 76.3--77.8 and 92.9 / 92.4 on
-the 600 rows), consistent with the $\sim$1pp estimate
-(\S\ref{sec:results}).
+\paragraph{Duplicate texts.}
+Gold-600 has 600 rows but 592 unique texts: eight exact-duplicate
+pairs that were not removed before training or evaluation. With
+ungrouped stratified folds, six to seven of the eight pairs are
+expected to be split across folds. Retraining on the 592 unique texts
+with deduplicated teachers moves the $\alpha{=}1.0$ estimates to
+82.6--83.1\% three-way (macro-F1 74.8--75.9) and 91.5\% binary
+(macro-F1 90.8); the $\alpha{=}0.5$ variant falls to 86.5\%.
 
-\paragraph{Selection bias (ood1000 as development set).}
-Git history shows the active-learning study iterated headline
-metrics on ood1000 across roughly two hours of commits, with the
-reported configuration changing four times. The final
-\texttt{mix\_crossfit.py} performs 5-fold CV \emph{on ood1000 itself}:
-each fold's weights are honest, but every one of the 1{,}000 labels
-influenced the selection. Beyond weights, the AL scale ladder
-(1K$\to$17K), teacher provenance (DeepSeek/Qwen/hybrid), epoch
-count (e4 vs.\ e8), seed subsets (avg4 vs.\ avg5), and neutral-
-correction mixes were all compared on ood1000. The reported 77.1\% three-class /
-92.3\% binary numbers are therefore best-of-$N$ maxima over
-$\approx$26 mix configurations and $\approx$73 SFT runs; we estimate
-the selection optimism at $+0.3$ to $+1.0$pp by comparing the chosen
-configuration against runner-up configurations in the released log.
+\paragraph{Selection on Dev-1000.}
+The LLM-label study iterated on Dev-1000: pool size (1K to 17K),
+teacher (DeepSeek, Qwen, hybrid), epochs, seed subsets and fusion
+weights were all compared there, the last by five-fold cross-fitting
+on Dev-1000 itself. The reported 77.1\% (three-way) and 92.3\%
+(binary) are maxima over 26 mixture configurations and about 73
+training runs. Comparing the chosen configuration with the runners-up
+gives an estimated optimism of 0.3--1.0 points (three-way) and
+0.2--0.7 (binary). McNemar tests on Dev-1000 are anti-conservative
+for the same reason.
 
-\subsection{Row-level overlap audit}
-We matched evaluation rows to every upstream training pool by Douban
-comment ID (\texttt{cid}). Table~\ref{tab:overlap} reports the union of
-overlapping rows across all corpus-derived models and the specific
-overlap for the deployed neutral detector. The AL/SFT training pools
-have \emph{zero} row-level overlap with any evaluation set;
-all contamination enters through the corpus pseudo-label chain.
-
-\begin{table}[t]
-\centering\small
-\begin{tabular}{lrr}
-\toprule
-Eval set & Union any-model & Deployed detector \\
-\midrule
-ood1000   & 687/1000 (68.7\%) & 130/1000 (13.0\%) \\
-fresh500  & 351/500  (70.2\%) &  66/500  (13.2\%) \\
-lab500    & 374/500  (74.8\%) &  59/500  (11.8\%) \\
-\bottomrule
-\end{tabular}
-\caption{Row-level \texttt{cid} overlap between evaluation sets and
-corpus-derived training pools. The deployed detector's training set
-(115K confident pseudo rows) overlaps 13.0\% of ood1000 and 13.2\% of
-fresh500.}
-\label{tab:overlap}
-\end{table}
-
-\section{Configuration Pool and Provenance Diagnostics}
-\label{app:configs}
-
-The active-learning study evaluated 26 mix configurations and 73 SFT
-runs. Table~\ref{tab:mixpool} lists the headline-relevant subset;
-the complete log is released with the code
-(\texttt{out/mix\_*.json}, \texttt{scripts/mix\_crossfit.py}).
-
-\begin{table}[t]
-\centering\small
-\begin{tabular}{llcc}
-\toprule
-Config & Teacher & Epoch & ood1000 acc \\
-\midrule
-al17kds\_avg5  & DS      & e8 & \textbf{0.771} \\
-al17kds\_avg4  & DS      & e8 & 0.769$^\dagger$ \\
-al14kds\_avg   & DS      & e8 & 0.755 \\
-v3 (no AL)     & ---     & ---& 0.650 \\
-\bottomrule
-\end{tabular}
-\caption{Top of the mix-configuration pool on ood1000 (dev set).
-$^\dagger$avg4 (seeds 42/123/456/789) was evaluated but not adopted;
-avg5 (adding seed 999) retained after split-half stability
-checks---an explicit best-of-N decision. al14kds has only three SFT
-seeds, hence ``avg'' rather than ``avg5''.}
-\label{tab:mixpool}
-\end{table}
-
-\section{Provenance and Ablation Diagnostics}
-\label{app:ablations}
-
-\begin{table*}[h]
-\centering\small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}p{5.2cm}p{2.6cm}p{4.2cm}@{}}
-\toprule
-Quantity & Estimate & Statistical test \\
-\midrule
-AL scale: al17kds\_avg5 vs.\ al14kds\_avg (3c, ood dev) & $+1.6$pp acc & McNemar $p{=}0.064$; Holm $p{\approx}0.45$ \\
-AL scale: al17k vs.\ 1K-human mix & --- & McNemar $p{=}3.9{\times}10^{-4}$; Holm $p{=}5.9{\times}10^{-3}$ \\
-v2$\to$v3 neutral-correction $\Delta$macro-F1 & $+1.6$pp & McNemar $p{=}0.65$; boot.\ CI $[-0.4,+3.8]$pp \\
-v3 neutral recall, OOD $\le$20ch$\to$$>$100ch & 51.1$\to$33.3\% & --- \\
-v3 neutral recall, gold $>$100ch & 88.0$\to$44.0\% & --- \\
-Deployed corpus detector, cid overlap & 13.0\% ood / 13.2\% fresh & --- \\
-Union, any corpus-trained model & 68.7\% ood / 70.2\% fresh / 74.8\% lab500 & --- \\
-IAA vs.\ blended reference & $\kappa{=}0.568$ & not pure human--human \\
-\bottomrule
-\end{tabular}
-\caption{Provenance and ablation diagnostics. ood1000 figures are
-development-set estimates; Holm correction is over the 22-test dev
-family. human400 pairwise comparisons form a separate 16-test family
-(Table~\ref{tab:human400-stats}). Near-duplicate (Jaccard $>0.8$)
-exposure adds 220 ood1000 and 107 fresh500 rows beyond exact cid hits.}
-\label{tab:ablations}
-\end{table*}
-
-\section{Supplementary Figure}
-\label{app:figs}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=\columnwidth]{fig2_provenance.pdf}
-\caption{Annotation-source composition of each evaluation split
-(reproduced from \S\ref{sec:res-provenance}). Only gold-600 is fully
-human-labelled; ood1000's ``human'' share is 20\% and
-anchoring-exposed; fresh500 and lab500 carry LLM-teacher labels
-throughout; human400 is fully human-labelled on an
-identifier-disjoint, length-stratified sample (text-level audit:
-Appendix~\ref{app:human400}).}
-\label{fig:provenance}
-\end{figure}
-
-\section{human400 Detailed Results}
-\label{app:human400}
+\subsection{Row-level overlap}
+We matched evaluation rows to every upstream training pool by comment
+identifier (Table~\ref{tab:overlap}). LLM-17K has no overlap with any
+evaluation set; all overlap enters through corpus pseudo-label pools.
+Near-duplicate matching (character 3-gram Jaccard $>0.8$) adds 220
+Dev-1000 and 107 Fresh-500 rows.
 
 \begin{table}[h]
 \centering\footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lcccc@{}}
+\begin{tabular}{@{}lrr@{}}
 \toprule
-System & 3c acc & 3c mac-F1 & bin acc & bin mac-F1 \\
+Evaluation set & Any corpus model & Neutral detector \\
 \midrule
-v3 (deployed) & 55.8 & 55.4 & 76.5 & 75.3 \\
-al17k SFT mean & 64.3 & 62.1 & 83.7 & 81.3 \\
-al17k mix (frozen) & \textbf{64.8} & \textbf{63.5} & 83.7 & \textbf{81.3} \\
-star-rating lookup & 55.75 & --- & 83.7 & 77.9 \\
-Qwen3-4B & 61.5 & 59.0 & --- & --- \\
+Dev-1000   & 687/1000 (68.7\%) & 130/1000 (13.0\%) \\
+Fresh-500  & 351/500  (70.2\%) &  66/500  (13.2\%) \\
+Human-400  & 0/400 & 0/400 \\
 \bottomrule
 \end{tabular}
-\caption{human400 headline metrics. Binary columns use the 221
-non-neutral rows. Star lookup: 4--5$\to$positive, 3$\to$neutral,
-1--2$\to$negative; binary variant maps 1--2$\to$negative, else
-positive. al17k rows use the frozen ood1000-selected recipe
-(5 seeds 3-class / 4 seeds binary, seed-averaged probabilities,
-weights $w{=}0.6$/$0.5$); values match \S\ref{sec:res-human400}.}
-\label{tab:human400}
+\caption{Identifier overlap between evaluation sets and
+corpus-derived training pools.}
+\label{tab:overlap}
 \end{table}
+
+\subsection{Configuration pool}
+Table~\ref{tab:mixpool} lists the top of the configuration pool; the
+complete log is released with the code.
+
+\begin{table}[h]
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Configuration (Mix) & Seeds & Dev acc. \\
+\midrule
+17K, DeepSeek labels  & 5 & \textbf{77.1} \\
+17K, DeepSeek labels  & 4 & 76.9$^\dagger$ \\
+14K, DeepSeek labels  & 3 & 75.5 \\
+11K, DeepSeek labels  & 3 & 74.9 \\
+11K, Qwen3-4B labels  & 3 & 72.4 \\
+11K, DeepSeek only$^\ddagger$ & 3 & 75.2 \\
+GoldEns (no LLM labels) & -- & 65.0 \\
+\bottomrule
+\end{tabular}
+\caption{Mixture configurations on Dev-1000. $^\dagger$Evaluated but
+not adopted. $^\ddagger$Without the 1{,}000-row two-pass block. The 17K and 14K rows differ by 1.6 points (McNemar
+$p{=}0.064$); 17K against the 1K configuration gives
+$p{=}3.9{\times}10^{-4}$ (Holm $5.9{\times}10^{-3}$ over the 22
+development-set tests); the all-DeepSeek 11K variant is
+indistinguishable from the standard 11K pool ($p{=}0.81$).}
+\label{tab:mixpool}
+\end{table}
+
+\paragraph{Other diagnostics.}
+GoldEns neutral recall on Dev-1000 falls from 51.1\% for reviews of
+at most 20 characters to 33.3\% above 100, so its out-of-domain loss
+is not a short-text artifact. On a 200-row subset of Dev-1000, a
+second human annotator agrees with the released labels on 71.5\%
+($\kappa{=}0.568$, 95\% CI $[0.47, 0.66]$); because the released
+labels mix 47 adjudicated and 153 consensus rows, this is agreement
+with a blended reference, not human--human agreement. On the binary
+task, Mix loses 8.4 points between consensus and adjudicated rows
+(93.7\% to 85.3\%), against 26.4 on the three-way task. On Fresh-500,
+whose labels come from the teacher that labelled LLM-17K, Mix scores
+77.0\% against 58.8\% for GoldEns; we treat this as agreement with the
+teacher rather than as a test.
+
+\section{Human-400: Detailed Results}
+\label{app:human400}
 
 \begin{table}[h]
 \centering\footnotesize
@@ -226,17 +205,17 @@ weights $w{=}0.6$/$0.5$); values match \S\ref{sec:res-human400}.}
 \toprule
 System & Class & Prec. & Rec. & F1 \\
 \midrule
-\multirow{3}{*}{v3 (deployed)}
+\multirow{3}{*}{GoldEns}
  & positive & 74.8 & 51.3 & 60.8 \\
  & neutral  & 62.9 & 50.3 & 55.9 \\
  & negative & 35.3 & 81.5 & 49.3 \\
 \midrule
-\multirow{3}{*}{al17k SFT (5-seed mean)}
+\multirow{3}{*}{LLM-label student}
  & positive & 75.5 & 53.2 & 62.4 \\
  & neutral  & 62.4 & 76.0 & 68.5 \\
  & negative & 52.8 & 58.5 & 55.5 \\
 \midrule
-\multirow{3}{*}{al17k mix (frozen)}
+\multirow{3}{*}{Mix}
  & positive & 75.0 & 53.8 & 62.7 \\
  & neutral  & 63.2 & 73.7 & 68.0 \\
  & negative & 54.4 & 66.2 & 59.7 \\
@@ -246,59 +225,39 @@ System & Class & Prec. & Rec. & F1 \\
  & neutral  & 59.4 & 70.4 & 64.5 \\
  & negative & 52.5 & 47.7 & 50.0 \\
 \midrule
-\multirow{3}{*}{star lookup}
+\multirow{3}{*}{Rating lookup}
  & positive & 54.6 & 71.8 & 62.0 \\
  & neutral  & 56.8 & 41.9 & 48.2 \\
  & negative & 57.1 & 55.4 & 56.2 \\
 \bottomrule
 \end{tabular}
-\caption{human400 three-class per-class precision/recall/F1 (\%),
-computed from the released prediction files
-(\texttt{human400\_v3\_probs.npz}, \texttt{human400\_sft\_probs\_al17k/},
-\texttt{qwen3\_4b\_human400\_probs.npy}) against the blind human
-labels; the star lookup predicts the rating-implied class directly.
-The mixture's gain over v3 is concentrated in neutral recall
-(50.3$\to$73.7) at the cost of negative recall (81.5$\to$66.2).}
+\caption{Human-400 per-class precision, recall and F1 (\%).}
 \label{tab:human400-perclass}
 \end{table}
 
-\paragraph{v3 diagnostics.} Per-class recall: positive 51.3\%,
-neutral 50.3\%, negative 81.5\%; dominant confusion cells are
-neutral$\to$negative (66) and positive$\to$neutral (45). Accuracy by
-design stratum: 56.2\% ($\le$20ch, $n{=}160$), 56.7\% (21--50,
-$n{=}120$), 53.7\% (51--100, $n{=}80$), 55.0\% ($>$100, $n{=}40$).
-By model confidence: 43.9\% ($<0.5$, $n{=}41$), 43.1\% (0.5--0.7,
-$n{=}123$), 61.3\% (0.7--0.9, $n{=}124$), 67.9\% ($\ge$0.9, $n{=}112$).
-By flag (exact match; one row carries combined mixed|off-topic flags):
-mixed 53.3\% ($n{=}30$), off-topic 67.9\% ($n{=}28$),
-spoiler 50.0\% ($n{=}2$).
+\paragraph{Confusions.} Rows are true positive/neutral/negative.
+GoldEns: $[80,45,31]$, $[23,90,66]$, $[4,8,53]$. Mix: $[84,59,13]$,
+$[24,132,23]$, $[4,18,43]$. Qwen3-4B: $[89,55,12]$, $[37,126,16]$,
+$[3,31,31]$.
 
-\paragraph{Per-rating human-label distribution.} Among human400 rows,
-5-star reviews are 62.7\% positive / 32.8\% neutral / 4.5\% negative
-($n{=}67$); 4-star 50.7\% / 44.9\% / 4.3\% ($n{=}138$); 3-star
-28.0\% / 56.8\% / 15.2\% ($n{=}132$); 2-star 17.9\% / 38.5\% /
-43.6\% ($n{=}39$); 1-star 0\% / 20.8\% / 79.2\% ($n{=}24$). The
-star-rule vs.\ v3 confusion matrices and per-rating accuracies are
-available in the released evaluation script output. The same star
-rule scores 71.3\% on gold-600 versus 55.8\% here, so the
-star--semantics gap is distribution-dependent rather than a
-single-film artifact.
+\paragraph{Strata.} Accuracy of GoldEns / Mix by length: 56.2 / 67.5
+($\leq$20 characters, $n{=}160$), 56.7 / 65.0 (21--50, $n{=}120$),
+53.8 / 58.8 (51--100, $n{=}80$), 55.0 / 65.0 ($>$100, $n{=}40$). By
+annotator flag: mixed 53.3 / 40.0 ($n{=}30$), off-topic 67.9 / 71.4
+($n{=}28$). GoldEns accuracy by its own confidence: 43.9\% ($<0.5$,
+$n{=}41$), 43.1\% (0.5--0.7, $n{=}123$), 61.3\% (0.7--0.9,
+$n{=}124$), 67.9\% ($\geq 0.9$, $n{=}112$).
 
-\paragraph{Mix details.} Per-seed 3-class mixes at $w{=}0.6$:
-s42 66.0\%, s123 63.5\%, s456 63.8\%, s789 65.5\%, s999 64.5\%;
-weight sweep 0.4--0.8 spans 63.3--65.0\%. On annotator-flagged
-mixed reviews the mix scores 40.0\% vs.\ v3's 53.3\% ($n{=}30$);
-off-topic rows 71.4\% vs.\ 67.9\% ($n{=}28$). Mix accuracy by length:
-67.5\% ($\le$20ch), 65.0\% (21--50), 58.8\% (51--100), 65.0\%
-($>$100ch); by confidence 42.9\% ($<0.5$) to 78.8\% ($\ge$0.9).
-McNemar (raw): mix vs.\ v3 $p{=}1.3{\times}10^{-3}$; mix vs.\ star lookup
-$p{=}7.4{\times}10^{-3}$; Holm-adjusted values in
-Table~\ref{tab:human400-stats}. Binary ($n{=}221$): v3 76.5/75.3; star
-rule 83.7/77.9; al17k SFT (4 seeds) 83.7/81.3; frozen mix
-($w{=}0.5$) 83.7/81.3. McNemar: mix vs.\ v3 $p{=}0.020$; mix vs.\
-star $p{=}1.0$ (28/28 symmetric discordance---same accuracy,
-different errors); SFT vs.\ v3 $p{=}0.026$. Per-seed binary mixes:
-s42 82.8, s123 83.7, s789 83.7, s999 84.2 accuracy.
+\paragraph{Ratings.} Human labels by rating
+(positive/neutral/negative): five stars 62.7 / 32.8 / 4.5\%
+($n{=}67$); four 50.7 / 44.9 / 4.3\% ($n{=}138$); three 28.0 / 56.8 /
+15.2\% ($n{=}132$); two 17.9 / 38.5 / 43.6\% ($n{=}39$); one 0 / 20.8
+/ 79.2\% ($n{=}24$).
+
+\paragraph{Seeds and weights.} Mix with each single seed: 66.0, 63.5,
+63.8, 65.5, 64.5\%. Varying the fusion weight from 0.4 to 0.8 (not
+used for selection) gives 63.3--65.0\%. Binary Mix per seed: 82.8,
+83.7, 83.7, 84.2\%.
 
 \begin{table*}[h]
 \centering\small
@@ -307,219 +266,140 @@ s42 82.8, s123 83.7, s789 83.7, s999 84.2 accuracy.
 \toprule
 Comparison & Task & $n$ & Discordant (1st/2nd) & Raw $p$ & Holm $p$ \\
 \midrule
-mix vs.\ v3   & 3c & 400 & 78/42  & $1.3{\times}10^{-3}$ & \textbf{0.021} \\
-SFT vs.\ v3   & 3c & 400 & 91/57  & $6.5{\times}10^{-3}$ & 0.097 \\
-mix vs.\ star & 3c & 400 & 104/68 & $7.4{\times}10^{-3}$ & 0.104 \\
-SFT vs.\ star & 3c & 400 & 101/67 & $1.1{\times}10^{-2}$ & 0.139 \\
-Qwen vs.\ v3  & 3c & 400 & 90/67  & $7.9{\times}10^{-2}$ & 0.788 \\
-Qwen vs.\ star& 3c & 400 & 97/74  & $9.2{\times}10^{-2}$ & 0.788 \\
-mix vs.\ Qwen & 3c & 400 & 64/51  & 0.263 & 1.000 \\
-SFT vs.\ Qwen & 3c & 400 & 63/52  & 0.351 & 1.000 \\
-mix vs.\ SFT  & 3c & 400 & 15/13  & 0.851 & 1.000 \\
-v3 vs.\ star  & 3c & 400 & 94/94  & 1.000 & 1.000 \\
+Mix vs.\ GoldEns        & 3-way & 400 & 78/42  & $1.3{\times}10^{-3}$ & \textbf{0.021} \\
+Student vs.\ GoldEns    & 3-way & 400 & 91/57  & $6.5{\times}10^{-3}$ & 0.097 \\
+Mix vs.\ rating         & 3-way & 400 & 104/68 & $7.4{\times}10^{-3}$ & 0.104 \\
+Student vs.\ rating     & 3-way & 400 & 101/67 & $1.1{\times}10^{-2}$ & 0.139 \\
+Qwen3-4B vs.\ GoldEns   & 3-way & 400 & 90/67  & $7.9{\times}10^{-2}$ & 0.788 \\
+Qwen3-4B vs.\ rating    & 3-way & 400 & 97/74  & $9.2{\times}10^{-2}$ & 0.788 \\
+Mix vs.\ Qwen3-4B       & 3-way & 400 & 64/51  & 0.263 & 1.000 \\
+Student vs.\ Qwen3-4B   & 3-way & 400 & 63/52  & 0.351 & 1.000 \\
+Mix vs.\ student        & 3-way & 400 & 15/13  & 0.851 & 1.000 \\
+GoldEns vs.\ rating     & 3-way & 400 & 94/94  & 1.000 & 1.000 \\
 \midrule
-mix vs.\ v3   & bin & 221 & 29/13  & 0.020 & 0.234 \\
-SFT vs.\ v3   & bin & 221 & 31/15  & 0.026 & 0.285 \\
-star vs.\ v3  & bin & 221 & 46/30  & 0.085 & 0.788 \\
-mix vs.\ SFT  & bin & 221 & 2/2    & 1.000 & 1.000 \\
-SFT vs.\ star & bin & 221 & 28/28  & 1.000 & 1.000 \\
-mix vs.\ star & bin & 221 & 28/28  & 1.000 & 1.000 \\
+Mix vs.\ GoldEns        & binary & 221 & 29/13  & 0.020 & 0.234 \\
+Student vs.\ GoldEns    & binary & 221 & 31/15  & 0.026 & 0.285 \\
+Rating vs.\ GoldEns     & binary & 221 & 46/30  & 0.085 & 0.788 \\
+Mix vs.\ student        & binary & 221 & 2/2    & 1.000 & 1.000 \\
+Student vs.\ rating     & binary & 221 & 28/28  & 1.000 & 1.000 \\
+Mix vs.\ rating         & binary & 221 & 28/28  & 1.000 & 1.000 \\
 \bottomrule
 \end{tabular}
-\caption{All pairwise McNemar exact tests on human400 among the
-evaluated systems (five systems for 3-class, four for binary;
-discordant counts are rows where only the first- or only the
-second-named system is correct). Holm adjustment is over this
-16-test human400 family, separate from the 22-test development-set
-family of \S\ref{sec:setup}; all raw $p$-values are unadjusted. Only
-the three-class mix-vs-v3 comparison survives correction.}
+\caption{Exact McNemar tests on Human-400 (discordant counts: rows
+where only the first or only the second system is correct). Holm
+adjustment is over these 16 tests.}
 \label{tab:human400-stats}
 \end{table*}
 
-\paragraph{Qwen3-4B.} Zero-shot label-logprob scoring
-(\texttt{eval\_human400\_qwen.py}) gives 61.5\%/59.0 three-class
-accuracy/macro-F1 on human400 (per-class recall 57.1/70.4/47.7 for
-positive/neutral/negative): above v3 but below the mixture
-(McNemar $p{=}0.26$, not significant). Its neutral recall is the
-highest of any system here, consistent with the gold-600 finding
-that general LLMs handle the neutral class better but lag overall.
-
 \paragraph{Text-level overlap audit.}
-Identifier-disjointness does not rule out text-level exposure through
-re-crawled, reconstructed, or derivative training pools. We audited
-all 400 human400 texts against every project training pool with three
-checks: (i) exact text match; (ii) normalized text match (lowercased,
-punctuation stripped); and (iii) near-duplicate detection via
-character 3-gram Jaccard similarity $>0.8$ over 462{,}879 unique pool
-texts. Targets included gold-600, all lab2000 pools (ood1000, al1000),
-all AL expansion pools, the pseudo-label and feature manifests, and
-the reconstructed corpus training sets.
+Identifier-disjointness does not rule out the same text appearing
+under another identifier. We compared all 400 Human-400 texts with
+462{,}879 unique texts from every project training pool (Gold-600,
+Dev-1000, LLM-17K, the pseudo-label and feature manifests, and the
+reconstructed corpus training sets) by exact match, normalised match
+(lower-cased, punctuation removed) and near-duplicate match
+(character 3-gram Jaccard $>0.8$). Against the pools of the systems
+in Table~\ref{tab:human400}, exact and near-duplicate overlap are
+both 0/400. Normalised matching flags two rows, each under 12
+characters of boilerplate, that also occur in the pseudo-label pool
+of the neutral detector. Pools with substantial exact overlap
+(46--145 rows) exist only for rating-trained models that we do not
+evaluate on Human-400.
 
-Against the training pools of the systems evaluated on human400 (the
-v3 ensemble channels, the al17k mixture, Qwen3-4B, and the
-star-rating lookup), exact overlap is 0/400 and near-duplicate overlap
-($J{>}0.8$) is 0/400. Normalized matching flags two rows---both under
-12 normalized characters of boilerplate text---that also occur in
-corpus pseudo-label pools feeding the deployed neutral-detector
-channel, and three rows occur in the full 910{,}998-review corpus
-under different comment identifiers. Text-level exposure is therefore
-bounded to two ultra-short boilerplate rows in one ensemble channel.
-Pools with substantial exact overlap (46--145 rows) exist only in
-rating-derived TF-IDF and corpus-scale MacBERT experiments that were
-not among the systems evaluated on human400, so they do not affect
-the reported comparison.
-
-\section{Annotation Protocol and Guidelines}
+\section{Annotation Guidelines}
 \label{app:annotation}
 
-\subsection{Shared guidelines: the neutral-class boundary}
-The same written guidelines (released under \texttt{annotation/})
-governed gold-600, adjudication, and human400 labelling. They are
-three-way: \emph{positive} for overall endorsement, \emph{negative}
-for overall rejection, and \emph{neutral} for everything else. Because
-the neutral class carries most of the ambiguity, Table~\ref{tab:neutral-rules}
-summarizes the decision rules; annotators also saw no star rating and
-could attach optional flags (\texttt{[mixed]}, \texttt{[off-topic]},
-\texttt{[spoiler]}, \texttt{[uncertain]}; original Chinese flag names
-in the released kit) that do not change the main label.
+The same written guidelines governed Gold-600, adjudication and
+Human-400. \emph{Positive} marks overall endorsement,
+\emph{negative} overall rejection, and \emph{neutral} everything
+else; Table~\ref{tab:neutral-rules} gives the rules for the neutral
+boundary. Annotators did not see ratings and could attach optional
+flags (mixed, off-topic, spoiler, uncertain) that do not change the
+label.
 
 \begin{table}[h]
 \centering\footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}p{4.6cm}p{1.4cm}p{1.5cm}@{}}
 \toprule
-Situation (rule) & Label & Note \\
+Situation & Label & Note \\
 \midrule
 Overall positive, minor flaws allowed & Positive & endorsement dominates \\
 Overall negative, partial praise allowed & Negative & criticism dominates \\
 \midrule
-Mixed praise and blame at parity & Neutral & whichever side dominates / where the verdict lands; even$\to$neutral \\
-Mediocre / ``just okay'' / passable & Neutral & no clear stance \\
+Praise and blame at parity & Neutral & otherwise the dominant side \\
+Mediocre, ``just okay'', passable & Neutral & no clear stance \\
 Purely objective description or information & Neutral & e.g., ``went with friends'' \\
-Comments only on actors, music, or showtimes, not the film & Neutral & but praise that amounts to endorsing the film $\to$ positive \\
-Jokes/memes with no clear evaluative stance & Neutral & --- \\
-Questions, pure spoilers, pure information & Neutral & questions with a clear emotional lean are labelled by that lean \\
-Ultra-short text ($<$10 chars) with no emotional cue & Neutral & clear emotion words still decide by sentiment \\
-Sarcasm or backhanded remarks & by intent & infer the real attitude from context \\
+Comments only on actors, music or showtimes & Neutral & unless it amounts to endorsing the film \\
+Jokes or memes with no evaluative stance & Neutral & --- \\
+Questions, pure spoilers & Neutral & unless a clear emotional lean \\
+Under 10 characters with no emotional cue & Neutral & emotion words still decide \\
+Sarcasm or backhanded remarks & by intent & infer the real attitude \\
 \midrule
-Any discernible lean, however weak & Pos/Neg & neutral is not ``don't know''; flag \texttt{[uncertain]} when unsure \\
+Any discernible lean, however weak & Pos./Neg. & neutral is not ``don't know'' \\
 \bottomrule
 \end{tabular}
-\caption{Neutral-class decision rules from the written annotation
-guidelines (translated from the Chinese original, released under
-\texttt{annotation/}). Optional flags never override the main label.}
+\caption{Neutral-class decision rules (translated from the Chinese
+guidelines).}
 \label{tab:neutral-rules}
 \end{table}
 
-\subsection{Gold-600}
-Reviews were scraped from the Douban page of a single film (first
-30 comment pages; 600 rows covering 592 unique texts, including 8
-exact-duplicate pairs that were \emph{not} removed before training or
-evaluation---see the duplicate-text leakage analysis in
-Appendix~\ref{app:audit}). Two label
-systems were recorded: a \emph{star-rule} label derived from the
-reviewer's star rating and a \emph{semantic} label assigned by the
-authors under written guidelines. The semantic label is authoritative
-for all reported metrics. Disagreement between the two systems is
-analysed in \S\ref{sec:data}.
+\paragraph{Human-400 protocol.}
+We sampled 400 reviews from the corpus with length stratification
+after excluding every comment identifier in Gold-600, Dev-1000,
+LLM-17K, Fresh-500, an earlier 500-row pilot set, and the
+confident pseudo-label pool (about 270K rows). Items were labelled
+by one author on an offline annotation page that showed only the
+review text.
+\ifSfive A second annotator labelled the same 400 items on the same
+page, without access to the first annotator's labels, ratings or any
+model output.\fi
 
-\subsection{lab2000 / AL adjudication}
-The ood1000 and al1000 sets were labelled in two passes by the same
-LLM annotator under a fixed prompt, then disagreements were
-adjudicated by the authors. Provenance is recorded per row
-(\texttt{final\_source}: \texttt{consensus} vs.\ \texttt{user}). A
-known limitation: during adjudication the student model's predictions
-were visible in the interface, which may anchor human labels toward
-model outputs; we flag this wherever adjudicated rows are reported
-separately.
+\paragraph{Dev-1000 adjudication.}
+The two LLM passes used one annotator model with different few-shot
+examples drawn from Gold-600. During adjudication the interface
+showed the review's star rating and the Gold-600 student's prediction
+and confidence, which may pull labels toward the rating rule and that
+model.
 
-\subsection{New 400-item human test set}
-To obtain an identifier-disjoint evaluation we sampled 400 reviews from
-the 911K corpus with length stratification (160 short $\le$20 chars,
-120 medium 21--50, 80 long 51--100, 40 extra-long $>$100) and
-\emph{excluded every comment ID} appearing in gold-600, lab2000,
-lab500, fresh500, the AL pools, or the confident pseudo-label pools
-($\approx$270K rows). A post-hoc audit re-verified zero identifier
-overlap against every corpus-side training-pool manifest; a
-text-level overlap audit (exact, normalized, near-duplicate) against
-all project training pools is reported in
-Appendix~\ref{app:human400}. Because the sample is length-stratified,
-it is benchmark-specific rather than a population sample of the
-natural corpus distribution. Items were
-labelled blind (no model predictions shown) under the written semantic
-guidelines by a single author; optional flags marked mixed, off-topic,
-spoiler, and uncertain rows. The written guidelines and the self-contained
-offline annotation page used for labelling are released under
-\texttt{annotation/}. Because only one annotator was available,
-no inter-annotator agreement is computable on this set.
-
-\section{Complete Negative-Results List}
+\section{Rejected Variants}
 \label{app:negative}
 
-Over twenty architecture and data variants were evaluated and
-rejected during the project; the deployed configuration is the
-measured optimum. Selected rejections most relevant to the
-evaluation protocol:
+More than twenty variants of GoldEns were evaluated on Gold-600 and
+rejected. The most informative:
 
 \begin{itemize}[leftmargin=*,itemsep=1pt]
-  \item LoRA fine-tuning of the MegatronBERT backbone: binary
-        0.9390/0.9343, three-class 0.8083/0.6431---hurts the ensemble.
-  \item Median / trimmed / geometric / logit-mean aggregation:
-        all worse than plain probability mean.
+  \item LoRA fine-tuning of the 1.3B backbone: binary 93.9\%,
+        three-way 80.8\% (macro-F1 64.3).
+  \item Median, trimmed, geometric and logit-mean aggregation: all
+        below the plain probability mean.
   \item Per-channel weight re-tuning: equal weights optimal within
-        $\pm$0.1pp noise.
-  \item 3-class student grid (alpha, tau, seed, epochs, class
-        weights, Qwen-augmented teacher): all worse than the deployed
-        $\alpha{=}0.5$, $\tau{=}2$, e8 configuration.
-  \item Synthetic-review augmentation (Qwen3-4B generated, 75
-        self-consistent rows): poisoned training; student OOF dropped
-        to 0.7917.
-  \item Round-2 pseudo-label flywheel: student probabilities degenerate
-        (mean confidence 0.986)---the flywheel saturates after one
-        round.
-  \item Corpus-trained MLP heads on 1.3B features (75K pseudo rows):
-        all ensemble variants worse than gold-trained channels.
-  \item Cascade threshold on gold-600: split-half validation collapses
-        ($\sim$0.86--0.88 vs.\ 0.89 tuned)---small-sample threshold
-        overfitting.
-  \item Stacked logistic-regression meta-learner on channel
-        log-probabilities: 0.8367/0.7936, far below the deployed
-        blend; channels too correlated for 600 samples.
-  \item Focal loss ($\gamma{=}2$) and class-balanced oversampling on
-        the 3-class student (gold-600 OOF, deployed recipe otherwise
-        unchanged): both improved the in-domain student OOF
-        (0.8017/0.7418 $\to$ 0.8100/0.7512 and 0.8083/0.7457
-        acc/macro-F1) but \emph{degraded} human400
-        (52.8\% $\to$ 50.0\% / 48.8\% acc)---in-domain gains did not
-        transfer out-of-domain, so neither was adopted.
+        $\pm$0.1 points.
+  \item Student grid ($\alpha$, $\tau$, seed, epochs, class weights,
+        Qwen-augmented teacher): none better than $\alpha{=}0.5$,
+        $\tau{=}2$, 8 epochs.
+  \item Synthetic reviews generated by Qwen3-4B (75 rows): student
+        accuracy fell to 79.2\%.
+  \item A second round of pseudo-labelling: student probabilities
+        degenerate (mean confidence 0.986).
+  \item MLP heads trained on corpus pseudo-labels (75K rows): every
+        ensemble variant worse than gold-trained heads.
+  \item A neutral-first cascade: split-half validation falls to
+        86--88\% from 89\% tuned.
+  \item A stacked logistic-regression meta-learner: 83.7\%
+        (macro-F1 79.4).
+  \item Focal loss ($\gamma{=}2$) and class-balanced oversampling for
+        the student: out-of-fold accuracy rose from 80.2\% to 81.0\%
+        and 80.8\%, but Human-400 accuracy fell from 52.8\% to 50.0\%
+        and 48.8\%. In-domain gains did not transfer.
 \end{itemize}
 
-\section{Ethics Statement and Data Availability}
+\section{Data and Artifact Availability}
 \label{app:ethics}
 
-\paragraph{Data.}
-Review texts are Douban user comments. The gold set derives from a
-single public film page; the corpus derives from the Moviedata-10M
-release (research-use dataset, attribution required, raw data not
-redistributed by us). We did not obtain platform authorization; the
-release is limited to labels, identifiers and SHA-256 text hashes for
-$\approx$5.0K evaluation/benchmark reviews --- raw review texts are
-not redistributed. Approximately 18.5K unique review texts were sent
-to the DeepSeek API for teacher labelling; all 600 gold texts were
-processed on Alibaba Cloud PAI. DeepSeek's published privacy policy
-permits the provider to use de-identified inputs and outputs for
-service improvement; no zero-retention agreement was in place.
-Annotation was performed by the authors and one additional annotator
-on publicly posted, non-sensitive film reviews; users were not
-contacted, and the task involved no human-subjects experimentation
-beyond the annotators' own labeling of public posts.
-
-\paragraph{Artifacts.}
-Code, audit scripts, per-row provenance fields, OOF probability
-files, and the configuration log are publicly released (repository
-and model URLs withheld for double-blind review; available upon
-request). License: code MIT; data for research use only.
-
-\paragraph{Intended use.}
-The system is a research prototype for sentiment analysis of Chinese
-reviews; it is not intended for moderation decisions affecting users.
+The release contains labels, identifiers and SHA-256 text hashes for
+about 5.0K evaluation and benchmark reviews, per-row provenance
+fields, out-of-fold and test probability files, and all analysis
+scripts; raw review texts are not redistributed. Repository and model
+locations are withheld for double-blind review. Code is released
+under the MIT licence; data are for research use only.

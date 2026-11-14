@@ -1,5 +1,6 @@
 \documentclass[11pt]{article}
 
+% Official ACL style, unmodified: no \linespread, no float/display spacing overrides.
 \usepackage[review]{acl}
 
 \usepackage{times}
@@ -13,25 +14,14 @@
 \usepackage{multirow}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds}
+\usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage{url}
 
-% Compact leading, float and display spacing to fit the 8-page
-% main-body limit.
-\linespread{0.885}
-\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
-\setlength{\floatsep}{6pt plus 2pt minus 2pt}
-\setlength{\intextsep}{6pt plus 2pt minus 2pt}
-\setlength{\dbltextfloatsep}{8pt plus 2pt minus 2pt}
-\setlength{\abovedisplayskip}{7pt plus 2pt minus 2pt}
-\setlength{\belowdisplayskip}{7pt plus 2pt minus 2pt}
-\setlength{\abovedisplayshortskip}{4pt plus 2pt minus 1pt}
-\setlength{\belowdisplayshortskip}{4pt plus 2pt minus 1pt}
+\input{exp_results}
 
-\title{Beyond Star Ratings: Weak Supervision and LLM-Assisted\\
-Data Expansion for Chinese Review Sentiment Classification}
+\title{Beyond Star Ratings: How Far Do Ratings, Pseudo-Labels, and LLM\\
+Annotations Go for Chinese Review Sentiment Classification?}
 
 \author{Anonymous SRW Submission}
 
@@ -39,107 +29,105 @@ Data Expansion for Chinese Review Sentiment Classification}
 \maketitle
 
 \begin{abstract}
-Chinese movie-review corpora provide abundant star ratings but few
-semantic sentiment labels. Because ratings encode overall evaluation
-rather than the polarity expressed in review text, they are an
-imperfect supervision source for three-way sentiment classification.
-We study how supervision source and data scale shape measured
-performance through a weak-supervision pipeline seeded by 600
-human-verified labels over a 910{,}998-review Douban corpus,
-combining rating-derived signals, student pseudo-labels, and
-uncertainty-sampled LLM annotations. On a 400-review,
-identifier-disjoint human evaluation set, the 17K-label mixture
-reaches 64.8\% accuracy versus 55.8\% for the deployed baseline and
-55.75\% for a star-rating lookup (McNemar $p{<}0.01$). Star--text
-agreement differs across review populations: 71.3\% on the
-single-film seed set versus 55.8\% on the broader sample, and
-three-star reviews are semantically neutral 30.6\% versus 56.8\% of
-the time. Leakage ablations show that teacher-derived distillation
-targets can materially affect fold-based performance estimates.
+Star ratings are the default source of cheap labels for review
+sentiment, yet a rating records an overall verdict rather than the
+polarity a text expresses. We study how far three inexpensive
+supervision sources---rating-derived labels, pseudo-labels from a
+small gold-trained model, and LLM annotations---carry three-way
+sentiment classification of short Chinese movie reviews, using a
+911K-review Douban corpus, 600 gold labels from a single film, and a
+400-review blind human test that shares no identifier with any
+training pool. Ratings agree with semantic labels on 71.3\% of the
+single-film gold set but on only 51--62\% of corpus reviews, under
+four rating-blind annotators (one human, three LLMs), and agreement
+falls as reviews get shorter. On the human test, an ensemble built
+from gold labels and its own pseudo-labels scores 55.8\%, no better
+than a rating lookup, while a compact encoder fine-tuned on 17K
+LLM-labelled reviews reaches 64.3\% (64.8\% when fused with the
+ensemble; McNemar $p{=}0.001$). At a matched 500-label budget, random
+and uncertainty-based selection are indistinguishable, and
+text classifiers score 23--28 points higher on LLM-consensus benchmark
+labels than on human-adjudicated ones.
 \end{abstract}
 
-\input{draft_1_3}
-\input{draft_4_5}
-\input{draft_6}
+\input{body}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-We set out to scale semantic sentiment classification for Chinese
-Douban reviews under weak supervision, and the empirical picture that
-emerged is threefold. First, star ratings are an informative but
-unreliable semantic proxy whose meaning shifts across populations:
-rating--text agreement is 71.3\% on the single-film gold-600 seed set
-but only 55.8\% on the broader human400 sample, and the three-star
-band flips from majority negative (30.6\% neutral) on gold-600 to
-majority neutral (56.8\%) on human400. Second, LLM-assisted data
-expansion yields genuine generalization at scale: on the
-identifier-disjoint human400 test the frozen-weight 17K mixture
-reaches 64.8\% three-class accuracy, $+9.0$pp over deployed v3
-(McNemar $p{=}1.3{\times}10^{-3}$), while a star-rating lookup
-matching v3 shows how little signal the ratings alone carry. Third,
-supervision provenance shapes measured performance: teacher-derived
-distillation targets inflated fold-based OOF estimates by
-$\approx$5.5pp, ood1000 functioned as a development set rather than a
-held-out test, and LLM-consensus labels overstated accuracy by
-$\approx$26 points relative to human-adjudicated rows. These results
-argue for provenance-aware evaluation whenever weak or
-model-generated labels feed either training or benchmarking. Future
-work includes fold-isolated corpus channels, fusion weights re-tuned
-on leakage-free signals, a second annotator for human400, and
-multi-annotator protocols for LLM-assisted benchmark construction.
+We compared the cheap labels available for Chinese review sentiment
+against blind human judgments. Star ratings are an informative but
+unreliable proxy: they match semantic labels on 71.3\% of a curated
+single-film set but on only 51--62\% of corpus reviews, whichever
+rating-blind annotator supplies the labels, and least often on the
+short reviews that dominate the corpus. A gold-only ensemble that
+reaches 82.6--84.0\% in leakage-corrected cross-validation scores
+55.8\% on Human-400, no better than reading the star rating, whereas
+a plain encoder fine-tuned on 17K LLM-labelled reviews reaches
+64.3\% (64.8\% fused), a gain carried by the neutral class. The
+measured benefit of LLM annotation depended on volume rather than on
+uncertainty-based selection at the one budget where we could compare
+them, and on which labels scored it: text classifiers score
+23--28 points higher on LLM-consensus rows than on human-adjudicated
+ones, where a rating lookup does as well as the LLM teacher.
+\ifSfive A second annotator agrees with the first on \IAAraw\% of
+Human-400 ($\kappa{=}\IAAkappa$), which bounds what any system can
+score against a single annotator. \fi
+We therefore recommend that weakly supervised sentiment work report a
+rating-lookup baseline, keep at least one fully human, text-audited
+test set outside every training pool, and split results by label
+provenance. Open questions are whether the gain holds on the
+high-confidence region that Human-400 excludes, at what label volume
+selection strategy begins to matter, and how ratings can be used as
+an input feature rather than as a label.
 
-\section{Limitations}
+\section*{Limitations}
 \label{sec:limitations}
 
-Several boundary conditions scope our claims. gold-600 is drawn from
-a single film page, so in-domain numbers are not cross-domain
-estimates, and its 600 rows retain eight exact-duplicate text pairs
-that can cross CV folds (Appendix~\ref{app:audit}). human400 is
-length-stratified (160/120/80/40) and single-annotator, so its
-results are benchmark-specific rather than population estimates; its
-text-level overlap audit against all training pools is reported in
-Appendix~\ref{app:human400}. Identifier-disjointness removes known
-training-pool exposure but does not prove contamination-free text:
-the audit found two ultra-short boilerplate normalized matches in
-corpus pseudo-label pools feeding one ensemble channel.
-The 479 adjudicated rows were labelled with student predictions
-visible, likely anchoring labels toward model outputs; ood1000 was
-used for model selection and has substantial identifier overlap, so
-its figures are selection-conditioned development estimates and its
-McNemar tests are anti-conservative; and our human--reference
-agreement ($\kappa{=}0.57$) blends human and same-LLM-consensus
-references, so it is not a pure human--human IAA. The corrected OOF
-figures (83.3--84.0\% three-class / 92.9\% binary on the 600 rows;
-82.6--83.1\% / 91.5\% after deduplication) are single-seed,
-frozen-weight leakage-channel ablation estimates still subject to
-fusion-weight selection bias, not fully selection-independent
-final-system scores. Finally, all 600 gold texts were processed on a
-commercial training platform (Alibaba Cloud PAI) for a baseline
-comparison; this egress is disclosed in Section~\ref{sec:ethics}.
+Gold-600 comes from one film page, so in-domain figures are not
+cross-film estimates, and we make no cross-film claim. Human-400 is
+\ifSfive double-annotated but small\else labelled by a single
+annotator, so no inter-annotator agreement is available\fi; its
+confidence intervals span about $\pm$5 points. It is length-stratified
+and was drawn outside the gold-only student's confident pool (about
+30\% of the corpus), so it measures the region where gold-only
+supervision is least certain and is not a full-corpus estimate; the
+rating-agreement results do not depend on this choice
+(Table~\ref{tab:stars} includes uniform samples), but the system
+comparison does. Identifier-disjointness does not prove text-level
+independence: our audit found no exact or near-duplicate overlap and
+two ultra-short boilerplate matches in one pseudo-label pool
+(Appendix~\ref{app:human400}). Dev-1000 was used for every design
+decision, 69\% of its rows occur in earlier corpus-derived training
+pools, its 200 adjudicated rows were labelled with a model prediction
+visible, and its consensus-versus-adjudicated gap confounds label
+source with item difficulty; we report it as development evidence
+only. The budget-matched selection comparison uses 500 labels;
+whether uncertainty-based selection helps at 17K is untested. The
+corrected cross-validation figures are single-seed ablations with
+fusion weights tuned on the same 600 rows. All LLM labels come from
+one commercial model family and one open model, and results may differ
+for other teachers.
 
-\section{Ethical Considerations}
+\section*{Ethical Considerations}
 \label{sec:ethics}
 
-All review texts are Douban user comments used without platform
-authorization: the gold-600 set was scraped from a single film page
-and the corpus derives from the Moviedata-10M release, whose terms
-prohibit redistribution of raw texts. We therefore release labels,
-identifiers and SHA-256 text hashes rather than review text; users
-may re-join source texts under the upstream license. Roughly 18.5K
-unique texts were transmitted to the DeepSeek API for teacher
-labelling and all 600 gold texts were processed on Alibaba Cloud
-PAI; only review text and star ratings were sent, with no direct
-identifiers. DeepSeek's published privacy policy permits the
-provider to use de-identified inputs and outputs for service
-improvement; no zero-retention agreement was in place, and API
-data is stored in the People's Republic of China. Annotation was
-performed by the authors and one additional annotator on publicly
-posted, non-sensitive film reviews; users were not contacted, and
-the task involved no human-subjects experimentation beyond the
-annotators' own labeling of public posts.
-A fuller ethics statement and data-availability details appear in
-Appendix~\ref{app:ethics}.
+All texts are public Douban user comments used without platform
+authorization: Gold-600 was collected from one film page and the
+corpus derives from the Moviedata-10M release, whose terms do not
+permit redistribution of raw text. We therefore release labels,
+identifiers and SHA-256 text hashes only; texts can be re-joined
+under the upstream terms. About 18.5K review texts were sent to the
+DeepSeek API for labelling (the provider's policy permits use of
+de-identified inputs for service improvement; no zero-retention
+agreement was in place), and the 600 gold texts were processed on a
+commercial training platform (Alibaba Cloud PAI) for a baseline
+comparison. Annotation was
+done by the authors and one additional annotator on public,
+non-sensitive film reviews; no users were contacted and the work
+involved no human-subjects experimentation beyond this labelling. The
+models are research prototypes and are not intended for moderation or
+other decisions that affect users.
 
 \bibliography{refs}
 
