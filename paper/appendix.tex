@@ -284,11 +284,26 @@ Rating vs.\ GoldEns     & binary & 221 & 46/30  & 0.085 & 0.788 \\
 Mix vs.\ student        & binary & 221 & 2/2    & 1.000 & 1.000 \\
 Student vs.\ rating     & binary & 221 & 28/28  & 1.000 & 1.000 \\
 Mix vs.\ rating         & binary & 221 & 28/28  & 1.000 & 1.000 \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Systems added after the first analysis (separate Holm family)}}\\
+Flash vs.\ Mix          & 3-way & 400 & 40/42  & 0.912 & 1.000 \\
+Flash vs.\ GoldEns      & 3-way & 400 & 56/94  & $2.4{\times}10^{-3}$ & \textbf{0.022} \\
+Flash vs.\ rating       & 3-way & 400 & 61/99  & $3.3{\times}10^{-3}$ & \textbf{0.026} \\
+Rating-label vs.\ Mix   & 3-way & 400 & 60/69  & 0.481 & 1.000 \\
+Rating-label vs.\ GoldEns & 3-way & 400 & 69/96 & 0.043 & 0.256 \\
+Rating-label vs.\ rating & 3-way & 400 & 59/86  & 0.031 & 0.214 \\
+Pseudo-label vs.\ Mix   & 3-way & 400 & 56/97  & $1.2{\times}10^{-3}$ & \textbf{0.013} \\
+Pseudo-label vs.\ GoldEns & 3-way & 400 & 72/67 & 0.735 & 1.000 \\
+Pseudo-label vs.\ rating & 3-way & 400 & 107/102 & 0.782 & 1.000 \\
+LLM-17K w/o Gold vs.\ Mix & 3-way & 400 & 20/15 & 0.500 & 1.000 \\
+LLM-17K w/o Gold vs.\ GoldEns & 3-way & 400 & 55/96 & $1.1{\times}10^{-3}$ & \textbf{0.013} \\
+LLM-17K w/o Gold vs.\ rating & 3-way & 400 & 62/103 & $1.8{\times}10^{-3}$ & \textbf{0.018} \\
 \bottomrule
 \end{tabular}
 \caption{Exact McNemar tests on Human-400 (discordant counts: rows
 where only the first or only the second system is correct). Holm
-adjustment is over these 16 tests.}
+adjustment is over the 16 tests above; tests involving systems added
+after the first analysis form a separate family (bottom block).}
 \label{tab:human400-stats}
 \end{table*}
 

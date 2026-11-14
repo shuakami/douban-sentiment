@@ -26,14 +26,16 @@
 \newcommand{\SoneInterp}{The student matches its teacher on blind human labels, so distillation into a 110M-parameter encoder loses little.}
 
 %% ---- S2: label-source swap on the same 16.9K texts (GPU, ~2 h) ---------------
-\newif\ifStwo \Stwofalse
-\newcommand{\SwapStarAcc}{\pending}   \newcommand{\SwapStarCI}{\pending}
-\newcommand{\SwapStarF}{\pending}     \newcommand{\SwapStarNeuR}{\pending}  \newcommand{\SwapStarBin}{\pending}
-\newcommand{\SwapPseudoAcc}{\pending} \newcommand{\SwapPseudoCI}{\pending}
-\newcommand{\SwapPseudoF}{\pending}   \newcommand{\SwapPseudoNeuR}{\pending} \newcommand{\SwapPseudoBin}{\pending}
-\newcommand{\SwapStarVsLLMP}{\pending}   % McNemar, LLM-label student vs star-label student
-\newcommand{\SwapPseudoVsLLMP}{\pending} % McNemar, LLM-label student vs pseudo-label student
-\newcommand{\StwoInterp}{\pending}
+\newif\ifStwo \Stwotrue
+\newcommand{\SwapStarAcc}{62.5}  \newcommand{\SwapStarCI}{[57.7, 67.1]}
+\newcommand{\SwapStarF}{61.6}    \newcommand{\SwapStarNeuR}{48.0}  \newcommand{\SwapStarBin}{86.0}
+\newcommand{\SwapPseudoAcc}{54.5} \newcommand{\SwapPseudoCI}{[49.6, 59.3]}
+\newcommand{\SwapPseudoF}{49.5}  \newcommand{\SwapPseudoNeuR}{69.8} \newcommand{\SwapPseudoBin}{68.8}
+\newcommand{\SwapDSAcc}{64.5}    \newcommand{\SwapDSNeuR}{76.0}
+\newcommand{\SwapNoGoldAcc}{66.0}
+\newcommand{\SwapStarVsLLMP}{0.54}   % McNemar, LLM-label student vs star-label student
+\newcommand{\SwapPseudoVsLLMP}{0.002} % McNemar, LLM-label student vs pseudo-label student
+\newcommand{\StwoInterp}{The 10.0-point gap over the pseudo-label arm (bootstrap 95\% CI $[4.0, 16.2]$) shows the gain is not merely more in-distribution text: label quality matters. Rating-rule labels on the same texts reach \SwapStarAcc\%, within 2 points of the LLM labels (McNemar $p{=}0.54$), with most of the gap on neutral recall (\SwapDSNeuR\% vs \SwapStarNeuR\%): ratings are noisy per item but usable in aggregate. Omitting Gold-600 entirely scores \SwapNoGoldAcc\%, so the single-film gold set does not carry the gain.}
 
 %% ---- S3: Human-400 learning curve (GPU, ~1.5 h) ------------------------------
 %% When true, Figure 3 uses fig_h400_curve.pdf (made by scripts/make_fig_h400_curve.py)
